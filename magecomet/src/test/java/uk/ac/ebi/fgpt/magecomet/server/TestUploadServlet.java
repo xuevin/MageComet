@@ -1,0 +1,97 @@
+package uk.ac.ebi.fgpt.magecomet.server;
+
+import static org.junit.Assert.*;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.Test;
+
+import org.mged.annotare.validator.SemanticValidator;
+import org.mged.magetab.error.ErrorItem;
+
+
+
+import uk.ac.ebi.arrayexpress2.magetab.datamodel.MAGETABInvestigation;
+import uk.ac.ebi.arrayexpress2.magetab.exception.ErrorItemListener;
+import uk.ac.ebi.arrayexpress2.magetab.exception.ParseException;
+import uk.ac.ebi.arrayexpress2.magetab.handler.ParserMode;
+import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
+import uk.ac.ebi.arrayexpress2.magetab.validator.Validator;
+
+
+public class TestUploadServlet {
+	
+	@Test
+	public void testValidator(){
+		try {
+
+			File idf = new File(this.getClass().getClassLoader().getResource("E-GEOD-18781.idf.txt").getFile());
+			
+			if(idf.exists()){
+				System.out.println("File Exists");
+			}else{
+				fail("File can't be found");
+			}
+
+			// make a new parser, in read only mode
+			MAGETABParser parser = new MAGETABParser(ParserMode.READ_ONLY);
+
+			
+			// register error item listener
+			final List<ErrorItem> errorList = new ArrayList<ErrorItem>();
+
+			parser.addErrorItemListener(new ErrorItemListener() {
+				public void errorOccurred(ErrorItem item) {
+					errorList.add(item);
+				}
+			});
+			
+			// Create validataor 
+			Validator<MAGETABInvestigation> validator = new SemanticValidator(idf.getAbsolutePath());
+
+			// set validator on the parser
+			parser.setValidator(validator);
+
+			// do parse
+			System.out.println("Parsing " + idf.getAbsolutePath() + "...");
+
+			// need to get the url of this file, as the parser only takes urls
+
+			parser.parse(idf.toURI().toURL());
+			
+			
+			JSONArray errorArray= new JSONArray();
+			
+			int i =0;
+			for(ErrorItem error:errorList){
+				JSONObject errorItem = new JSONObject();
+				errorItem.put("code",error.getErrorCode()+"");
+				errorItem.put("type",error.getErrorType());
+				errorItem.put("message",error.getMesg());
+				errorItem.put("line",error.getLine()+"");
+				errorItem.put("column",error.getCol()+"");
+				errorArray.put(i,errorItem);
+				i++;
+			}
+			System.out.println(errorArray.toString());
+
+		} catch (ParseException e) {
+			// This happens if parsing failed.
+			// Any errors here will also have been reported by the listener
+			e.printStackTrace();
+			fail();
+		} catch (MalformedURLException e) {
+			// This is if the url from the file is bad
+			e.printStackTrace();
+			fail();
+		} catch (Exception e){
+			e.printStackTrace();
+			fail();
+		}
+	}
+}
