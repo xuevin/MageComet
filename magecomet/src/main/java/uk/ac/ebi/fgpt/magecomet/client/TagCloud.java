@@ -2,13 +2,11 @@ package uk.ac.ebi.fgpt.magecomet.client;
 
 import java.util.ArrayList;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.InlineHTML;
-import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
+import com.smartgwt.client.widgets.Window;
 
 public class TagCloud extends AbsolutePanel{
 
@@ -16,23 +14,8 @@ public class TagCloud extends AbsolutePanel{
 	public TagCloud(){
 		super();
 		listOfWordTags=new ArrayList<WordTag>();
-		
-		
-		addWord("sarcoidoisis",2);
-		addWord("sarcoidoisis",2);
-		addWord("protocol",2);
-		addWord("Homo sapiens",2);
-		addWord("RNA",2);
-		addWord("Female",2);
-		addWord("array",2);
-		addWord("design",2);
-		addWord("age",2);
-		addWord("blood",2);
-		addWord("disease",2);
-		addWord("organism",2);
-		
 	}
-	public void addWord(String word){
+	public void addWord(String word,ClickHandler action){
 		for(WordTag wtag: listOfWordTags){
 			if(wtag.getWord().equals(word)){
 				wtag.addHit();
@@ -40,10 +23,10 @@ public class TagCloud extends AbsolutePanel{
 				return;
 			}
 		}
-		listOfWordTags.add(new WordTag(word));
+		listOfWordTags.add(new WordTag(word,action));
 		refresh();
 	}
-	public void addWord(String word,int number){
+	public void addWord(String word,ClickHandler action,int number){
 		for(WordTag wtag: listOfWordTags){
 			if(wtag.getWord().equals(word)){
 				wtag.addHit(number);
@@ -51,13 +34,14 @@ public class TagCloud extends AbsolutePanel{
 				return;
 			}
 		}
-		listOfWordTags.add(new WordTag(word,number));
+		listOfWordTags.add(new WordTag(word,action,number));
 		refresh();
 	}
 	public void refresh(){
 		clear();
 		for(WordTag tag:listOfWordTags){
 			Button lbl = new Button(tag.getWord());
+			lbl.addClickHandler(tag.getClickHandeler());
 			lbl.setStyleName("");
 			//lbl.setWordWrap(true);
 			

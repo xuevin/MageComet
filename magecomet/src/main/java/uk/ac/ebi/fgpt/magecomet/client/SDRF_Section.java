@@ -16,7 +16,6 @@ import com.smartgwt.client.types.ListGridEditEvent;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.IButton;
-import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.TransferImgButton;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -36,12 +35,14 @@ public class SDRF_Section extends SectionStackSection{
 	private ListGrid sdrfTable;
 	private FilterBuilder filterBuilder; 
 	private HStack filterStack;
-	private ComboBoxItem cbItem;
-	private TextItem newValueText;
+	private ComboBoxItem columnChooserCombobox;
+	private TextItem cellValueTextItem;
 	private Window columnWindow;
+	private int uniqueKeyCount;
 	
 	public SDRF_Section(){
 		super("SDRF");
+		uniqueKeyCount=0;
 		
 		sdrfTable = new ListGrid();			
 		sdrfTable.setCanEdit(true);
@@ -78,7 +79,7 @@ public class SDRF_Section extends SectionStackSection{
         //For adding columns
         //sdrfTable.startEditingNew(); 
         
-		IButton button2 = new IButton("Add Column New");  
+		IButton button2 = new IButton("Add New Column");  
         button2.setTop(250);  
         button2.addClickHandler(new ClickHandler() {  
             public void onClick(ClickEvent event) {
@@ -120,15 +121,19 @@ public class SDRF_Section extends SectionStackSection{
 		
 		JSONArray jsonArray = jsonObject.get("sdrfArray").isArray();
 		
+		//Populate Datasource
 		DataSource data = new DataSource("sdrf_ds");		
 		data.setFields(JSONToDataSourceField(jsonArray)); // Need this to do filtering (Limited to filtering of input data)
 		data.setTestData(JSONToListGridRecord(jsonArray));
 		data.setClientOnly(true);
 		
-		//Must set data before fields
+		
+		//Set order of the fields and load data
 		sdrfTable.setDataSource(data);
-		sdrfTable.setFields(JSONToListGridField(jsonArray)); //Problem - You are making a lot of objects
+		sdrfTable.setFields(JSONToListGridField(jsonArray));
 		sdrfTable.fetchData();
+		
+		//Build a filter
     	filterBuilder = new FilterBuilder();
 		filterBuilder.setDataSource(sdrfTable.getDataSource());
 		IButton filterButton = new IButton("Filter");
@@ -143,18 +148,18 @@ public class SDRF_Section extends SectionStackSection{
 		
 		DynamicForm form = new DynamicForm();
 		form.setNumCols(4);
-		cbItem = new ComboBoxItem("Column");  
-		cbItem.setTitle("Column");  
+		columnChooserCombobox = new ComboBoxItem("Column");  
+		columnChooserCombobox.setTitle("Column");  
 		updateColumnsInComboBox();
 		
-		newValueText = new TextItem();
-		newValueText.setTitle("Value");
-		form.setItems(cbItem,newValueText);
+		cellValueTextItem = new TextItem();
+		cellValueTextItem.setTitle("Value");
+		form.setItems(columnChooserCombobox,cellValueTextItem);
 		
 		
 		
 		
-    	IButton orderOfColumns = new IButton("Update");  
+    	IButton orderOfColumns = new IButton("Set Value In Visible Columns");  
     	orderOfColumns.setLeft(0);  
     	orderOfColumns.addClickHandler(new ClickHandler() {  
     		public void onClick(ClickEvent event) {  
@@ -163,8 +168,8 @@ public class SDRF_Section extends SectionStackSection{
 	//        	}
     			//This updates based on what is visible
     			for(ListGridRecord record:sdrfTable.getRecords()){
-    				String columnName = cbItem.getValue().toString();
-    				record.setAttribute(columnName, newValueText.getValue().toString());
+    				String columnName = columnChooserCombobox.getValue().toString();
+    				record.setAttribute(columnName, cellValueTextItem.getValue().toString());
     				sdrfTable.updateData(record);
     			}
     			sdrfTable.saveAllEdits();
@@ -184,6 +189,7 @@ public class SDRF_Section extends SectionStackSection{
 		if(sdrfTable.getAllFields().length==0){
 			return;
 		}
+		//Create New Window
 		columnWindow = new Window();
 		columnWindow.setTitle("Customize SDRF Columns");
 		columnWindow.setWidth(600);
@@ -192,15 +198,15 @@ public class SDRF_Section extends SectionStackSection{
 		columnWindow.show();
 		
 		//Available Fields that the user can select from
-		final ListGrid minedFields = new ListGrid();
-		minedFields.setVisible(true);
-		minedFields.setWidth("45%");
-		minedFields.setHeight("95%");
-		minedFields.setLayoutAlign(VerticalAlignment.CENTER);
-		minedFields.setCanAcceptDrop(true);
-		minedFields.setCanAcceptDroppedRecords(true);
-		minedFields.setCanDragRecordsOut(true);
-		minedFields.setCanReorderRecords(true);  
+		final ListGrid curratorGrid = new ListGrid();
+		curratorGrid.setVisible(true);
+		curratorGrid.setWidth("45%");
+		curratorGrid.setHeight("95%");
+		curratorGrid.setLayoutAlign(VerticalAlignment.CENTER);
+		curratorGrid.setCanAcceptDrop(true);
+		curratorGrid.setCanAcceptDroppedRecords(true);
+		curratorGrid.setCanDragRecordsOut(true);
+		curratorGrid.setCanReorderRecords(true);  
 	
 		
 		//Fields that are visible to the user
@@ -216,10 +222,10 @@ public class SDRF_Section extends SectionStackSection{
 		activeFields.setCanSort(true);
 		
 		
-		ListGridField minedKey= new ListGridField("key","Key");
-		ListGridField minedField = new ListGridField("title","DataMined Column");
-		minedKey.setHidden(true);
-		minedFields.setFields(minedKey,minedField);
+		ListGridField curatorAddedKey= new ListGridField("key","Key");
+		ListGridField curratorAddedField = new ListGridField("title","New Columns");
+		curatorAddedKey.setHidden(true);
+		curratorGrid.setFields(curatorAddedKey,curratorAddedField);
 		
 		
 		ListGridField visibleKey= new ListGridField("key","Key");
@@ -227,20 +233,47 @@ public class SDRF_Section extends SectionStackSection{
 		visibleKey.setHidden(true);
 		activeFields.setFields(visibleKey,visibleField);
 		
-
+		//Get the fields in the table and make them records. This allows 
+		//users to reorder them vertically instead of horizontally with lots of scrolling
 		activeFields.setData(convertFieldsToRecords());
+		
+		
+		IButton addButton = new IButton();
+		addButton.setWidth(24);
+		addButton.setHeight(24);
+		addButton.setShowRollOver(true);
+		addButton.setIcon("[SKIN]actions/add.png");
+		
+		
+		//Columns can only be shifted through this GUI.
+		
+		addButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				
+				
+				int uniqueKey = getNewUniqueKey();
+				ListGridRecord newColumn = new ListGridRecord();
+				newColumn.setAttribute("key",uniqueKey);
+				newColumn.setAttribute("title", "New Column"+uniqueKey);
+				curratorGrid.addData(newColumn);
+				
+			}
+		});
+		
 		
 		TransferImgButton leftArrow = new TransferImgButton(TransferImgButton.LEFT);
 		leftArrow.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				activeFields.transferSelectedData(minedFields);
+				activeFields.transferSelectedData(curratorGrid);
 			}
 		});
 		
 		TransferImgButton rightArrow = new TransferImgButton(TransferImgButton.RIGHT);
 		rightArrow.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				minedFields.transferSelectedData(activeFields);
+				curratorGrid.transferSelectedData(activeFields);
 			}
 		});
 				
@@ -249,6 +282,7 @@ public class SDRF_Section extends SectionStackSection{
 		VStack arrows = new VStack();
 		arrows.setWidth(20);
 		arrows.setAlign(Alignment.CENTER);
+		arrows.addMember(addButton);
 		arrows.addMember(leftArrow);
 		arrows.addMember(rightArrow);
 		
@@ -282,8 +316,13 @@ public class SDRF_Section extends SectionStackSection{
     	cancel.addClickHandler(new ClickHandler() {  
     		public void onClick(ClickEvent event) {
     			//discard changes... restore the original
-    			activeFields.setData(convertFieldsToRecords());
-    			columnWindow.hide();
+    			
+    			//DON'T USE
+    			//activeFields.setData(convertFieldsToRecords());
+    			
+    			//Probably want to create a new popup instead
+    			columnWindow.destroy();
+    			columnWindow=null;
     		}
     	});
 		
@@ -297,7 +336,7 @@ public class SDRF_Section extends SectionStackSection{
 		HStack hStack = new HStack();
 		hStack.setAlign(Alignment.CENTER);
 		hStack.setAlign(VerticalAlignment.CENTER);
-		hStack.addMember(minedFields);
+		hStack.addMember(curratorGrid);
 		hStack.addMember(arrows);
 		hStack.addMember(activeFields);
 		
@@ -305,16 +344,36 @@ public class SDRF_Section extends SectionStackSection{
 		columnWindow.addItem(hStack);
 		columnWindow.addItem(actionButtons);		
 	}
+	
+	/**
+	 * Updates the combo box. Should be called everytime the table changes
+	 */
 	private void updateColumnsInComboBox() {
 		LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();  
 		for(ListGridField field:sdrfTable.getAllFields()){
 			valueMap.put(field.getName(), field.getTitle());
 		}
-		cbItem.setValueMap(valueMap);
+		columnChooserCombobox.setValueMap(valueMap);
 
 	}
+	
+	/**
+	 * Gets an array of Fields which is retrieved from the sdrfTable.
+	 * The order of the array determines the order of the columns.
+	 * 
+	 * For each listGridRecord, there is a key and title attribute.
+	 * The key attribute uniquely identifies the column and is used to retrieve
+	 * the data
+	 * 
+	 * The title attribute is the name of the column, such as "Term Source REF"
+	 * 
+	 * <br>[0] (KEY=1)...(TITLE= Term Source)
+	 * <br>[1] (KEY=20)...(TITLE= Comment)
+	 * <br>[2] (Key=3)...(Title= Sample)
+	 *  
+	 * @return an array of ListGridRecords, which describes the order of the columns
+	 */
 	private ListGridRecord[] convertFieldsToRecords(){
-		//For each field, make a new record
 		ListGridRecord[] columnsArray= new ListGridRecord[sdrfTable.getAllFields().length-1];
 		int i =0;
 		for(ListGridField field:sdrfTable.getAllFields()){
@@ -328,6 +387,17 @@ public class SDRF_Section extends SectionStackSection{
 		}
 		return columnsArray;
 	}
+	
+	/**
+	 * Converts a JSON array into an array of ListGridRecords.
+	 * 
+	 * Each attribute is retrieved through it's unique key assigned.
+	 * Fields also have the unique key and that is how the relationship is preserved
+	 * 
+	 * @param jsonArrayOfRows
+	 * @return an array of ListGridRecords are returned. This is used to populate the data
+	 * source but it does not determine the order of the columns
+	 */
 	private ListGridRecord[] JSONToListGridRecord(JSONArray jsonArrayOfRows){
 		//Number of rows is one less because row zero contains data about the field name.
 		int numberOfRows=jsonArrayOfRows.size();
@@ -353,6 +423,11 @@ public class SDRF_Section extends SectionStackSection{
 		}
 		return arrayOfRecords;
 	}
+	/**
+	 * @param jsonArray
+	 * @return an array of DataSourceFields are returned. This is used to populate the
+	 * data source and is not used to determine the order of the columns
+	 */
 	private DataSourceField[] JSONToDataSourceField(JSONArray jsonArray) {
 		JSONArray firstRow = jsonArray.get(0).isArray();
 		// Plus one is to put the key in the front
@@ -368,6 +443,18 @@ public class SDRF_Section extends SectionStackSection{
 		arrayOfFields[0]=key;
 		return arrayOfFields; 
 	}
+	/**
+	 * @param array
+	 * @return an array of ListGridField's are returned. 
+	 * This array is used to determine the order of the columns. 
+	 * 
+	 * <br>[ArrayIndex]uniquekey...(name)
+	 * <br>[0]key...( Key)
+	 * <br>[1]1...(Term Source)
+	 * <br>[2]26...(Comment)
+	 * <br>[3]2...(Sample Name)
+	 * <br>etc.
+	 */
 	private ListGridField[] JSONToListGridField(JSONArray array){
 		JSONArray firstRow = array.get(0).isArray();
 		// Plus one is to put the key in the front
@@ -379,6 +466,8 @@ public class SDRF_Section extends SectionStackSection{
 			arrayOfFields[i+1].setAutoFitWidth(true);
 			
 		}
+		//At first, the unique key count is instantiated to the number of fields present
+		uniqueKeyCount=firstRow.size();
 		
 		//Make a primary key
 		ListGridField key = new ListGridField("key","Key");
@@ -386,5 +475,9 @@ public class SDRF_Section extends SectionStackSection{
 		key.setAutoFitWidth(true);
 		arrayOfFields[0]=key;
 		return arrayOfFields; 
+	}
+	private int getNewUniqueKey(){
+		uniqueKeyCount++;
+		return uniqueKeyCount;
 	}
 }

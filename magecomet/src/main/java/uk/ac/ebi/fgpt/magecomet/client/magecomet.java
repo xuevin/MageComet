@@ -5,6 +5,7 @@ import gwtupload.client.MultiUploader;
 import gwtupload.client.IUploadStatus.Status;
 import gwtupload.client.IUploader.UploadedInfo;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
@@ -15,10 +16,8 @@ import com.smartgwt.client.types.Side;
 import com.smartgwt.client.types.VisibilityMode;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Window;
-import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.SectionStack;
 import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.layout.VStack;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 
@@ -57,6 +56,8 @@ public class magecomet implements EntryPoint {
 	private final ErrorsTab errorTab = new ErrorsTab();
 	private final TagCloud tagCloud = new TagCloud();
 	private Window tagCloudWindow = new Window();
+	private final Tab tagCloudTab1 = new Tab("Weight By Location");
+	private final Tab tagCloudTab2 = new Tab("Weight By Errors");
 
 	/**
 	 * Declares the Widgets that will be used
@@ -88,34 +89,66 @@ public class magecomet implements EntryPoint {
 		dataUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
 		
 		
-		
-//		tagCloud.setVisible(true);
-		tagCloud.setWidth("100%");
-		
-		
-		Canvas gwtCanvas = new Canvas();
-		gwtCanvas.addChild(tagCloud);
-
-
-
 		editTab.setPane(sectionStack);
 		
 		topTabSet.addTab(editTab);
 		topTabSet.addTab(errorTab);
+
+		
+		//Tabs For Cloud
+		// 1 - Where Did it Occur Tag
+		
+		// 2 - Weight 
+		
+		//TabSet for cloud
+		TabSet tagCloudTabSet = new TabSet();
+		tagCloudTabSet.setTabBarPosition(Side.TOP);
+		tagCloudTabSet.setTabBarAlign(Side.LEFT);
+		tagCloudTabSet.setHeight100();
+		tagCloudTabSet.setWidth100();
 		
 		
 		
+		
+		
+		tagCloudTabSet.addTab(tagCloudTab1);
+		tagCloudTabSet.addTab(tagCloudTab2);
+		
+		
+//		tagCloud.setVisible(true);
+		tagCloud.setWidth("100%");
+		
+		Canvas gwtCanvas = new Canvas();
+		gwtCanvas.addChild(tagCloud);
+
+		tagCloudTab1.setPane(gwtCanvas);
 	
 		tagCloudWindow.setHeaderControls(HeaderControls.HEADER_LABEL,HeaderControls.MINIMIZE_BUTTON);
 		tagCloudWindow.setTitle("Tag Cloud");
-		tagCloudWindow.setWidth("400");
-		tagCloudWindow.setHeight("300");
-		tagCloudWindow.addItem(gwtCanvas);
+		tagCloudWindow.setWidth("500");
+		tagCloudWindow.setHeight("250");
+		tagCloudWindow.addItem(tagCloudTabSet);
 		tagCloudWindow.setCanDragResize(true);
+		tagCloudWindow.moveTo(400, 0);
+		tagCloudWindow.minimize();
 		tagCloudWindow.show();
-//		tagCloudWindow.setAutoSize(true);
 		
-	
+		//********DEBUBING***********************
+		ClickHandler popup = new ClickHandler() {
+			@Override
+			public void onClick(
+					//TODO Remove GWT elements and only use SMARTGWT
+					com.google.gwt.event.dom.client.ClickEvent arg0) {
+				new AutofillPopup("Blank");
+				
+			}
+			
+		};
+		tagCloud.addWord("sarcoidoisis",popup,2);
+		tagCloud.addWord("protocol",popup,2);
+		tagCloud.addWord("Homo sapiens",popup,2);
+		tagCloud.addWord("RNA",popup,2);
+		//********DEBUBING***********************
 
 
 		
@@ -174,15 +207,25 @@ public class magecomet implements EntryPoint {
 		private void updateErrors(JSONObject jsonObject){
 			JSONArray errors = jsonObject.get("error").isArray();
 			errorTab.handelJSONArrayOfErrors(errors);
-			
 		}
 		private void fillTagCloud(JSONObject jsonObject, int weight) {
 			JSONArray tagWords = jsonObject.get("whatizit").isArray();
-
-
+			
 			for (int i = 0; i < tagWords.size(); i++) {
-				tagCloud.addWord(tagWords.get(i).isString()
-						.stringValue(),weight);
+				final String word = tagWords.get(i).isString().stringValue();
+				
+				ClickHandler popup = new ClickHandler() {
+					@Override
+					public void onClick(
+							//TODO Remove GWT elements and only use SMARTGWT
+							com.google.gwt.event.dom.client.ClickEvent arg0) {
+						new AutofillPopup(word);
+						
+					}
+					
+				};
+				tagCloud.addWord(word,popup,weight);
+
 			}
 		}
 	};

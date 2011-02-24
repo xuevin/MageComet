@@ -10,7 +10,9 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.RecordList;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridEditEvent;
+import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.widgets.HTMLFlow;
 import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.TransferImgButton;
 import com.smartgwt.client.widgets.Window;
@@ -27,16 +29,27 @@ public class IDF_Section extends SectionStackSection{
 	private ArrayList<ListGridRecord> rows;
 	private ArrayList<String> listOfAvailableFields;
 	private ListGrid idfGrid;
+	private final HTMLFlow textBox = new HTMLFlow("Experiment Description" +
+			"Experiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment Description");
 
 	public IDF_Section(){
 		super("IDF");
+		HStack hStack = new HStack();
+		
 		idfGrid = new ListGrid();
 		idfGrid.setCanEdit(true);
 		idfGrid.setEditEvent(ListGridEditEvent.CLICK);
 		idfGrid.setCanSort(false);
+		idfGrid.setWidth("60%");
 		rows = new ArrayList<ListGridRecord>();
 		listOfAvailableFields = new ArrayList<String>();
-		addItem(idfGrid);
+		textBox.setWidth("40%");
+		textBox.setOverflow(Overflow.AUTO);
+		
+		hStack.addMember(idfGrid);
+		hStack.addMember(textBox);
+		
+		addItem(hStack);
 		
 		IButton editFieldsButton = new IButton("Edit Fields");
 		editFieldsButton.setLeft(0);
@@ -90,7 +103,7 @@ public class IDF_Section extends SectionStackSection{
 			}
 		});
 		
-		addItem(editFieldsButton);
+//		addItem(editFieldsButton);
 		
 		//TODO make a HLayout for this
 		
@@ -109,7 +122,7 @@ public class IDF_Section extends SectionStackSection{
 		JSONArray jsonArray = jsonObject.get("idfArray").isArray();
 		ListGridRecord[] listOfRows = new ListGridRecord[jsonArray.size()];
 		
-		
+		//Get the data from the rows and make each a record
 		for(int row=0; row <jsonArray.size();row ++){
 			
 			JSONArray columnArray = jsonArray.get(row).isArray();
@@ -118,6 +131,12 @@ public class IDF_Section extends SectionStackSection{
 				tempRow.setAttribute(column+"", columnArray.get(column).isString().stringValue());
 			}
 			listOfRows[row]=tempRow;
+			
+			
+			//Find the column with experiment description
+			if(columnArray.get(0).isString().stringValue().equals("Experiment Description")){
+				textBox.setContents(columnArray.get(1).isString().stringValue());
+			}
 		}
 		
 		//Iterate through JSON Array and find the one with the most number of columns
@@ -127,8 +146,9 @@ public class IDF_Section extends SectionStackSection{
 				longestRow = jsonArray.get(i).isArray().size();
 			}
 		}
-		ListGridField[] listOfFields = new ListGridField[longestRow];
 		
+		ListGridField[] listOfFields = new ListGridField[longestRow];
+		//Make the columns
 		for(int i = 1; i<longestRow;i++){
 			listOfFields[i] = new ListGridField((""+i),"");
 		}

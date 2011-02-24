@@ -289,6 +289,7 @@ public class UploadServlet extends UploadAction{
 
 	private JSONArray getJSONArrayFromWhatIzIt(File file) throws IOException, ReSyntaxException, CompileDfaException{
 		try{
+			//TODO make this customizable
 			FileReader mwt = new FileReader("src/main/resources/EFO_inferred_v142.xml");
 			
 			DictFilter dict = new DictFilter(mwt, "xml", "none", false);
@@ -317,7 +318,6 @@ public class UploadServlet extends UploadAction{
 				String match = matcher.group();
 				uniqueTerms.add(match.substring(7,match.length()-1));
 			}
-			 
 			return new JSONArray(uniqueTerms);
 		}catch(IOException e){
 			System.out.println("ERROR Loading EFO");

@@ -2,18 +2,21 @@ package uk.ac.ebi.fgpt.magecomet.client;
 
 import com.google.gwt.event.dom.client.ClickHandler;
 
+
 public class WordTag {
 	private String word;
 	private int hits;
 	private ClickHandler clickHandeler;
 	
-	public WordTag(String word){
+	public WordTag(String word,ClickHandler action){
 		this.word = word;
 		this.hits=1;
+		this.clickHandeler=action;
 	}
-	public WordTag(String word,int number){
+	public WordTag(String word,ClickHandler action,int number){
 		this.word = word;
 		this.hits=number;
+		this.clickHandeler=action;
 	}
 	public int getHits(){
 		return hits;
