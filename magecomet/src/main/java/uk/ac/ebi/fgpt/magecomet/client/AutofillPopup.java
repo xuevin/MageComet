@@ -1,6 +1,5 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
-import org.apache.tools.ant.DynamicAttribute;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.VerticalAlignment;

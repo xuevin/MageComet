@@ -20,7 +20,7 @@
   <stylesheet src="Upload.css"/>
   
   <!-- Specify the app entry point class.                         -->
-  <entry-point class='uk.ac.ebi.fgpt.magecomet.client.magecomet'/>
+  <entry-point class='uk.ac.ebi.fgpt.magecomet.client.Magecomet'/>
 
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>

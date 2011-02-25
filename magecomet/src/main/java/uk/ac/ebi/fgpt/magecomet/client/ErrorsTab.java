@@ -1,6 +1,5 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
-import com.google.gwt.core.ext.TreeLogger.Type;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.smartgwt.client.data.DataSource;
