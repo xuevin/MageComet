@@ -12,8 +12,10 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.smartgwt.client.types.HeaderControls;
 import com.smartgwt.client.types.Side;
 import com.smartgwt.client.types.VisibilityMode;
+import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.layout.SectionStack;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
@@ -77,20 +79,20 @@ public class Magecomet implements EntryPoint {
 		
 		
 		//Set the callback object.
-		AsyncCallback<String> callback = new AsyncCallback<String>() {
+		final AsyncCallback<String> callback = new AsyncCallback<String>() {
 			public void onFailure(Throwable caught) {
-		        // If the stock code is in the list of delisted codes, display an error message.
 		        String details = caught.getMessage();
-//		        errorMsgLabel.setText("Error: " + details);
-//		        errorMsgLabel.setVisible(true);
-
 			}
 			public void onSuccess(String url){
-				System.out.println(url);
+				Window window = new Window();
+				window.setTitle(url);
+				window.show();
+//				System.out.println(url);
 			}
 		};
 
-		fileService.getURL("Something", "VeryLongString", callback);
+		
+		
 		
 
 
@@ -181,6 +183,19 @@ public class Magecomet implements EntryPoint {
 		Canvas gwtUploadCanvas = new Canvas();
 		HorizontalPanel uploadPanel = new HorizontalPanel();
 		gwtUploadCanvas.addChild(uploadPanel);
+		//===================
+		// TESTBUTTON
+		Button button = new Button("Click ME");
+		button.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				fileService.getURL("Stuff", "more stuff", callback);			
+			}
+		});
+		gwtUploadCanvas.addChild(button);
+		
+		//====================
 		uploadPanel.add(dataUploader);
 		uploadPanel.add(EFOSuggestBox);
 		uploadPanel.add(new com.google.gwt.user.client.ui.Label("EFO Search"));
