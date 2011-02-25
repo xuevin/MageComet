@@ -1,6 +1,5 @@
  package uk.ac.ebi.fgpt.magecomet.client;
 
-
 import java.util.LinkedHashMap;
 
 import com.google.gwt.json.client.JSONArray;

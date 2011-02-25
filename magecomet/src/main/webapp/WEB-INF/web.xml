@@ -35,9 +35,19 @@
 		<servlet-name>uploadServlet</servlet-name>
 		<url-pattern>*.gupld</url-pattern>
 	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>fileServiceImpl</servlet-name>
+		<url-pattern>/magecomet/FileService</url-pattern>
+	</servlet-mapping>
+
 	<!-- Default page to serve -->
 	<welcome-file-list>
 		<welcome-file>magecomet.html</welcome-file>
 	</welcome-file-list>
+
+
+
+
 
 </web-app>

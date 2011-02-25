@@ -1,10 +1,12 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.smartgwt.client.types.HeaderControls;
@@ -61,12 +63,34 @@ public class Magecomet implements EntryPoint {
 	private final Tab tagCloudTab1 = new Tab("Weight By Location");
 	private final Tab tagCloudTab2 = new Tab("Weight By Errors");
 
+
 	/**
 	 * Declares the Widgets that will be used
 	 */
 	private SuggestBox EFOSuggestBox = new SuggestBox();
+	
+	private FileServiceAsync fileService = GWT.create(FileService.class);
+	
+
 
 	public void onModuleLoad() {
+		
+		
+		//Set the callback object.
+		AsyncCallback<String> callback = new AsyncCallback<String>() {
+			public void onFailure(Throwable caught) {
+		        // If the stock code is in the list of delisted codes, display an error message.
+		        String details = caught.getMessage();
+//		        errorMsgLabel.setText("Error: " + details);
+//		        errorMsgLabel.setVisible(true);
+
+			}
+			public void onSuccess(String url){
+				System.out.println(url);
+			}
+		};
+
+		fileService.getURL("Something", "VeryLongString", callback);
 		
 
 
@@ -99,7 +123,6 @@ public class Magecomet implements EntryPoint {
 		
 		//Tabs For Cloud
 		// 1 - Where Did it Occur Tag
-		
 		// 2 - Weight 
 		
 		//TabSet for cloud

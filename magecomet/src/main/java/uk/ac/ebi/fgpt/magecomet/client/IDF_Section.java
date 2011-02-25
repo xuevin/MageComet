@@ -1,8 +1,6 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
