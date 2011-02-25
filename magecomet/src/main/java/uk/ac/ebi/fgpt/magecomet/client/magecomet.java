@@ -24,6 +24,7 @@ import com.smartgwt.client.widgets.tab.TabSet;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
+
 public class magecomet implements EntryPoint {
 	/**
 	 * The message displayed to the user when the server cannot be reached or
