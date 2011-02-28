@@ -5,7 +5,6 @@
 
 <web-app>
 
-
 	<context-param>
 		<!--  max size of the upload request-->
 		<param-name>maxSize</param-name>
@@ -37,14 +36,23 @@
 	</servlet-mapping>
 
 
-	  <servlet>
-	    <servlet-name>fileServiceImpl</servlet-name>
-	    <servlet-class>uk.ac.ebi.fgpt.magecomet.server.FileServiceImpl</servlet-class>
-	  </servlet>
-  
+	<servlet>
+		<servlet-name>fileServiceImpl</servlet-name>
+		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.FileServiceImpl</servlet-class>
+	</servlet>
+
 	<servlet-mapping>
 		<servlet-name>fileServiceImpl</servlet-name>
 		<url-pattern>/magecomet/FileService</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DownloadServlet</servlet-name>
+		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.DownloadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DownloadServlet</servlet-name>
+		<url-pattern>/magecomet/DownloadServlet</url-pattern>
 	</servlet-mapping>
 
 	<!-- Default page to serve -->

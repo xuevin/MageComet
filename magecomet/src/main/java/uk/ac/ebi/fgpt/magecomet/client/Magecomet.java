@@ -3,11 +3,14 @@ package uk.ac.ebi.fgpt.magecomet.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.smartgwt.client.types.HeaderControls;
 import com.smartgwt.client.types.Side;
@@ -84,9 +87,23 @@ public class Magecomet implements EntryPoint {
 		        String details = caught.getMessage();
 			}
 			public void onSuccess(String url){
-				Window window = new Window();
-				window.setTitle(url);
-				window.show();
+				 String fileDownloadURL = "/DownloadServlet" 
+					 + "&fileURL=" + URL.encode(url); 
+				 
+				 Frame fileDownloadFrame = new Frame(fileDownloadURL); 
+				 fileDownloadFrame.setSize("0px", "0px"); 
+				 fileDownloadFrame.setVisible(false); 
+				 RootPanel panel = RootPanel.get("__gwt_downloadFrame"); 
+
+				 while (panel.getWidgetCount() > 0) 
+					 panel.remove(0); 
+				 panel.add(fileDownloadFrame); 
+								
+//				com.google.gwt.user.client.Window.open(url, "_blank", "");
+				
+				
+				//From here, call DownloadServlet
+				
 //				System.out.println(url);
 			}
 		};
@@ -190,7 +207,7 @@ public class Magecomet implements EntryPoint {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				fileService.getURL("Stuff", "more stuff", callback);			
+				fileService.writeFile("Accession", "Table", callback);			
 			}
 		});
 		gwtUploadCanvas.addChild(button);

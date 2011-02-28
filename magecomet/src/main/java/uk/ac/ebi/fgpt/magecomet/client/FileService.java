@@ -5,7 +5,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("FileService")
 public interface FileService extends RemoteService{
-	String getURL(String experiemntAccession,String tableAsAString);
+	String writeFile(String experiemntAccession,String tableAsAString);
 }
 
 
