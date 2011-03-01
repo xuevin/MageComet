@@ -31,9 +31,19 @@
 			<name>smartclient.com</name>
 			<url>http://www.smartclient.com/maven2/</url>
 		</repository>
+		<!--		<repository>-->
+		<!--			<id>gwtupload</id>-->
+		<!--			<url>http://gwtupload.googlecode.com/svn/mavenrepo/</url>-->
+		<!--		</repository>-->
 		<repository>
-			<id>gwtupload</id>
-			<url>http://gwtupload.googlecode.com/svn/mavenrepo/</url>
+			<id>sonatype-snapshots</id>
+			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
 		</repository>
 	</repositories>
 
@@ -76,10 +86,15 @@
 			<artifactId>json</artifactId>
 			<version>20090211</version>
 		</dependency>
+		<!--		<dependency>-->
+		<!--			<groupId>com.googlecode.gwtupload</groupId>-->
+		<!--			<artifactId>gwtupload</artifactId>-->
+		<!--			<version>0.6.3</version>-->
+		<!--		</dependency>-->
 		<dependency>
 			<groupId>com.googlecode.gwtupload</groupId>
 			<artifactId>gwtupload</artifactId>
-			<version>0.6.3</version>
+			<version>0.6.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>annotare</groupId>

@@ -12,7 +12,6 @@ import uk.ac.ebi.fgpt.magecomet.client.FileService;
 
 
 public class FileServiceImpl extends RemoteServiceServlet implements FileService{
-	@Override
 	public String writeFile(String experimentAccession,String tableAsAString) {
 		try {
 			// Create file
@@ -21,7 +20,8 @@ public class FileServiceImpl extends RemoteServiceServlet implements FileService
 			bufferedWriter = new BufferedWriter(new FileWriter(file));
 			bufferedWriter.write(tableAsAString);
 			bufferedWriter.close();
-			return(file.toURI().toURL().toString());   					
+			
+			return(file.getAbsolutePath());   					
 		} catch (Exception e) {// Catch exception if any
 			System.err.println("Error: " + e.getMessage());
 			return "Error With Output";

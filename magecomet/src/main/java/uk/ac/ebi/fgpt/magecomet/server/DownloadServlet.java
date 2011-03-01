@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletOutputStream;
 
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 public class DownloadServlet extends HttpServlet{
 	
@@ -22,7 +23,7 @@ public class DownloadServlet extends HttpServlet{
 	throws ServletException, IOException{
 		
 	response.setContentType("application/download");
-	response.setHeader("Content-Disposition","attachment;filename=temp.csv");
+	response.setHeader("Content-Disposition","attachment;filename="+request.getParameter("fileURL"));
 	
 	//Get file
 	String fileurl = request.getParameter("fileURL");

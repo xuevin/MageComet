@@ -62,12 +62,12 @@ public class AutofillPopup extends Window{
         
         Button cancelButton = new Button("Cancel");
         cancelButton.addClickHandler(new ClickHandler() {
-			
-			@Override
 			public void onClick(ClickEvent event) {
 				destroy();
 				
 			}
+			
+		
 		});
         
 		

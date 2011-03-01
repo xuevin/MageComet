@@ -19,6 +19,10 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
 
+/**
+ * @author chrnovx
+ *
+ */
 public class SDRF_Section_ColumnEditor extends Window{
 	//Saved states of column editor
 	private RecordList savedActiveRecords;
@@ -98,7 +102,6 @@ public class SDRF_Section_ColumnEditor extends Window{
 		addButton.setIcon("[SKIN]actions/add.png");
 
 		addButton.addClickHandler(new ClickHandler() {
-			@Override
 			public void onClick(ClickEvent event) {
 				int uniqueKey = getNewUniqueKey();
 				ListGridRecord newColumn = new ListGridRecord();
@@ -212,8 +215,12 @@ public class SDRF_Section_ColumnEditor extends Window{
 	public void updateColumns() {
 		savedActiveRecords=convertFieldsToRecords();
 		activeGrid.setData(savedActiveRecords);
-		
 	}
+	/**
+	 * Gets a unique key that represents a column
+	 * 
+	 * @return a new unique key that represents a column
+	 */
 	private int getNewUniqueKey(){
 		uniqueKeyCount++;
 		return uniqueKeyCount;
@@ -251,7 +258,7 @@ public class SDRF_Section_ColumnEditor extends Window{
 		return recordList;
 	}
 	/**
-	 * Updates the combo box. Should be called everytime the table changes
+	 * Updates the combo box. Should be called every time the table changes
 	 */
 	private void updateColumnsInComboBox() {
 		LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();  

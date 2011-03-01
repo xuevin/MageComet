@@ -87,8 +87,8 @@ public class Magecomet implements EntryPoint {
 		        String details = caught.getMessage();
 			}
 			public void onSuccess(String url){
-				 String fileDownloadURL = "/DownloadServlet" 
-					 + "&fileURL=" + URL.encode(url); 
+				 String fileDownloadURL = "/magecomet/DownloadServlet" 
+					 + "?fileURL=" + URL.encode(url); 
 				 
 				 Frame fileDownloadFrame = new Frame(fileDownloadURL); 
 				 fileDownloadFrame.setSize("0px", "0px"); 
@@ -168,18 +168,16 @@ public class Magecomet implements EntryPoint {
 		tagCloudTab1.setPane(gwtCanvas);
 	
 		tagCloudWindow.setHeaderControls(HeaderControls.HEADER_LABEL,HeaderControls.MINIMIZE_BUTTON);
-		tagCloudWindow.setTitle("Tag Cloud");
+		tagCloudWindow.setTitle("EFO Tag Cloud");
 		tagCloudWindow.setWidth("500");
 		tagCloudWindow.setHeight("250");
 		tagCloudWindow.addItem(tagCloudTabSet);
 		tagCloudWindow.setCanDragResize(true);
-		tagCloudWindow.moveTo(400, 0);
+		tagCloudWindow.moveTo(500, 0);
 		tagCloudWindow.minimize();
-		tagCloudWindow.show();
 		
 		//********DEBUBING***********************
 		ClickHandler popup = new ClickHandler() {
-			@Override
 			public void onClick(
 					//TODO Remove GWT elements and only use SMARTGWT
 					com.google.gwt.event.dom.client.ClickEvent arg0) {
@@ -188,10 +186,10 @@ public class Magecomet implements EntryPoint {
 			}
 			
 		};
-		tagCloud.addWord("sarcoidoisis",popup,2);
-		tagCloud.addWord("protocol",popup,2);
-		tagCloud.addWord("Homo sapiens",popup,2);
-		tagCloud.addWord("RNA",popup,2);
+//		tagCloud.addWord("sarcoidoisis",popup,2);
+//		tagCloud.addWord("protocol",popup,2);
+//		tagCloud.addWord("Homo sapiens",popup,2);
+//		tagCloud.addWord("RNA",popup,2);
 		//********DEBUBING***********************
 
 
@@ -200,24 +198,24 @@ public class Magecomet implements EntryPoint {
 		Canvas gwtUploadCanvas = new Canvas();
 		HorizontalPanel uploadPanel = new HorizontalPanel();
 		gwtUploadCanvas.addChild(uploadPanel);
-		//===================
-		// TESTBUTTON
-		Button button = new Button("Click ME");
-		button.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				fileService.writeFile("Accession", "Table", callback);			
-			}
-		});
-		gwtUploadCanvas.addChild(button);
-		
-		//====================
 		uploadPanel.add(dataUploader);
 		uploadPanel.add(EFOSuggestBox);
 		uploadPanel.add(new com.google.gwt.user.client.ui.Label("EFO Search"));
 		uploadPanel.setHeight("60px");
 		
+		
+		//===================
+		// TESTBUTTON
+		Button button = new Button("Click ME");
+		button.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
+			
+			public void onClick(ClickEvent event) {
+//				fileService.writeFile("document", "Table", callback);
+				sdrfSection.getSDRFAsString();
+			}
+		});
+		mainLayout.addMember(button);
+		//====================
 	
 		mainLayout.setHeight100();
 		mainLayout.setWidth100();
@@ -272,7 +270,6 @@ public class Magecomet implements EntryPoint {
 				final String word = tagWords.get(i).isString().stringValue();
 				
 				ClickHandler popup = new ClickHandler() {
-					@Override
 					public void onClick(
 							//TODO Remove GWT elements and only use SMARTGWT
 							com.google.gwt.event.dom.client.ClickEvent arg0) {
