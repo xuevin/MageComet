@@ -1,6 +1,8 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Button;
@@ -10,12 +12,22 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.CheckboxItem;
+import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
 
 public class AutofillPopup extends Window{
 
+	private EFOServiceAsync efoServiceAsync = GWT.create(EFOService.class);
+
+    private final StaticTextItem termSourceNum = new StaticTextItem();
+    private final CheckboxItem characteristicCheckbox = new CheckboxItem();  
+    private final CheckboxItem factorValueCheckbox = new CheckboxItem();  
+    private final CheckboxItem termSourceRefCheckbox = new CheckboxItem();  
+    private final StaticTextItem termSourceRef = new StaticTextItem();
+    private final CheckboxItem termSourceNumberCheckbox = new CheckboxItem();
+    private final CheckboxItem addToAllRecordsCheckBox = new CheckboxItem();
 	public AutofillPopup(final String efoTerm,final GuiMediator guiMediator){
 		super();
 		setTitle(efoTerm);
@@ -25,8 +37,20 @@ public class AutofillPopup extends Window{
 		setAlign(VerticalAlignment.TOP);
 		show();
 		
+		final AsyncCallback<String> callback = new AsyncCallback<String>() {
+			public void onFailure(Throwable caught) {
+		        String details = caught.getMessage();
+				 termSourceNum.setValue(details);
+
+			}
+			public void onSuccess(String EFOAccession){
+				 termSourceNum.setValue(EFOAccession);
+			}
+		};
 		
-        //*****************************
+        
+		
+		//*****************************
         // Form
         //*****************************
 		DynamicForm form = new DynamicForm();
@@ -36,13 +60,11 @@ public class AutofillPopup extends Window{
 		efo_description.setContents(efoTerm+"Description");
 		efo_description.setHeight(20);
 		
-        final CheckboxItem characteristicCheckbox = new CheckboxItem();  
         characteristicCheckbox.setTitle("Characteristic");
         TextItem characteristicInput = new TextItem();
         characteristicInput.setTitle("Column Name");
         characteristicInput.setHint("ie. Tissue");
         
-        final CheckboxItem factorValueCheckbox = new CheckboxItem();  
         factorValueCheckbox.setTitle("Factor Value");
         
         TextItem factorValueInput = new TextItem();
@@ -50,15 +72,16 @@ public class AutofillPopup extends Window{
         factorValueInput.setHint("ie. Tissue");
 
         
-        final CheckboxItem termSourceRefCheckbox = new CheckboxItem();  
         termSourceRefCheckbox.setTitle("Term Source REF");
-        termSourceRefCheckbox.setColSpan(4);
-        
-        final CheckboxItem termSourceNumberCheckbox = new CheckboxItem();
+       
+        termSourceRef.setTitle("Ontology");
+        termSourceRef.setValue("EFO");
+     
         termSourceNumberCheckbox.setTitle("Term Source Number");
-        termSourceNumberCheckbox.setColSpan(4);
         
-        final CheckboxItem addToAllRecordsCheckBox = new CheckboxItem();
+        termSourceNum.setTitle("Accession Number");
+		efoServiceAsync.getEfoAccessionIdByName(efoTerm, callback);
+
         addToAllRecordsCheckBox.setTitle("Add Term as Value to All Records");
         addToAllRecordsCheckBox.setColSpan(4);
         
@@ -73,7 +96,9 @@ public class AutofillPopup extends Window{
 						factorValueCheckbox,
 						factorValueInput,
 						termSourceRefCheckbox,
+						termSourceRef,
 						termSourceNumberCheckbox,
+						termSourceNum,
 						addToAllRecordsCheckBox);
 		
 		HStack buttonsStack = new HStack();
