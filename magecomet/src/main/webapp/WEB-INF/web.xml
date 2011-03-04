@@ -18,7 +18,7 @@
 			server. false or 0, means don't use slow uploads
 		-->
 		<param-name>slowUploads</param-name>
-		<param-value>400</param-value>
+		<param-value>0</param-value>
 	</context-param>
 
 

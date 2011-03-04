@@ -1,6 +1,5 @@
 /** Add css rules here for your application. */
 
-
 /** Example rules used by the template application (remove for your app) */
 h1 {
   font-size: 2em;
@@ -38,9 +37,9 @@ h1 {
 	margin: 1px;	
 	border: 0px;
 	background: white;
+	cursor: pointer;
 }
 .tagcloud:hover{
-	
 	color:black;
 	text-decoration:underline
 }
@@ -61,4 +60,7 @@ h1 {
 }
 .overflow{
 	overflow:visible;
+}
+.header{
+	font-size: 30pt;
 }
