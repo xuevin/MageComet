@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -283,7 +284,7 @@ public class UploadServlet extends UploadAction{
 	private JSONArray getJSONArrayFromWhatIzIt(File file) throws IOException, ReSyntaxException, CompileDfaException{
 		try{
 			//TODO make this customizable
-			FileReader mwt = new FileReader("src/main/resources/EFO_inferred_v142.xml");
+			InputStreamReader mwt = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("EFO_inferred_v142.xml"));
 			
 			DictFilter dict = new DictFilter(mwt, "xml", "none", false);
 			DfaRun r = dict.createRun();

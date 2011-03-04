@@ -1,7 +1,5 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
-import java.util.LinkedHashMap;
-
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.RecordList;
 import com.smartgwt.client.types.Alignment;
@@ -12,7 +10,6 @@ import com.smartgwt.client.widgets.TransferImgButton;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
@@ -20,7 +17,7 @@ import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
 
 /**
- * @author chrnovx
+ * @author vincent@ebi.ac.uk
  *
  */
 public class SDRF_Section_ColumnEditor extends Window{
@@ -31,21 +28,24 @@ public class SDRF_Section_ColumnEditor extends Window{
 	private final ListGrid activeGrid = new ListGrid();
 	private ListGrid sdrfTable;
 	private int uniqueKeyCount;
-	private ComboBoxItem columnChooserCombobox;
+	private GuiMediator guiMediator;
 
 	
 	/**
-	 * This creates a new Window which has the controls to edit the Columns in the SDRF
 	 * 
-	 * @param sdrfTable The ListGrid SDRF table that is being modified
-	 * @param columnChooserCombobox  The ComboBoxItem that is used to filter the data
-	 * @param originalKeyCount The original number of columns in the SDRF (used to generate unique keys)
+	 * This is a window which has the function to edit the SDRF table.
+	 * 
+	 * @param sdrfTable the SDRF table to be modified
+	 * @param originalKeyCount the number of fields that were originally in the SDRF
+	 * @param guiMediator the mediator, which allows for this window to update other windows.
 	 */
-	public SDRF_Section_ColumnEditor(final ListGrid sdrfTable, final ComboBoxItem columnChooserCombobox, int originalKeyCount) {
+	public SDRF_Section_ColumnEditor(final ListGrid sdrfTable, final int originalKeyCount,final GuiMediator guiMediator) {
 		super();
 		this.sdrfTable=sdrfTable;
 		this.uniqueKeyCount=originalKeyCount;
-		this.columnChooserCombobox=columnChooserCombobox; // Needs combo box item because it is updated when the user clicks save
+		this.guiMediator = guiMediator;
+		this.guiMediator.registerSDRFSectionColumnEditor(this);
+		
 		
 		setTitle("Customize SDRF Columns");
 		
@@ -93,7 +93,6 @@ public class SDRF_Section_ColumnEditor extends Window{
 		// Buttons
 		//******************
 		
-		
 		// Button to add new columns		
 		IButton addButton = new IButton();
 		addButton.setWidth(24);
@@ -108,7 +107,6 @@ public class SDRF_Section_ColumnEditor extends Window{
 				newColumn.setAttribute("key",uniqueKey);
 				newColumn.setAttribute("title", "New Column"+uniqueKey);
 				scratchGrid.addData(newColumn);
-				
 			}
 		});
 		
@@ -127,8 +125,6 @@ public class SDRF_Section_ColumnEditor extends Window{
 
 			}
 		});
-				
-		
 		
 		//Make a new button to confirm changes
 		IButton save = new IButton("Save");  
@@ -150,13 +146,10 @@ public class SDRF_Section_ColumnEditor extends Window{
     			savedScratcRecords=scratchGrid.getDataAsRecordList();
     			savedActiveRecords=activeGrid.getDataAsRecordList();
     			
-    			updateColumnsInComboBox();
-    			//TODO
-    			//Change column in the field
+    			guiMediator.updateColumnsInComboBox(newActiveColumns);
     			hide();
     		}
     	});
-    	
     	
     	//Make a new button to discard changes
 		IButton cancel = new IButton("Cancel");  
@@ -164,12 +157,8 @@ public class SDRF_Section_ColumnEditor extends Window{
     	cancel.addClickHandler(new ClickHandler() {  
     		public void onClick(ClickEvent event) {
     			//discard changes... restore the original
-    			
     			activeGrid.setData(savedActiveRecords);
     			scratchGrid.setData(savedScratcRecords);
-    			//DON'T USE
-    			//activeFields.setData(convertFieldsToRecords());
-    			//Probably want to create a new popup instead
     			hide();
     		}
     	});
@@ -177,15 +166,12 @@ public class SDRF_Section_ColumnEditor extends Window{
     	//******************
     	// Layout
     	//******************
-
 		VStack arrows = new VStack();
 		arrows.setWidth(20);
 		arrows.setAlign(Alignment.CENTER);
 		arrows.addMember(addButton);
 		arrows.addMember(leftArrow);
 		arrows.addMember(rightArrow);
-		
-    	
     			
     	// Simple HStack for save and cancel button
 		HStack actionButtons = new HStack();
@@ -193,7 +179,6 @@ public class SDRF_Section_ColumnEditor extends Window{
 		actionButtons.setHeight(20);
 		actionButtons.addMember(save);
 		actionButtons.addMember(cancel);
-		
 		
 		// HStack for 2 tables and transfer buttons
 		HStack hStack = new HStack();
@@ -203,11 +188,8 @@ public class SDRF_Section_ColumnEditor extends Window{
 		hStack.addMember(arrows);
 		hStack.addMember(activeGrid);
 		
-		
 		addItem(hStack);
 		addItem(actionButtons);		
-		
-		
 	}
 	/**
 	 * Updates the list of columns in the editor.
@@ -215,6 +197,17 @@ public class SDRF_Section_ColumnEditor extends Window{
 	public void updateColumns() {
 		savedActiveRecords=convertFieldsToRecords();
 		activeGrid.setData(savedActiveRecords);
+	}
+	public String addNewColumnAndGetKey(String title){
+		int uniqueKey = getNewUniqueKey();
+		ListGridRecord newColumn = new ListGridRecord();
+		newColumn.setAttribute("key",uniqueKey);
+		newColumn.setAttribute("title", title);
+		scratchGrid.addData(newColumn);
+		
+		//Save
+		savedScratcRecords=scratchGrid.getDataAsRecordList();
+		return uniqueKey+"";
 	}
 	/**
 	 * Gets a unique key that represents a column
@@ -256,17 +249,5 @@ public class SDRF_Section_ColumnEditor extends Window{
 			i++;	
 		}
 		return recordList;
-	}
-	/**
-	 * Updates the combo box. Should be called every time the table changes
-	 */
-	private void updateColumnsInComboBox() {
-		LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();  
-		for(ListGridField field:sdrfTable.getAllFields()){
-			valueMap.put(field.getName(), field.getTitle());
-		}
-		if(columnChooserCombobox!=null){
-			columnChooserCombobox.setValueMap(valueMap);	
-		}
 	}
 }

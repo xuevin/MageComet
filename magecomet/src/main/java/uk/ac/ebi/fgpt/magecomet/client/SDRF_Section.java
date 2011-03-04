@@ -1,52 +1,44 @@
  package uk.ac.ebi.fgpt.magecomet.client;
 
-import java.util.LinkedHashMap;
-
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.smartgwt.client.core.DataClass;
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.types.AutoFitWidthApproach;
 import com.smartgwt.client.types.DragDataAction;
 import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.types.ListGridEditEvent;
+import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.SelectionStyle;
+import com.smartgwt.client.types.Side;
+import com.smartgwt.client.types.TabBarControls;
 import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.events.KeyPressEvent;
-import com.smartgwt.client.widgets.events.KeyPressHandler;
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.FilterBuilder;
-import com.smartgwt.client.widgets.form.events.FilterSearchEvent;
-import com.smartgwt.client.widgets.form.events.SearchHandler;
-import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
-import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
-import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
+import com.smartgwt.client.widgets.tab.TabSet;
 
 public class SDRF_Section extends SectionStackSection{
 	private final ListGrid sdrfTable = new ListGrid();;
-	private final FilterBuilder filterBuilder  = new FilterBuilder(); 
-	private final ComboBoxItem columnChooserCombobox = new ComboBoxItem("Column");
-	private final HStack filterStack = new HStack();
-	private TextItem cellValueTextItem;
+	private final TabSet automaticFunctionsEditor = new TabSet();
+	
+	private ListGridRecord[] listOfAllRecords; //Used to modify ALL of the records even after filter
 	private SDRF_Section_ColumnEditor columnWindow;
 	private int numColumnsBeforeModification;
+	private GuiMediator guiMediator;
 	
-
-	
-	
-	public SDRF_Section(){
+	public SDRF_Section(final GuiMediator guiMediator){
 		super("SDRF");
+		//Mediator Actions
+		this.guiMediator = guiMediator;
+		this.guiMediator.registerSDRFSection(this);
+		
 		numColumnsBeforeModification=0;
+		
 		sdrfTable.setCanEdit(true);
 	 	sdrfTable.setEditEvent(ListGridEditEvent.CLICK);  
         sdrfTable.setEditByCell(true); 
@@ -59,8 +51,6 @@ public class SDRF_Section extends SectionStackSection{
         sdrfTable.setShowBackgroundComponent(false);
         sdrfTable.setCanReorderFields(true);
         
-        filterStack.setHeight(40);
-		
 		
 		IButton editColumns = new IButton("Edit Columns");  
         editColumns.setTop(250);  
@@ -73,7 +63,7 @@ public class SDRF_Section extends SectionStackSection{
 						return;
 					}else{
 						//Create New Window
-						columnWindow = new SDRF_Section_ColumnEditor(sdrfTable,columnChooserCombobox,numColumnsBeforeModification);
+						columnWindow = new SDRF_Section_ColumnEditor(sdrfTable,numColumnsBeforeModification,guiMediator);
 						columnWindow.setWidth(600);
 						columnWindow.setHeight(400);
 						columnWindow.centerInPage();
@@ -86,142 +76,66 @@ public class SDRF_Section extends SectionStackSection{
 			}
 		});
         
+        FilterTab filterAndReplaceTab = new FilterTab(guiMediator);
+        ExtractTab createNewColumnsTab = new ExtractTab(guiMediator);
         
-//        //For adding columns
-//        //sdrfTable.startEditingNew(); 
-//        
-//		IButton button2 = new IButton("Add New Column");  
-//        button2.setTop(250);  
-//        button2.addClickHandler(new ClickHandler() {  
-//            public void onClick(ClickEvent event) {
-//            	ListGridField[] temp= new ListGridField[sdrfTable.getAllFields().length+1];
-//            	for(int i =0;i<sdrfTable.getAllFields().length;i++){
-//            		temp[i]=sdrfTable.getAllFields()[i];
-//            	}
-//            	temp[temp.length-1]=(new ListGridField((""+temp.length+1),"Title"));
-//            	//TODO Ask user what title it will be called. 
-//            	// Also, find a way to simplify where to place the column
-//            	
-//            	sdrfTable.setFields(temp);
-//
-//            }  
-//        });  
+        automaticFunctionsEditor.setWidth100();
+        automaticFunctionsEditor.setHeight(60);
+        automaticFunctionsEditor.setTabBarControls(TabBarControls.TAB_PICKER);
+        automaticFunctionsEditor.setPaneContainerOverflow(Overflow.VISIBLE);
+        automaticFunctionsEditor.setOverflow(Overflow.VISIBLE);
+        automaticFunctionsEditor.setTabs(filterAndReplaceTab,createNewColumnsTab);
+        automaticFunctionsEditor.setTabBarAlign(Side.LEFT);
+        automaticFunctionsEditor.setTabBarPosition(Side.TOP);
         
-        IButton nameButton = new IButton("\"Name\"");  
-    	nameButton.setLeft(0);  
-    	nameButton.addClickHandler(new ClickHandler() {  
-        public void onClick(ClickEvent event) {  
-        	sdrfTable.setFieldTitle("Hello", "Name");  
-        	}  
-    	});
-    
-
-		
     	addItem(editColumns);
 		addItem(sdrfTable);
-		addItem(filterStack);
-		
-        //addItem(nameButton); 
-		//addItem(button);
-		//addItem(button2);
-		//addItem(orderOfColumns);
-		
-		
+		addItem(automaticFunctionsEditor);
 	}
 	public void handleJSONObject(JSONObject jsonObject) {
-		
 		JSONArray jsonArray = jsonObject.get("sdrfArray").isArray();
+		listOfAllRecords = JSONToListGridRecord(jsonArray);
 		
 		//Populate Datasource
 		DataSource data = new DataSource("sdrf_ds");		
 		data.setFields(JSONToDataSourceField(jsonArray)); // Need this to do filtering (Limited to filtering of input data)
-		data.setTestData(JSONToListGridRecord(jsonArray));
+		data.setTestData(listOfAllRecords);
 		data.setClientOnly(true);
-		
 		
 		//Set order of the fields and load data
 		sdrfTable.setDataSource(data);
 		sdrfTable.setFields(JSONToListGridField(jsonArray));
 		sdrfTable.fetchData();
 		
-		//Build a filter
-		filterBuilder.setDataSource(sdrfTable.getDataSource());
-		filterBuilder.setSaveOnEnter(true);
-		filterBuilder.addSearchHandler(new SearchHandler(){
-			public void onSearch(FilterSearchEvent event) {
-				sdrfTable.fetchData(filterBuilder.getCriteria());
-			}
-		});
+		//Pass data to FilterTab
+		guiMediator.passDataToFilterTab(sdrfTable);
 		
-		IButton filterButton = new IButton("Filter");
-		filterButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				sdrfTable.filterData(filterBuilder.getCriteria());
-			}
-		});
-		filterStack.addMember(filterBuilder);
-		filterStack.addMember(filterButton);
+		//Pass all fields to Extract Tab
+		guiMediator.passAllRecordsToExtractTab(listOfAllRecords);
+
 		
-		
-		DynamicForm form = new DynamicForm();
-		form.setNumCols(4);  
-		columnChooserCombobox.setTitle("Column");  
-		updateColumnsInComboBox();
-		
-		cellValueTextItem = new TextItem();
-		cellValueTextItem.setTitle("Value");
-		form.setItems(columnChooserCombobox,cellValueTextItem);
-		
-		
-		
-		
-    	IButton orderOfColumns = new IButton("Set For Visible");  
-    	orderOfColumns.setLeft(0);  
-    	orderOfColumns.addClickHandler(new ClickHandler() {  
-    		public void onClick(ClickEvent event) {  
-	//        	for(ListGridField field:sdrfTable.getAllFields()){
-	//        		System.out.print(field.getTitle()+"\t");
-	//        	}
-    			//This updates based on what is visible
-    			for(ListGridRecord record:sdrfTable.getRecords()){
-    				String columnName = columnChooserCombobox.getValue().toString();
-    				record.setAttribute(columnName, cellValueTextItem.getValue().toString());
-    				sdrfTable.updateData(record);
-    			}
-    			sdrfTable.saveAllEdits();
+    	//Create New Column Editor Window
+		columnWindow = new SDRF_Section_ColumnEditor(sdrfTable,numColumnsBeforeModification,guiMediator);
+		columnWindow.setWidth(600);
+		columnWindow.setHeight(400);
+		columnWindow.centerInPage();
     	
-    			
-//    			sdrfTable.getRecord(0).setAttribute("1", "Happy");
-//    			sdrfTable.saveAllEdits();
-//    			sdrfTable.updateData(sdrfTable.getRecord(0));
-    		}
-    	});
-    	
-    	
-    	filterStack.addMember(form);
-    	filterStack.addMember(orderOfColumns);
 	}
 	
-	
-
-	
-	//TODO Think about implementing mediator design pattern
-	
-	public void getSDRFAsString(){
+	public String getSDRFAsString(){
 		String sdrfAsString ="";
-		//Print out all fields
-		ListGridField[] listOfFields = sdrfTable.getAllFields();
-		for(ListGridField column:listOfFields){
-			if(!column.getTitle().equals("Key")){
-				sdrfAsString+=column.getTitle()+"\t";
+		if(sdrfTable.getFields().length!=0){
+			
+			//Print out all fields
+			ListGridField[] listOfFields = sdrfTable.getAllFields();
+			for(ListGridField column:listOfFields){
+				if(!column.getTitle().equals("Key")){
+					sdrfAsString+=column.getTitle()+"\t";
+				}
+				sdrfAsString.replaceAll("\\s+$", "");//Remove last tab
 			}
-			sdrfAsString.replaceAll("\\s+$", "");//Remove last tab
-		}
-		sdrfAsString+="\n";
-
-		
-		
-		
+			sdrfAsString+="\n";
+			
 //		final String stringRecords="";
 //		//Print out all records
 //		DSCallback callback = new DSCallback() {
@@ -247,21 +161,32 @@ public class SDRF_Section extends SectionStackSection{
 //			}
 //		};
 //		sdrfTable.clearCriteria(callback, null);
-		
-		for(DataClass record:sdrfTable.getDataSource().getTestData()){
-			System.out.println(record.getAttribute("key"));
-			System.out.println(record.getAttribute("1"));
-			for(ListGridField column:listOfFields){
-				if(!column.getTitle().equals("Key")){
-					sdrfAsString+=record.getAttribute(column.getName())+"\t";
+			
+			for(DataClass record:sdrfTable.getDataSource().getTestData()){
+				System.out.println(record.getAttribute("key"));
+				System.out.println(record.getAttribute("1"));
+				for(ListGridField column:listOfFields){
+					if(!column.getTitle().equals("Key")){
+						sdrfAsString+=record.getAttribute(column.getName())+"\t";
+					}
 				}
+				sdrfAsString=sdrfAsString.trim();//Remove last tab and make it a new line
+				sdrfAsString+="\n";
 			}
-			sdrfAsString.trim();//Remove last tab and make it a new line
-			sdrfAsString+="\n";
+			sdrfAsString=sdrfAsString.trim();//Remove last new line
+			
+			
+			return sdrfAsString;
 		}
-		sdrfAsString.trim();//Remove last new line
-		System.out.println(sdrfAsString);
+		return "";
 		
+	}
+	public void addAttributeToAllRecords(final String uniqueKey, final String value){
+		for(ListGridRecord record:listOfAllRecords){
+			record.setAttribute(uniqueKey, value);
+			sdrfTable.updateData(record);
+		}
+		sdrfTable.saveAllEdits();	
 	}
 	/**
 	 * Converts a JSON array into an array of ListGridRecords.
@@ -351,19 +276,6 @@ public class SDRF_Section extends SectionStackSection{
 		arrayOfFields[0]=key;
 		return arrayOfFields; 
 	}
-	/**
-	 * Updates the combo box. Should be called everytime the table changes
-	 */
-	private void updateColumnsInComboBox() {
-		LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();  
-		for(ListGridField field:sdrfTable.getAllFields()){
-			valueMap.put(field.getName(), field.getTitle());
-		}
-		if(columnChooserCombobox!=null){
-			columnChooserCombobox.setValueMap(valueMap);	
-		}
-	}
-	//TODO Think about implementing mediator design pattern
 
 
 }

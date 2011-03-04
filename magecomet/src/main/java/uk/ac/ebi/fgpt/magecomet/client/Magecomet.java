@@ -7,18 +7,25 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.HeaderControls;
 import com.smartgwt.client.types.Side;
+import com.smartgwt.client.types.TabBarControls;
 import com.smartgwt.client.types.VisibilityMode;
+import com.smartgwt.client.widgets.BaseWidget;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.HTMLFlow;
+import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.SectionStack;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
@@ -57,16 +64,20 @@ public class Magecomet implements EntryPoint {
 	 * Declare the panels that will be used
 	 */
 	private final VLayout mainLayout = new VLayout();
+	
+	private final GuiMediator guiMediator = new GuiMediator();
+	
+	//Section for Stacks
 	private final SectionStack sectionStack = new SectionStack();
-
-	private final IDF_Section idfSection = new IDF_Section();
-	private final SDRF_Section sdrfSection = new SDRF_Section();
+	private final IDF_Section idfSection = new IDF_Section(guiMediator);
+	private final SDRF_Section sdrfSection = new SDRF_Section(guiMediator);
+//	private final HStack saveStack = new HStack();
+	private final Button saveSDRFButton = new Button("Export SDRF");
+	private final TabSet topTabSet = new TabSet();
 	private final Tab editTab = new Tab("Edit");
 	private final ErrorsTab errorTab = new ErrorsTab();
-	private final TagCloud tagCloud = new TagCloud();
-	private Window tagCloudWindow = new Window();
-	private final Tab tagCloudTab1 = new Tab("Weight By Location");
-	private final Tab tagCloudTab2 = new Tab("Weight By Errors");
+	private String currentSDRF ="";
+	private String currentIDF="";
 
 
 	/**
@@ -75,19 +86,19 @@ public class Magecomet implements EntryPoint {
 	private SuggestBox EFOSuggestBox = new SuggestBox();
 	
 	private FileServiceAsync fileService = GWT.create(FileService.class);
+
+//	private HTMLFlow header;
 	
-
-
 	public void onModuleLoad() {
 		
-		
-		//Set the callback object.
+		//Set the callback object for downloading files
 		final AsyncCallback<String> callback = new AsyncCallback<String>() {
 			public void onFailure(Throwable caught) {
 		        String details = caught.getMessage();
 			}
 			public void onSuccess(String url){
-				 String fileDownloadURL = "/magecomet/DownloadServlet" 
+				 String fileDownloadURL = GWT.getHostPageBaseURL() +
+				 "magecomet/DownloadServlet" 
 					 + "?fileURL=" + URL.encode(url); 
 				 
 				 Frame fileDownloadFrame = new Frame(fileDownloadURL); 
@@ -98,26 +109,20 @@ public class Magecomet implements EntryPoint {
 				 while (panel.getWidgetCount() > 0) 
 					 panel.remove(0); 
 				 panel.add(fileDownloadFrame); 
-								
-//				com.google.gwt.user.client.Window.open(url, "_blank", "");
-				
-				
-				//From here, call DownloadServlet
-				
-//				System.out.println(url);
 			}
 		};
 
+        //*****************************
+        // Layout
+        //*****************************		
 		
 		
 		
-
-
-		TabSet topTabSet = new TabSet();
-		topTabSet.setTabBarPosition(Side.TOP);
-		topTabSet.setTabBarAlign(Side.LEFT);
-		topTabSet.setHeight100();
-		topTabSet.setWidth100();
+//		header= new HTMLFlow();
+//		header.setContents("Magecomet");
+//		header.setHeight("30");
+//		header.setStyleName("header");
+		
 		
 		
 		sectionStack.setVisibilityMode(VisibilityMode.MULTIPLE);
@@ -126,75 +131,21 @@ public class Magecomet implements EntryPoint {
 		sectionStack.setWidth100();
 		sectionStack.setMargin(0);
 		sectionStack.setPadding(0);
-		
-				
+			
 		MultiUploader dataUploader = new MultiUploader();
-		// Add a finish handler which will load the image once the upload
-		// finishes
 		dataUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
 		
-		
 		editTab.setPane(sectionStack);
+		editTab.setIcon("[SKIN]actions/edit.png");
 		
+		topTabSet.setTabBarPosition(Side.TOP);
+		topTabSet.setTabBarAlign(Side.LEFT);
+		topTabSet.setHeight100();
+		topTabSet.setWidth100();
 		topTabSet.addTab(editTab);
 		topTabSet.addTab(errorTab);
+		topTabSet.setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER, saveSDRFButton);
 
-		
-		//Tabs For Cloud
-		// 1 - Where Did it Occur Tag
-		// 2 - Weight 
-		
-		//TabSet for cloud
-		TabSet tagCloudTabSet = new TabSet();
-		tagCloudTabSet.setTabBarPosition(Side.TOP);
-		tagCloudTabSet.setTabBarAlign(Side.LEFT);
-		tagCloudTabSet.setHeight100();
-		tagCloudTabSet.setWidth100();
-		
-		
-		
-		
-		
-		tagCloudTabSet.addTab(tagCloudTab1);
-		tagCloudTabSet.addTab(tagCloudTab2);
-		
-		
-//		tagCloud.setVisible(true);
-		tagCloud.setWidth("100%");
-		
-		Canvas gwtCanvas = new Canvas();
-		gwtCanvas.addChild(tagCloud);
-
-		tagCloudTab1.setPane(gwtCanvas);
-	
-		tagCloudWindow.setHeaderControls(HeaderControls.HEADER_LABEL,HeaderControls.MINIMIZE_BUTTON);
-		tagCloudWindow.setTitle("EFO Tag Cloud");
-		tagCloudWindow.setWidth("500");
-		tagCloudWindow.setHeight("250");
-		tagCloudWindow.addItem(tagCloudTabSet);
-		tagCloudWindow.setCanDragResize(true);
-		tagCloudWindow.moveTo(500, 0);
-		tagCloudWindow.minimize();
-		
-		//********DEBUBING***********************
-		ClickHandler popup = new ClickHandler() {
-			public void onClick(
-					//TODO Remove GWT elements and only use SMARTGWT
-					com.google.gwt.event.dom.client.ClickEvent arg0) {
-				new AutofillPopup("Blank");
-				
-			}
-			
-		};
-//		tagCloud.addWord("sarcoidoisis",popup,2);
-//		tagCloud.addWord("protocol",popup,2);
-//		tagCloud.addWord("Homo sapiens",popup,2);
-//		tagCloud.addWord("RNA",popup,2);
-		//********DEBUBING***********************
-
-
-		
-		
 		Canvas gwtUploadCanvas = new Canvas();
 		HorizontalPanel uploadPanel = new HorizontalPanel();
 		gwtUploadCanvas.addChild(uploadPanel);
@@ -205,24 +156,36 @@ public class Magecomet implements EntryPoint {
 		
 		
 		//===================
-		// TESTBUTTON
-		Button button = new Button("Click ME");
-		button.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
+		
+		saveSDRFButton.setIcon("[SKIN]actions/download.png");
+		saveSDRFButton.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
 			
 			public void onClick(ClickEvent event) {
-//				fileService.writeFile("document", "Table", callback);
-				sdrfSection.getSDRFAsString();
+				if(!sdrfSection.getSDRFAsString().equals("")){
+					fileService.writeFile(currentSDRF, sdrfSection.getSDRFAsString(), callback);	
+				}
+				
 			}
 		});
-		mainLayout.addMember(button);
 		//====================
-	
+		
+		TagCloudWindow tagCloudWindow = new TagCloudWindow(guiMediator);
+		tagCloudWindow.show();
+		tagCloudWindow.moveTo(600, 60);
+//		tagCloudWindow.moveAbove(canvas)
+		
+		
 		mainLayout.setHeight100();
-		mainLayout.setWidth100();
+		mainLayout.setWidth("98%");
+//		mainLayout.addMember(header);
 		mainLayout.addMember(gwtUploadCanvas);
 		mainLayout.addMember(topTabSet);
-		mainLayout.addChild(tagCloudWindow);
+		
+		
+		mainLayout.setHtmlElement(DOM.getElementById("webapp"));
 		mainLayout.show();
+
+//		RootPanel.get("webapp").add(mainLayout);
 		
 	}
 
@@ -232,7 +195,6 @@ public class Magecomet implements EntryPoint {
 			if (uploader.getStatus() == Status.SUCCESS) {
 				
 				UploadedInfo info = uploader.getServerInfo();
-				
 				
 				System.out.println("File name " + info.name);
 				
@@ -249,9 +211,11 @@ public class Magecomet implements EntryPoint {
 				if (info.name.contains("sdrf")) {
 					sdrfSection.handleJSONObject(jsonObject);
 					fillTagCloud(jsonObject, 2);
+					currentSDRF = info.name;
 				} else if (info.name.contains("idf")) {
 					idfSection.handleJSONObject(jsonObject);
 					fillTagCloud(jsonObject, 1);
+					currentIDF = info.name;
 				} else {
 					// Do Nothing
 				}
@@ -269,17 +233,8 @@ public class Magecomet implements EntryPoint {
 			for (int i = 0; i < tagWords.size(); i++) {
 				final String word = tagWords.get(i).isString().stringValue();
 				
-				ClickHandler popup = new ClickHandler() {
-					public void onClick(
-							//TODO Remove GWT elements and only use SMARTGWT
-							com.google.gwt.event.dom.client.ClickEvent arg0) {
-						new AutofillPopup(word);
-						
-					}
-					
-				};
-				tagCloud.addWord(word,popup,weight);
-
+				
+				guiMediator.addWordToTagCloud(word,weight);
 			}
 		}
 	};

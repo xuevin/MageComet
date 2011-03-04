@@ -30,9 +30,14 @@ public class IDF_Section extends SectionStackSection{
 	private final HTMLFlow textBox = new HTMLFlow("Experiment Description" 
 //			+ "Experiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment Description"
 			);
+	private GuiMediator guiMediator;
 
-	public IDF_Section(){
+	public IDF_Section(GuiMediator guiMediator){
 		super("IDF");
+		
+		this.guiMediator = guiMediator;
+		this.guiMediator.registerIDFSection(this);
+		
 		HStack hStack = new HStack();
 		
 		idfGrid = new ListGrid();
@@ -151,6 +156,8 @@ public class IDF_Section extends SectionStackSection{
 			listOfFields[i] = new ListGridField((""+i),"");
 		}
 		listOfFields[0] = new ListGridField("0","Field"); 
+		listOfFields[0].setWidth(220);
+		
 		idfGrid.setFields(listOfFields);
 		idfGrid.setData(listOfRows);
 	}

@@ -3,19 +3,18 @@ package uk.ac.ebi.fgpt.magecomet.client;
 import java.util.ArrayList;
 
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
-import com.smartgwt.client.widgets.Window;
+import com.google.gwt.user.client.ui.FlowPanel;
 
-public class TagCloud extends AbsolutePanel{
+public class TagCloud extends FlowPanel{
 
 	private ArrayList<WordTag> listOfWordTags;
 	public TagCloud(){
 		super();
-		listOfWordTags=new ArrayList<WordTag>();
+		setHeight("100%");
+		listOfWordTags = new ArrayList<WordTag>();
 	}
-	public void addWord(String word,ClickHandler action){
+	public void addWord(String word,ClickAction action){
 		for(WordTag wtag: listOfWordTags){
 			if(wtag.getWord().equals(word)){
 				wtag.addHit();
@@ -26,7 +25,7 @@ public class TagCloud extends AbsolutePanel{
 		listOfWordTags.add(new WordTag(word,action));
 		refresh();
 	}
-	public void addWord(String word,ClickHandler action,int number){
+	public void addWord(String word,ClickAction action,int number){
 		for(WordTag wtag: listOfWordTags){
 			if(wtag.getWord().equals(word)){
 				wtag.addHit(number);
@@ -38,13 +37,18 @@ public class TagCloud extends AbsolutePanel{
 		refresh();
 	}
 	public void refresh(){
-		clear();
+		clear();		
 		for(WordTag tag:listOfWordTags){
 			Button lbl = new Button(tag.getWord());
-			lbl.addClickHandler(tag.getClickHandeler());
+			final WordTag item=tag;
+			lbl.addClickHandler(new com.google.gwt.event.dom.client.ClickHandler() {
+				public void onClick(ClickEvent arg0) {
+					item.getClickAction().execute();
+					
+				}
+			});
 			lbl.setStyleName("");
-			//lbl.setWordWrap(true);
-			
+	
 			lbl.setStylePrimaryName("tagcloud");
 			switch (tag.getHits()) {
 			case 1:
@@ -63,9 +67,10 @@ public class TagCloud extends AbsolutePanel{
 				lbl.addStyleDependentName("size5");
 				break;
 			}
-			//lbl.addClickHandler(tag.getClickHandeler());
 			add(lbl);
 		}
 		
+		
+
 	}
 }

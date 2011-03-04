@@ -15,6 +15,7 @@ public class ErrorsTab extends Tab{
 	private ListGrid errorsListGrid;
 	public ErrorsTab(){
 		super("Errors");
+		setIcon("[SKIN]actions/exclamation.png");
 		errorsListGrid = new ListGrid();
 
 		ListGridField codeField = new ListGridField("code","Code");
