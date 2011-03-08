@@ -41,17 +41,8 @@ public class GuiMediator {
 		this.extractTab=extractTab;
 	}
 	public void addWordToTagCloud(final String word, int weight) {
-		//Very ugly way of referring to itself..
-		//TODO Maybe this click handeler doesn't belong here.
-		final GuiMediator self = this;
-		ClickAction action = new ClickAction() {
-			public void execute(){
-				new AutofillPopup(word,self);				
-			}
-			
-		};
 		if(tagCloudWindow!=null){
-			tagCloudWindow.addWord(word,action,weight);
+			tagCloudWindow.addWord(word,weight);
 		}
 	}
 	/**
@@ -79,6 +70,9 @@ public class GuiMediator {
 	}
 	public void passAllRecordsToExtractTab(ListGridRecord[] listGridRecords){
 		extractTab.setRecords(listGridRecords);
+	}
+	public String addColumnToScratch(String title){
+		return sdrfSectionColumnEditor.addNewColumnAndGetKey(title);
 	}
 
 }

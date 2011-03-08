@@ -25,7 +25,8 @@ import com.smartgwt.client.widgets.tab.TabSet;
 public class SDRF_Section extends SectionStackSection{
 	private final ListGrid sdrfTable = new ListGrid();;
 	private final TabSet automaticFunctionsEditor = new TabSet();
-	
+	private final IButton editColumnsButton = new IButton("Edit Columns");  
+
 	private ListGridRecord[] listOfAllRecords; //Used to modify ALL of the records even after filter
 	private SDRF_Section_ColumnEditor columnWindow;
 	private int numColumnsBeforeModification;
@@ -40,7 +41,7 @@ public class SDRF_Section extends SectionStackSection{
 		numColumnsBeforeModification=0;
 		
 		sdrfTable.setCanEdit(true);
-	 	sdrfTable.setEditEvent(ListGridEditEvent.CLICK);  
+	 	sdrfTable.setEditEvent(ListGridEditEvent.DOUBLECLICK);  
         sdrfTable.setEditByCell(true); 
         sdrfTable.setCanReorderRecords(true);     
         sdrfTable.setDragDataAction(DragDataAction.MOVE);  
@@ -51,10 +52,10 @@ public class SDRF_Section extends SectionStackSection{
         sdrfTable.setShowBackgroundComponent(false);
         sdrfTable.setCanReorderFields(true);
         
-		
-		IButton editColumns = new IButton("Edit Columns");  
-        editColumns.setTop(250);  
-        editColumns.addClickHandler(new ClickHandler() {
+        editColumnsButton.setWidth(120);
+		editColumnsButton.setIcon("[SKIN]DatabaseBrowser/column.png");
+        editColumnsButton.setTop(250);  
+        editColumnsButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if(columnWindow==null){
 					//If there are no fields, it does not continue,
@@ -71,6 +72,7 @@ public class SDRF_Section extends SectionStackSection{
 					}
 				}else{
 					columnWindow.updateColumns();
+					columnWindow.centerInPage();
 					columnWindow.show();
 				}
 			}
@@ -85,10 +87,10 @@ public class SDRF_Section extends SectionStackSection{
         automaticFunctionsEditor.setPaneContainerOverflow(Overflow.VISIBLE);
         automaticFunctionsEditor.setOverflow(Overflow.VISIBLE);
         automaticFunctionsEditor.setTabs(filterAndReplaceTab,createNewColumnsTab);
+        automaticFunctionsEditor.setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER,editColumnsButton);
         automaticFunctionsEditor.setTabBarAlign(Side.LEFT);
         automaticFunctionsEditor.setTabBarPosition(Side.TOP);
         
-    	addItem(editColumns);
 		addItem(sdrfTable);
 		addItem(automaticFunctionsEditor);
 	}
@@ -167,7 +169,12 @@ public class SDRF_Section extends SectionStackSection{
 				System.out.println(record.getAttribute("1"));
 				for(ListGridField column:listOfFields){
 					if(!column.getTitle().equals("Key")){
-						sdrfAsString+=record.getAttribute(column.getName())+"\t";
+						
+						if(record.getAttribute(column.getName())==null){
+							sdrfAsString+="\t";
+						}else{
+							sdrfAsString+=record.getAttribute(column.getName())+"\t";
+						}
 					}
 				}
 				sdrfAsString=sdrfAsString.trim();//Remove last tab and make it a new line

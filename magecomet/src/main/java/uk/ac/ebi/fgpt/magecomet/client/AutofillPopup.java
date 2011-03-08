@@ -4,8 +4,10 @@ package uk.ac.ebi.fgpt.magecomet.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Button;
+import com.smartgwt.client.widgets.HTMLFlow;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -28,14 +30,20 @@ public class AutofillPopup extends Window{
     private final StaticTextItem termSourceRef = new StaticTextItem();
     private final CheckboxItem termSourceNumberCheckbox = new CheckboxItem();
     private final CheckboxItem addToAllRecordsCheckBox = new CheckboxItem();
+    private final TextItem characteristicInput = new TextItem();
+    private final TextItem factorValueInput = new TextItem();
+	private final HTMLFlow efo_description = new HTMLFlow();
+
 	public AutofillPopup(final String efoTerm,final GuiMediator guiMediator){
 		super();
 		setTitle(efoTerm);
-		setWidth(400);
-		setHeight(240);
+		setWidth(500);
+		setHeight(350);
+		setOverflow(Overflow.AUTO);
 		centerInPage();
 		setAlign(VerticalAlignment.TOP);
 		show();
+		
 		
 		final AsyncCallback<String> callback = new AsyncCallback<String>() {
 			public void onFailure(Throwable caught) {
@@ -47,7 +55,15 @@ public class AutofillPopup extends Window{
 				 termSourceNum.setValue(EFOAccession);
 			}
 		};
-		
+		final AsyncCallback<String> callback2 = new AsyncCallback<String>() {
+			public void onFailure(Throwable caught) {
+		        String details = caught.getMessage();
+		        efo_description.setContents("Description:\n"+details);
+			}
+			public void onSuccess(String description){
+				efo_description.setContents("Description:<br>"+description.replaceAll("\n", "<br><br>"));
+			}
+		};
         
 		
 		//*****************************
@@ -56,18 +72,16 @@ public class AutofillPopup extends Window{
 		DynamicForm form = new DynamicForm();
 		form.setNumCols(4);
 		
-		Label efo_description = new Label();
-		efo_description.setContents(efoTerm+"Description");
+		efo_description.setContents("Description:");
 		efo_description.setHeight(20);
 		
         characteristicCheckbox.setTitle("Characteristic");
-        TextItem characteristicInput = new TextItem();
         characteristicInput.setTitle("Column Name");
         characteristicInput.setHint("ie. Tissue");
         
         factorValueCheckbox.setTitle("Factor Value");
         
-        TextItem factorValueInput = new TextItem();
+        
         factorValueInput.setTitle("Column Name");
         factorValueInput.setHint("ie. Tissue");
 
@@ -81,6 +95,7 @@ public class AutofillPopup extends Window{
         
         termSourceNum.setTitle("Accession Number");
 		efoServiceAsync.getEfoAccessionIdByName(efoTerm, callback);
+		efoServiceAsync.getEfoDescriptionByName(efoTerm, callback2);
 
         addToAllRecordsCheckBox.setTitle("Add Term as Value to All Records");
         addToAllRecordsCheckBox.setColSpan(4);
@@ -115,15 +130,36 @@ public class AutofillPopup extends Window{
 		Button saveButton = new Button("Save");
         saveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				boolean characteristic = characteristicCheckbox.getValueAsBoolean(); 
-				boolean factorValue = factorValueCheckbox.getValueAsBoolean();
-				boolean termSourceRef = termSourceRefCheckbox.getValueAsBoolean();
-				boolean termSourceNumber = termSourceNumberCheckbox.getValueAsBoolean();
-				
-				
-				
+				boolean characteristicChecked = characteristicCheckbox.getValueAsBoolean(); 
+				boolean factorValueChecked = factorValueCheckbox.getValueAsBoolean();
+				boolean termSourceRefChecked = termSourceRefCheckbox.getValueAsBoolean();
+				boolean termSourceNumberChecked = termSourceNumberCheckbox.getValueAsBoolean();
+				String characteristicString = characteristicInput.getValueAsString();
+				String factorValueString = factorValueInput.getValueAsString();
+			
 				if(addToAllRecordsCheckBox.getValueAsBoolean()==true){
-					guiMediator.addColumnToScratchAndAddValueToAllRecords("Comments", efoTerm);	
+					if(characteristicChecked){
+						guiMediator.addColumnToScratchAndAddValueToAllRecords("Characteristics["+characteristicString+"]", efoTerm);
+						if(termSourceNumberChecked){
+							guiMediator.addColumnToScratchAndAddValueToAllRecords("Term Accession Number", termSourceNum.getDisplayValue());
+						}
+						if(termSourceRefChecked){
+							guiMediator.addColumnToScratchAndAddValueToAllRecords("Term Source REF", "EFO");
+						}
+					}
+					if(factorValueChecked){
+						guiMediator.addColumnToScratchAndAddValueToAllRecords("Factor Value["+factorValueString+"]", efoTerm);
+						if(termSourceNumberChecked){
+							guiMediator.addColumnToScratchAndAddValueToAllRecords("Term Accession Number", termSourceNum.getDisplayValue());
+						}
+						if(termSourceRefChecked){
+							guiMediator.addColumnToScratchAndAddValueToAllRecords("Term Source REF", "EFO");
+						}
+					}
+				}else{
+					
+					//Do some filtering here
+					//Filter on all columns that have the value mentioned
 				}
 				destroy();
 			}
@@ -143,19 +179,20 @@ public class AutofillPopup extends Window{
         //*****************************
         // Layout
         //*****************************
+        buttonsStack.addMember(saveButton);
 		buttonsStack.addMember(cancelButton);
-		buttonsStack.addMember(saveButton);
 		
 		VStack vStack = new VStack();
 		vStack.setAlign(Alignment.LEFT);
 		vStack.setAlign(VerticalAlignment.TOP);
 		vStack.setHeight100();
+		vStack.setMembersMargin(15);
 		
 		vStack.addMember(efo_description);
 		vStack.addMember(form);
 		
-		addMember(vStack);
-		addMember(buttonsStack);
+		addItem(vStack);
+		addItem(buttonsStack);
 	}
 	
 }

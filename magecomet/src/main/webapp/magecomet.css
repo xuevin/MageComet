@@ -44,19 +44,19 @@ h1 {
 	text-decoration:underline
 }
 .tagcloud-size1{
-	font-size: 14pt;
+	font-size: 12pt;
 }
 .tagcloud-size2{
-	font-size: 18pt;
+	font-size: 16pt;
 }
 .tagcloud-size3{
-	font-size: 22pt;
+	font-size: 20pt;
 }
 .tagcloud-size4{
-	font-size: 26pt;
+	font-size: 24pt;
 }
 .tagcloud-size5{
-	font-size: 30pt;
+	font-size: 38pt;
 }
 .overflow{
 	overflow:visible;

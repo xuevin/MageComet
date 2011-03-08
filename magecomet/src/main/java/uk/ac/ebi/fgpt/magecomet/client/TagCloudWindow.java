@@ -4,6 +4,7 @@ import com.smartgwt.client.types.HeaderControls;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.Side;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.HTMLFlow;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
@@ -46,6 +47,10 @@ public class TagCloudWindow extends Window{
 		gwtCanvas.addChild(tagCloud);
 
 		tagCloudTab1.setPane(gwtCanvas);
+		
+		
+		HTMLFlow temp = new HTMLFlow("Development");
+		tagCloudTab2.setPane(temp);
 	
 
 
@@ -53,7 +58,14 @@ public class TagCloudWindow extends Window{
 		
 		minimize();
 	}
-	public void addWord(String word,ClickAction action, int number){
+	public void addWord(final String word, int number){
+		//Very ugly way of referring to itself..
+		ClickAction action = new ClickAction() {
+			public void execute(){
+				new AutofillPopup(word,guiMediator);				
+			}
+			
+		};
 		tagCloud.addWord(word, action, number);
 	}
 }
