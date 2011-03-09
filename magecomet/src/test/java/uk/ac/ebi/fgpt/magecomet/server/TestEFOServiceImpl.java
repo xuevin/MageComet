@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -78,6 +79,22 @@ public class TestEFOServiceImpl {
 				
 			}
 			
+		} catch (OntologyServiceException e) {
+			e.printStackTrace();
+		}
+	}
+	@Test
+	public void getAllTerms_Development(){
+		if(ontoService==null){
+			intialize();
+		}
+		try {
+			
+			Set<OntologyTerm> allTerms =  ontoService.getAllTerms(null);
+			for(OntologyTerm ontoTerm :allTerms){
+				System.out.println(ontoTerm.getLabel());
+			}
+			System.out.println(allTerms.size());
 		} catch (OntologyServiceException e) {
 			e.printStackTrace();
 		}

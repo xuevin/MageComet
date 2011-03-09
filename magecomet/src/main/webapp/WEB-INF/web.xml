@@ -4,6 +4,11 @@
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
+	<listener>
+		<listener-class>
+			uk.ac.ebi.fgpt.magecomet.server.InitilizationServletContextListener
+  		</listener-class>
+	</listener>
 
 	<context-param>
 		<!--  max size of the upload request-->
@@ -20,8 +25,6 @@
 		<param-name>slowUploads</param-name>
 		<param-value>0</param-value>
 	</context-param>
-
-
 
 	<!-- Servlets -->
 	<servlet>

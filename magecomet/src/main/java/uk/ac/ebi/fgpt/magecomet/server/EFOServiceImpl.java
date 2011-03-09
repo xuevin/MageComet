@@ -1,23 +1,22 @@
 package uk.ac.ebi.fgpt.magecomet.server;
 
 
-import java.net.URISyntaxException;
 import java.util.List;
+
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import uk.ac.ebi.fgpt.magecomet.client.EFOService;
+import uk.ac.ebi.ontocat.OntologyService;
 import uk.ac.ebi.ontocat.OntologyServiceException;
 import uk.ac.ebi.ontocat.OntologyTerm;
 import uk.ac.ebi.ontocat.OntologyService.SearchOptions;
-import uk.ac.ebi.ontocat.file.FileOntologyService;
 
 
 public class EFOServiceImpl extends RemoteServiceServlet implements EFOService{
-	private FileOntologyService ontoService;
-
+	private OntologyService ontoService;
 	public EFOServiceImpl(){
-		intialize();
+		super();
 	}
 	public String getEfoAccessionIdByName(String efoName) {
 		if(ontoService==null){
@@ -37,12 +36,16 @@ public class EFOServiceImpl extends RemoteServiceServlet implements EFOService{
 		return "ERROR";
 	}
 	private void intialize() {
-		try {
-			ontoService = new FileOntologyService(this.getClass().getClassLoader().getResource("EFO_inferred_v142.owl").toURI());
-		} catch (URISyntaxException e) {
-			System.err.println("DEFAULT EFO_inferred_v142.owl IS NOT FOUND");
-			e.printStackTrace();
-		}		
+//		try {
+//            OntologyService liveEFO = new FileOntologyService(new URI("http://www.ebi.ac.uk/efo/efo.owl"));
+////			ontoService = new FileOntologyService(getClass().getClassLoader().getResource("EFO_inferred_v142.owl").toURI());
+//			ontoService=liveEFO;
+//		} catch (URISyntaxException e) {
+//			System.err.println("EFO IS NOT FOUND");
+//			e.printStackTrace();
+//		}
+		ontoService=(OntologyService) getServletContext().getAttribute("ontoService");
+
 	}
 	public String getEfoDescriptionByName(String efoName) {
 		if(ontoService==null){

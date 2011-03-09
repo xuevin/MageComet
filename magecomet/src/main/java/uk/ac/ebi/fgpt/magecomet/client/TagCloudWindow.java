@@ -1,5 +1,6 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
+import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.types.HeaderControls;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.Side;
@@ -15,11 +16,15 @@ public class TagCloudWindow extends Window{
 	private final Tab tagCloudTab2 = new Tab("Weight By Errors");
 	private final TagCloud tagCloud = new TagCloud();
 	private GuiMediator guiMediator;
+	private EFOServiceAsync efoServiceAsync = GWT.create(EFOService.class);
+
 
 	public TagCloudWindow(GuiMediator guiMediator){
 		super();
 		this.guiMediator=guiMediator;
 		this.guiMediator.registerTagCloud(this);
+		
+		
 		
 		setHeaderControls(HeaderControls.HEADER_LABEL,HeaderControls.MINIMIZE_BUTTON);
 		setTitle("EFO Tag Cloud");
@@ -59,10 +64,9 @@ public class TagCloudWindow extends Window{
 		minimize();
 	}
 	public void addWord(final String word, int number){
-		//Very ugly way of referring to itself..
 		ClickAction action = new ClickAction() {
 			public void execute(){
-				new AutofillPopup(word,guiMediator);				
+				new AutofillPopup(word,efoServiceAsync,guiMediator);				
 			}
 			
 		};

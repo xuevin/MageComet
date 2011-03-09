@@ -171,7 +171,7 @@ public class Magecomet implements EntryPoint {
 		
 		TagCloudWindow tagCloudWindow = new TagCloudWindow(guiMediator);
 		tagCloudWindow.show();
-		tagCloudWindow.moveTo(600, 60);
+		tagCloudWindow.moveTo(600, 140);
 //		tagCloudWindow.moveAbove(canvas)
 		
 		

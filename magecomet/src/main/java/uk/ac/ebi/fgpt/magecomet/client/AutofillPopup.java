@@ -21,7 +21,6 @@ import com.smartgwt.client.widgets.layout.VStack;
 
 public class AutofillPopup extends Window{
 
-	private EFOServiceAsync efoServiceAsync = GWT.create(EFOService.class);
 
     private final StaticTextItem termSourceNum = new StaticTextItem();
     private final CheckboxItem characteristicCheckbox = new CheckboxItem();  
@@ -34,7 +33,7 @@ public class AutofillPopup extends Window{
     private final TextItem factorValueInput = new TextItem();
 	private final HTMLFlow efo_description = new HTMLFlow();
 
-	public AutofillPopup(final String efoTerm,final GuiMediator guiMediator){
+	public AutofillPopup(final String efoTerm,final EFOServiceAsync efoServiceAsync,final GuiMediator guiMediator){
 		super();
 		setTitle(efoTerm);
 		setWidth(500);

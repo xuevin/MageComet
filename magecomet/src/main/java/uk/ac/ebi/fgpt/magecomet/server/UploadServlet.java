@@ -24,10 +24,16 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.RepaintManager;
 
+import monq.ie.Term2Re;
 import monq.jfa.CompileDfaException;
+import monq.jfa.Dfa;
 import monq.jfa.DfaRun;
+import monq.jfa.Nfa;
 import monq.jfa.ReSyntaxException;
+import monq.jfa.actions.Copy;
+import monq.jfa.actions.Printf;
 import monq.programs.DictFilter;
 
 import org.apache.commons.fileupload.FileItem;
@@ -48,6 +54,7 @@ import uk.ac.ebi.arrayexpress2.magetab.parser.IDFParser;
 import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
 import uk.ac.ebi.arrayexpress2.magetab.parser.SDRFParser;
 import uk.ac.ebi.arrayexpress2.magetab.validator.Validator;
+import uk.ac.ebi.ontocat.OntologyTerm;
 
 import gwtupload.server.UploadAction;
 import gwtupload.server.exceptions.UploadActionException;
@@ -61,12 +68,12 @@ public class UploadServlet extends UploadAction{
 
 
 	
-	Hashtable<String, String> receivedContentTypes = new Hashtable<String, String>();
+	private Hashtable<String, String> receivedContentTypes = new Hashtable<String, String>();
 	
 	/**
 	 * Maintain a list with received files and their content types. 
 	 */
-	Hashtable<String, File> receivedFiles = new Hashtable<String, File>();
+	private Hashtable<String, File> receivedFiles = new Hashtable<String, File>();
 	 
 	
 	/**
@@ -283,9 +290,7 @@ public class UploadServlet extends UploadAction{
 
 	private JSONArray getJSONArrayFromWhatIzIt(File file) throws IOException, ReSyntaxException, CompileDfaException{
 		try{
-			//TODO make this customizable
-			InputStreamReader mwt = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("EFO_inferred_v142.xml"));
-			
+			InputStreamReader mwt = (InputStreamReader) getServletContext().getAttribute("monqInput");
 			DictFilter dict = new DictFilter(mwt, "xml", "none", false);
 			DfaRun r = dict.createRun();
 			
