@@ -24,7 +24,7 @@ public class SDRF_Section_ColumnEditor extends Window{
 	//Saved states of column editor
 	private RecordList savedActiveRecords;
 	private RecordList savedScratcRecords;
-	private final ListGrid scratchGrid = new ListGrid();
+	private final ListGrid clipboardGrid = new ListGrid();
 	private final ListGrid activeGrid = new ListGrid();
 	private ListGrid sdrfTable;
 	private int uniqueKeyCount;
@@ -50,15 +50,15 @@ public class SDRF_Section_ColumnEditor extends Window{
 		setTitle("Customize SDRF Columns");
 		
 		//Scratch Grid
-		scratchGrid.setVisible(true);
-		scratchGrid.setWidth("45%");
-		scratchGrid.setHeight("95%");
-		scratchGrid.setLayoutAlign(VerticalAlignment.CENTER);
-		scratchGrid.setCanAcceptDrop(true);
-		scratchGrid.setCanAcceptDroppedRecords(true);
-		scratchGrid.setCanDragRecordsOut(true);
-		scratchGrid.setCanReorderRecords(true);  
-		scratchGrid.setCanEdit(true);
+		clipboardGrid.setVisible(true);
+		clipboardGrid.setWidth("45%");
+		clipboardGrid.setHeight("95%");
+		clipboardGrid.setLayoutAlign(VerticalAlignment.CENTER);
+		clipboardGrid.setCanAcceptDrop(true);
+		clipboardGrid.setCanAcceptDroppedRecords(true);
+		clipboardGrid.setCanDragRecordsOut(true);
+		clipboardGrid.setCanReorderRecords(true);  
+		clipboardGrid.setCanEdit(true);
 	
 		
 		//Active Grid
@@ -74,10 +74,10 @@ public class SDRF_Section_ColumnEditor extends Window{
 		activeGrid.setCanEdit(true);
 		
 		//Make keys for each grid
-		ListGridField scratchKey= new ListGridField("key","Key");
-		ListGridField scratchField = new ListGridField("title","Scratch Columns");
-		scratchKey.setHidden(true);
-		scratchGrid.setFields(scratchKey,scratchField);
+		ListGridField clipboardKey= new ListGridField("key","Key");
+		ListGridField clipboardField = new ListGridField("title","Clipboard");
+		clipboardKey.setHidden(true);
+		clipboardGrid.setFields(clipboardKey,clipboardField);
 		
 		
 		ListGridField activeKey= new ListGridField("key","Key");
@@ -106,7 +106,7 @@ public class SDRF_Section_ColumnEditor extends Window{
 				ListGridRecord newColumn = new ListGridRecord();
 				newColumn.setAttribute("key",uniqueKey);
 				newColumn.setAttribute("title", "New Column"+uniqueKey);
-				scratchGrid.addData(newColumn);
+				clipboardGrid.addData(newColumn);
 			}
 		});
 		
@@ -114,13 +114,13 @@ public class SDRF_Section_ColumnEditor extends Window{
 		TransferImgButton leftArrow = new TransferImgButton(TransferImgButton.LEFT);
 		leftArrow.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				scratchGrid.transferSelectedData(activeGrid);
+				clipboardGrid.transferSelectedData(activeGrid);
 			}
 		});
 		TransferImgButton rightArrow = new TransferImgButton(TransferImgButton.RIGHT);
 		rightArrow.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				activeGrid.transferSelectedData(scratchGrid);
+				activeGrid.transferSelectedData(clipboardGrid);
 
 
 			}
@@ -132,21 +132,24 @@ public class SDRF_Section_ColumnEditor extends Window{
     	save.addClickHandler(new ClickHandler() {  
     		public void onClick(ClickEvent event) {  
     			Record[] activeFieldArray = activeGrid.getRecords();
+    			
+    			//Set the grid to reflect the new columns
     			ListGridField[] newActiveColumns = new ListGridField[activeFieldArray.length+1];
     			newActiveColumns[0]=new ListGridField("key","Key");
     			for(int i =0;i<activeFieldArray.length;i++){
     				newActiveColumns[i+1]=new ListGridField(	activeFieldArray[i].getAttribute("key"),
-    														activeFieldArray[i].getAttribute("title"));
+    															activeFieldArray[i].getAttribute("title"));
     				newActiveColumns[i+1].setAutoFitWidthApproach(AutoFitWidthApproach.BOTH);
     				newActiveColumns[i+1].setAutoFitWidth(true);
     			}
-    			sdrfTable.setFields(newActiveColumns);
-    			    			
+    			sdrfTable.setFields(newActiveColumns);   
+    			
     			//Save Column States
-    			savedScratcRecords=scratchGrid.getDataAsRecordList();
+    			savedScratcRecords=clipboardGrid.getDataAsRecordList();
     			savedActiveRecords=activeGrid.getDataAsRecordList();
     			
-    			guiMediator.updateColumnsInComboBox(newActiveColumns);
+    			//Update other gui components with the change
+    			guiMediator.updateColumns(newActiveColumns);
     			hide();
     		}
     	});
@@ -158,7 +161,7 @@ public class SDRF_Section_ColumnEditor extends Window{
     		public void onClick(ClickEvent event) {
     			//discard changes... restore the original
     			activeGrid.setData(savedActiveRecords);
-    			scratchGrid.setData(savedScratcRecords);
+    			clipboardGrid.setData(savedScratcRecords);
     			hide();
     		}
     	});
@@ -184,7 +187,7 @@ public class SDRF_Section_ColumnEditor extends Window{
 		HStack hStack = new HStack();
 		hStack.setAlign(Alignment.CENTER);
 		hStack.setAlign(VerticalAlignment.CENTER);
-		hStack.addMember(scratchGrid);
+		hStack.addMember(clipboardGrid);
 		hStack.addMember(arrows);
 		hStack.addMember(activeGrid);
 		
@@ -203,10 +206,10 @@ public class SDRF_Section_ColumnEditor extends Window{
 		ListGridRecord newColumn = new ListGridRecord();
 		newColumn.setAttribute("key",uniqueKey);
 		newColumn.setAttribute("title", title);
-		scratchGrid.addData(newColumn);
+		clipboardGrid.addData(newColumn);
 		
 		//Save
-		savedScratcRecords=scratchGrid.getDataAsRecordList();
+		savedScratcRecords=clipboardGrid.getDataAsRecordList();
 		return uniqueKey+"";
 	}
 	/**

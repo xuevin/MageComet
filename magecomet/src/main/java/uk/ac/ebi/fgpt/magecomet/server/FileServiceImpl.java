@@ -4,7 +4,6 @@ package uk.ac.ebi.fgpt.magecomet.server;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.net.MalformedURLException;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

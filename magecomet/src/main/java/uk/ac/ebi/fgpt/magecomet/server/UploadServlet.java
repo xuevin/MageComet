@@ -6,11 +6,13 @@ package uk.ac.ebi.fgpt.magecomet.server;
 
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,16 +26,10 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.RepaintManager;
 
-import monq.ie.Term2Re;
 import monq.jfa.CompileDfaException;
-import monq.jfa.Dfa;
 import monq.jfa.DfaRun;
-import monq.jfa.Nfa;
 import monq.jfa.ReSyntaxException;
-import monq.jfa.actions.Copy;
-import monq.jfa.actions.Printf;
 import monq.programs.DictFilter;
 
 import org.apache.commons.fileupload.FileItem;
@@ -290,7 +286,15 @@ public class UploadServlet extends UploadAction{
 
 	private JSONArray getJSONArrayFromWhatIzIt(File file) throws IOException, ReSyntaxException, CompileDfaException{
 		try{
-			InputStreamReader mwt = (InputStreamReader) getServletContext().getAttribute("monqInput");
+			InputStream inputStream =null;
+			try {
+				String input = (String) getServletContext().getAttribute("monqInput");
+				inputStream = new ByteArrayInputStream(input.toString().getBytes("UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			
+			InputStreamReader mwt = new InputStreamReader(inputStream) ;
 			DictFilter dict = new DictFilter(mwt, "xml", "none", false);
 			DfaRun r = dict.createRun();
 			
@@ -303,7 +307,6 @@ public class UploadServlet extends UploadAction{
 			 } catch(IOException e){
 				 System.out.println("Error Reading Files");
 			 }
-			 
 			 
 			 String filteredString = r.filter(new String(buffer));
 			 

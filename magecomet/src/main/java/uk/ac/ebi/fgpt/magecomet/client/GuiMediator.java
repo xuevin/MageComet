@@ -46,15 +46,15 @@ public class GuiMediator {
 		}
 	}
 	/**
-	 * Updates the combo box. Should be called every time the table changes
+	 * Updates the columns. Should be called every time the table changes
 	 */
-	public void updateColumnsInComboBox(ListGridField[] listGridFields) {
+	public void updateColumns(ListGridField[] listGridFields) {
 		LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();  
 		for(ListGridField field:listGridFields){
 			valueMap.put(field.getName(), field.getTitle());
 		}
 		if(filterTab!=null){
-			filterTab.updateColumnsInComboBox(valueMap);	
+			filterTab.updateColumnsInComboBox(valueMap);
 		}
 		if(extractTab!=null){
 			extractTab.updateColumnsInComboBox(valueMap);	
@@ -68,8 +68,8 @@ public class GuiMediator {
 	public void passDataToFilterTab(ListGrid sdrfTable) {
 		filterTab.setData(sdrfTable);
 	}
-	public void passAllRecordsToExtractTab(ListGridRecord[] listGridRecords){
-		extractTab.setRecords(listGridRecords);
+	public void passAllRecordsToExtractTab(ListGridRecord[] listGridRecords,ListGrid sdrfTable){
+		extractTab.setRecords(listGridRecords,sdrfTable);
 	}
 	public String addColumnToScratch(String title){
 		return sdrfSectionColumnEditor.addNewColumnAndGetKey(title);

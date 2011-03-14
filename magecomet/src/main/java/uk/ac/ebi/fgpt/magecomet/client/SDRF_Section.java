@@ -10,6 +10,7 @@ import com.smartgwt.client.types.DragDataAction;
 import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.types.ListGridEditEvent;
 import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.RowEndEditAction;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.types.Side;
 import com.smartgwt.client.types.TabBarControls;
@@ -41,10 +42,14 @@ public class SDRF_Section extends SectionStackSection{
 		numColumnsBeforeModification=0;
 		
 		sdrfTable.setCanEdit(true);
-	 	sdrfTable.setEditEvent(ListGridEditEvent.DOUBLECLICK);  
+	 	sdrfTable.setEditEvent(ListGridEditEvent.CLICK);  
+	 	  
         sdrfTable.setEditByCell(true); 
-        sdrfTable.setCanReorderRecords(true);     
-        sdrfTable.setDragDataAction(DragDataAction.MOVE);  
+        sdrfTable.setCanReorderRecords(true);    
+        sdrfTable.setCellHeight(22); 
+  
+
+//        sdrfTable.setDragDataAction(DragDataAction.MOVE);  
         sdrfTable.setShowRollOver(false);
         sdrfTable.setPadding(0);
         sdrfTable.setMargin(0);
@@ -91,8 +96,8 @@ public class SDRF_Section extends SectionStackSection{
         automaticFunctionsEditor.setTabBarAlign(Side.LEFT);
         automaticFunctionsEditor.setTabBarPosition(Side.TOP);
         
-		addItem(sdrfTable);
-		addItem(automaticFunctionsEditor);
+        addItem(automaticFunctionsEditor);
+        addItem(sdrfTable);
 	}
 	public void handleJSONObject(JSONObject jsonObject) {
 		JSONArray jsonArray = jsonObject.get("sdrfArray").isArray();
@@ -113,7 +118,7 @@ public class SDRF_Section extends SectionStackSection{
 		guiMediator.passDataToFilterTab(sdrfTable);
 		
 		//Pass all fields to Extract Tab
-		guiMediator.passAllRecordsToExtractTab(listOfAllRecords);
+		guiMediator.passAllRecordsToExtractTab(listOfAllRecords,sdrfTable);
 
 		
     	//Create New Column Editor Window

@@ -13,6 +13,7 @@ import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
+import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
@@ -40,11 +41,10 @@ public class ExtractTab extends Tab{
 		setTitle("Extract");
 		
 		vstack.setHeight(40);
-		
 		hstack.setHeight(40);
 		
 		HTMLFlow directions = new HTMLFlow();
-		directions.setHeight(15);
+		directions.setHeight(20);
 		directions.setContents("Input the characters surrounding the the value that will be extracted into a new column.<br>" +
 				"To indicate the beginning of the row use \"^\" and to indicate the end of a row use \"$\"");
 		
@@ -55,18 +55,22 @@ public class ExtractTab extends Tab{
 		
 		form.setNumCols(8);
 		columnComboBoxItem.setTitle("From");
+		columnComboBoxItem.setRequired(true);
 		
         leftInput.setTitle("Left");
+        leftInput.setRequired(true);
 		rightInput.setTitle("Right");
+		rightInput.setRequired(true);
 	
-		sampleOutput.setHeight(75);
+		sampleOutput.setHeight(10);
 		sampleOutput.setContents("Sample Extract:<br>");
 		
 	
 		
 		
-		newColumn.setTitle("New Column:");
-
+		newColumn.setTitle("New Column");
+		newColumn.setWrapTitle(false);
+		newColumn.setRequired(true);
 		
 		submit.setTitle("Extract");
 		
@@ -81,10 +85,11 @@ public class ExtractTab extends Tab{
 		hstack.addMember(form);
 		hstack.addMember(submit);
 		
+
 		vstack.addMember(directions);
 		vstack.addMember(hstack);
+		vstack.setMembersMargin(10);
 		vstack.addMember(sampleOutput);
-		
 		setPane(vstack);
 	}
 	public void updateColumnsInComboBox(LinkedHashMap<String, String> valueMap) {
@@ -110,14 +115,14 @@ public class ExtractTab extends Tab{
 				String textInColumn = 
 					record.getAttributeAsString(columnComboBoxItem.getValueAsString());
 				
-				output+=extract(textInColumn)+"<br>";
+				output+="["+extract(textInColumn)+"] ";
 				i--;
 			}
-			sampleOutput.setContents("Sample Extract:<br>"+output);
+			sampleOutput.setContents("Sample Extract: "+output);
 						
 		}
 	};
-	public void setRecords(final ListGridRecord[] listGridRecords) {
+	public void setRecords(final ListGridRecord[] listGridRecords,final ListGrid sdrfTable) {
 		listOfAllRecords = listGridRecords;
 		
 		leftInput.addChangedHandler(inputChanged);
@@ -126,20 +131,31 @@ public class ExtractTab extends Tab{
 		submit.addClickHandler(new ClickHandler() {
 			
 			public void onClick(ClickEvent event) {
-				//Add a new column
-				String newColumnName = guiMediator.addColumnToScratch(newColumn.getValueAsString());
-				
-				//For each record, add the attribute extracted
-				for(ListGridRecord record:listOfAllRecords){
+				if(form.validate()){
+					//TODO add extra validation to make sure that column names are spelled correctly
 					
-					//If ComboBoxItem is null, don't do anything;
-					if(columnComboBoxItem.getValueAsString()==null ||
-							record.getAttributeAsString(columnComboBoxItem.getValueAsString())==null){
-						return;
+					//Add a new column
+					String newColumnName = guiMediator.addColumnToScratch(newColumn.getValueAsString());
+					
+					//For each record, add the attribute extracted
+					for(ListGridRecord record:listOfAllRecords){
+						
+						//If ComboBoxItem is null, don't do anything;
+						if(columnComboBoxItem.getValueAsString()==null ||
+								record.getAttributeAsString(columnComboBoxItem.getValueAsString())==null){
+							return;
+						}
+						String textInColumn = 
+							record.getAttributeAsString(columnComboBoxItem.getValueAsString());
+							record.setAttribute(newColumnName, extract(textInColumn));
+						sdrfTable.updateData(record);
+
 					}
-					String textInColumn = 
-						record.getAttributeAsString(columnComboBoxItem.getValueAsString());
-						record.setAttribute(newColumnName, extract(textInColumn));
+					sdrfTable.saveAllEdits();
+					leftInput.clearValue();
+					rightInput.clearValue();
+					newColumn.clearValue();
+					sampleOutput.setContents("Sample Extract:");
 				}
 			}
 		});

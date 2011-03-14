@@ -2,7 +2,6 @@ package uk.ac.ebi.fgpt.magecomet.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -14,18 +13,12 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.types.HeaderControls;
 import com.smartgwt.client.types.Side;
 import com.smartgwt.client.types.TabBarControls;
 import com.smartgwt.client.types.VisibilityMode;
-import com.smartgwt.client.widgets.BaseWidget;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.HTMLFlow;
-import com.smartgwt.client.widgets.Label;
-import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.SectionStack;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
@@ -63,8 +56,6 @@ public class Magecomet implements EntryPoint {
 	/**
 	 * Declare the panels that will be used
 	 */
-	private final VLayout mainLayout = new VLayout();
-	
 	private final GuiMediator guiMediator = new GuiMediator();
 	
 	//Section for Stacks
@@ -80,11 +71,11 @@ public class Magecomet implements EntryPoint {
 	private String currentIDF="";
 
 
+
 	/**
 	 * Declares the Widgets that will be used
 	 */
-	private SuggestBox EFOSuggestBox = new SuggestBox();
-	
+	private SuggestBox EFOSuggestBox;
 	private FileServiceAsync fileService = GWT.create(FileService.class);
 
 //	private HTMLFlow header;
@@ -111,7 +102,10 @@ public class Magecomet implements EntryPoint {
 				 panel.add(fileDownloadFrame); 
 			}
 		};
-
+		SearchOracle searchOracle = new SearchOracle();
+		EFOSuggestBox = new SuggestBox(searchOracle);
+		EFOSuggestBox.setLimit(3);   // Set the limit to 5 suggestions		
+	
         //*****************************
         // Layout
         //*****************************		
@@ -131,7 +125,9 @@ public class Magecomet implements EntryPoint {
 		sectionStack.setWidth100();
 		sectionStack.setMargin(0);
 		sectionStack.setPadding(0);
-			
+		sectionStack.expandSection(1);
+	
+		
 		MultiUploader dataUploader = new MultiUploader();
 		dataUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
 		
@@ -140,11 +136,13 @@ public class Magecomet implements EntryPoint {
 		
 		topTabSet.setTabBarPosition(Side.TOP);
 		topTabSet.setTabBarAlign(Side.LEFT);
-		topTabSet.setHeight100();
-		topTabSet.setWidth100();
+		topTabSet.setHeight("750px");
+		topTabSet.setWidth("98%");
 		topTabSet.addTab(editTab);
 		topTabSet.addTab(errorTab);
 		topTabSet.setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER, saveSDRFButton);
+		topTabSet.moveBy(10, 200);
+		topTabSet.show();
 
 		Canvas gwtUploadCanvas = new Canvas();
 		HorizontalPanel uploadPanel = new HorizontalPanel();
@@ -152,7 +150,7 @@ public class Magecomet implements EntryPoint {
 		uploadPanel.add(dataUploader);
 		uploadPanel.add(EFOSuggestBox);
 		uploadPanel.add(new com.google.gwt.user.client.ui.Label("EFO Search"));
-		uploadPanel.setHeight("60px");
+		uploadPanel.setHeight("70px");
 		
 		
 		//===================
@@ -171,21 +169,21 @@ public class Magecomet implements EntryPoint {
 		
 		TagCloudWindow tagCloudWindow = new TagCloudWindow(guiMediator);
 		tagCloudWindow.show();
-		tagCloudWindow.moveTo(600, 140);
+		tagCloudWindow.moveTo(600, 150);
 //		tagCloudWindow.moveAbove(canvas)
 		
 		
-		mainLayout.setHeight100();
-		mainLayout.setWidth("98%");
-//		mainLayout.addMember(header);
-		mainLayout.addMember(gwtUploadCanvas);
-		mainLayout.addMember(topTabSet);
 		
 		
-		mainLayout.setHtmlElement(DOM.getElementById("webapp"));
-		mainLayout.show();
+//		mainLayout.setHtmlElement(DOM.getElementById("webapp"));
+//		mainLayout.show();
 
-//		RootPanel.get("webapp").add(mainLayout);
+		RootPanel.get("search").add(uploadPanel);
+//		topTabSet.setHtmlElement(DOM.getElementById("webapp"));
+		
+		
+		
+		
 		
 	}
 
@@ -232,8 +230,6 @@ public class Magecomet implements EntryPoint {
 			
 			for (int i = 0; i < tagWords.size(); i++) {
 				final String word = tagWords.get(i).isString().stringValue();
-				
-				
 				guiMediator.addWordToTagCloud(word,weight);
 			}
 		}

@@ -2,19 +2,15 @@ package uk.ac.ebi.fgpt.magecomet.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletOutputStream;
 
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 public class DownloadServlet extends HttpServlet{
 	

@@ -2,6 +2,9 @@ package uk.ac.ebi.fgpt.magecomet.client;
 
 import java.util.LinkedHashMap;
 
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -26,7 +29,7 @@ public class FilterTab extends Tab{
 	private final ComboBoxItem columnChooserCombobox = new ComboBoxItem("Column");
 	private final TextItem cellValueTextItem = new TextItem();
 	private final IButton filterButton = new IButton("Filter");
-	private final IButton setForVisibleButton = new IButton("Set For Visible");
+	private final IButton replaceButton = new IButton("Replace");
 	private final DynamicForm form = new DynamicForm();
 	
 	private GuiMediator guiMediator;
@@ -51,15 +54,15 @@ public class FilterTab extends Tab{
 		
 		
 		//Make a button to handle changing all values in column 
-    	setForVisibleButton.setLeft(0);  
-    	setForVisibleButton.setCanHover(true);
-    	setForVisibleButton.addHoverHandler(new HoverHandler() {
+    	replaceButton.setLeft(0);  
+    	replaceButton.setCanHover(true);
+    	replaceButton.addHoverHandler(new HoverHandler() {
 			
 			public void onHover(HoverEvent event) {
                 String prompt = "Click this button to change all the values in \"" +
                 columnChooserCombobox.getDisplayValue() + "\" to \"" +
                 cellValueTextItem.getValueAsString()+"\"";  
-                setForVisibleButton.setPrompt(prompt);
+                replaceButton.setPrompt(prompt);
             }  
 		});
     	
@@ -79,32 +82,26 @@ public class FilterTab extends Tab{
 				listGrid.filterData(filterBuilder.getCriteria());
 			}
 		});
-		setForVisibleButton.addClickHandler(new ClickHandler() {  
+		
+		replaceButton.addClickHandler(new ClickHandler() {  
     		public void onClick(ClickEvent event) {  
-	//        	for(ListGridField field:sdrfTable.getAllFields()){
-	//        		System.out.print(field.getTitle()+"\t");
-	//        	}
-    			//This updates based on what is visible
+    			//This updates based on what is filtered
     			for(ListGridRecord record:listGrid.getRecords()){
     				String columnName = columnChooserCombobox.getValue().toString();
     				record.setAttribute(columnName, cellValueTextItem.getValue().toString());
     				listGrid.updateData(record);
     			}
     			listGrid.saveAllEdits();
-    			
-    			
-//    			sdrfTable.getRecord(0).setAttribute("1", "Happy");
-//    			sdrfTable.saveAllEdits();
-//    			sdrfTable.updateData(sdrfTable.getRecord(0));
     		}
     	});
-		guiMediator.updateColumnsInComboBox(listGrid.getAllFields());
+		
+		guiMediator.updateColumns(listGrid.getAllFields());
 		
 		//Layout
 		filterStack.addMember(filterBuilder);
 		filterStack.addMember(filterButton);
     	filterStack.addMember(form);
-    	filterStack.addMember(setForVisibleButton);
+    	filterStack.addMember(replaceButton);
 		
 	}
 	/**
@@ -113,7 +110,7 @@ public class FilterTab extends Tab{
 	 */
 	public void updateColumnsInComboBox(LinkedHashMap<String, String> valueMap) {
 		if(columnChooserCombobox!=null){
-			columnChooserCombobox.setValueMap(valueMap);	
+			columnChooserCombobox.setValueMap(valueMap);
 		}
 	}
 }

@@ -6,16 +6,21 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import uk.ac.ebi.fgpt.magecomet.client.SearchSuggestion;
 import uk.ac.ebi.ontocat.OntologyService;
 import uk.ac.ebi.ontocat.OntologyServiceException;
 import uk.ac.ebi.ontocat.OntologyTerm;
 import uk.ac.ebi.ontocat.file.FileOntologyService;
+
+
+
 
 public class InitilizationServletContextListener implements ServletContextListener{
 
@@ -31,10 +36,11 @@ public class InitilizationServletContextListener implements ServletContextListen
 		try {
 			System.out.println("Downloading EFO Service");
 			//During Testing
-            OntologyService liveEFO = new FileOntologyService(new URI("http://www.ebi.ac.uk/efo/efo.owl"));
-//			OntologyService liveEFO = new FileOntologyService(getClass().getClassLoader().getResource("EFO_inferred_v142.owl").toURI());
-			context.setAttribute("ontoService", liveEFO);
-            context.setAttribute("monqInput", termsToInputReader(liveEFO.getAllTerms(null)));
+//            OntologyService ontoService = new FileOntologyService(new URI("http://www.ebi.ac.uk/efo/efo.owl"));
+			OntologyService ontoService = new FileOntologyService(getClass().getClassLoader().getResource("EFO_inferred_v142.owl").toURI());
+			context.setAttribute("ontoService", ontoService);
+            context.setAttribute("monqInput", termsToInputReader(ontoService.getAllTerms(null)));
+            context.setAttribute("ontoCatDict", createDictionary(ontoService));
 		} catch (URISyntaxException e) {
 			System.err.println("EFO IS NOT FOUND");
 			e.printStackTrace();
@@ -45,11 +51,11 @@ public class InitilizationServletContextListener implements ServletContextListen
 		
 	}
 
-	private InputStreamReader termsToInputReader(Set<OntologyTerm> allTerms) {
+	private String termsToInputReader(Set<OntologyTerm> allTerms) {
 		InputStream inputStream = null;
 		
 		StringBuilder input = new StringBuilder();
-		
+	 
 		//Print Headers
 		input.append("<?xml version='1.0'?>");
 		input.append("\n<mwt>");
@@ -66,15 +72,32 @@ public class InitilizationServletContextListener implements ServletContextListen
 		}
 		//output closing tag
 		input.append("\n</mwt>");
-
+		
+		return input.toString();
+		
+		
+	}
+	private SearchSuggestion[] createDictionary(OntologyService ontoCat){
+		SearchSuggestion[] sortedListOfTerms;
 		try {
-			inputStream = new ByteArrayInputStream(input.toString().getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
+			//TODO perhaps this is not the most efficient;
+			ArrayList<SearchSuggestion> listOfTerms=new ArrayList<SearchSuggestion>();
+			for(OntologyTerm ontoTerm:ontoCat.getAllTerms(null)){
+				listOfTerms.add(new SearchSuggestion(ontoTerm.getLabel(),ontoTerm.getLabel(), ontoTerm.getAccession()));
+				//Add synonymns
+				for(String syn:ontoCat.getSynonyms(ontoTerm)){
+					listOfTerms.add(new SearchSuggestion(syn,ontoTerm.getLabel(), ontoTerm.getAccession()));
+				}
+			}
+			java.util.Collections.sort(listOfTerms);
+			sortedListOfTerms = new SearchSuggestion[listOfTerms.size()];
+			for(int i=0;i<listOfTerms.size();i++){
+				sortedListOfTerms[i]=listOfTerms.get(i);
+			}
+			return sortedListOfTerms;
+		} catch (OntologyServiceException e) {
 			e.printStackTrace();
 		}
-		
-		return new InputStreamReader(inputStream);
-		
-		
+		return new SearchSuggestion[0];
 	}
 }

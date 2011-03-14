@@ -16,6 +16,7 @@ import com.smartgwt.client.widgets.TransferImgButton;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
@@ -154,6 +155,8 @@ public class IDF_Section extends SectionStackSection{
 		//Make the columns
 		for(int i = 1; i<longestRow;i++){
 			listOfFields[i] = new ListGridField((""+i),"");
+			listOfFields[i].setEditorType(new TextAreaItem());  
+
 		}
 		listOfFields[0] = new ListGridField("0","Field"); 
 		listOfFields[0].setWidth(220);
