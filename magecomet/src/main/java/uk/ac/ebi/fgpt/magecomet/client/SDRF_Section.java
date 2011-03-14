@@ -6,11 +6,9 @@ import com.smartgwt.client.core.DataClass;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.types.AutoFitWidthApproach;
-import com.smartgwt.client.types.DragDataAction;
 import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.types.ListGridEditEvent;
 import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.types.RowEndEditAction;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.types.Side;
 import com.smartgwt.client.types.TabBarControls;
@@ -42,8 +40,7 @@ public class SDRF_Section extends SectionStackSection{
 		numColumnsBeforeModification=0;
 		
 		sdrfTable.setCanEdit(true);
-	 	sdrfTable.setEditEvent(ListGridEditEvent.CLICK);  
-	 	  
+	 	sdrfTable.setEditEvent(ListGridEditEvent.DOUBLECLICK);  
         sdrfTable.setEditByCell(true); 
         sdrfTable.setCanReorderRecords(true);    
         sdrfTable.setCellHeight(22); 
@@ -113,6 +110,8 @@ public class SDRF_Section extends SectionStackSection{
 		sdrfTable.setDataSource(data);
 		sdrfTable.setFields(JSONToListGridField(jsonArray));
 		sdrfTable.fetchData();
+		
+		
 		
 		//Pass data to FilterTab
 		guiMediator.passDataToFilterTab(sdrfTable);
@@ -289,5 +288,27 @@ public class SDRF_Section extends SectionStackSection{
 		return arrayOfFields; 
 	}
 
-
+	public void updateDataSource(ListGridField[] newListGridFields){
+		
+		DataSource data = new DataSource("sdrf_ds");
+		DataSourceField[] fields = new DataSourceField[newListGridFields.length];
+		for(int i =1;i<newListGridFields.length;i++){
+			fields[i]=new DataSourceField(newListGridFields[i].getName(),
+					FieldType.TEXT,newListGridFields[i].getTitle());
+		}
+		//Make a primary key
+		DataSourceField key = new DataSourceField("key",FieldType.INTEGER ,"Key");
+		key.setPrimaryKey(true);
+		fields[0]=key;
+		
+		data.setFields(fields); // Need this to do filtering (Limited to filtering of input data)
+		data.setTestData(listOfAllRecords);
+		data.setClientOnly(true);
+		
+		
+		sdrfTable.setDataSource(data);
+		guiMediator.passDataToFilterTab(sdrfTable);
+		sdrfTable.setFields(newListGridFields);
+		sdrfTable.fetchData();
+	}
 }

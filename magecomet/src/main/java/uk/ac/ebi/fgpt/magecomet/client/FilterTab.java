@@ -18,17 +18,16 @@ import com.smartgwt.client.widgets.form.events.SearchHandler;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.tab.Tab;
 
 public class FilterTab extends Tab{
 	private final HStack filterStack = new HStack();
-	private final FilterBuilder filterBuilder  = new FilterBuilder();
+	private FilterBuilder filterBuilder;
 	private final ComboBoxItem columnChooserCombobox = new ComboBoxItem("Column");
 	private final TextItem cellValueTextItem = new TextItem();
-	private final IButton filterButton = new IButton("Filter");
+	private IButton filterButton;
 	private final IButton replaceButton = new IButton("Replace");
 	private final DynamicForm form = new DynamicForm();
 	
@@ -44,8 +43,7 @@ public class FilterTab extends Tab{
         filterStack.setHeight(40);
 
         
-    	//Build a filter
-		filterBuilder.setSaveOnEnter(true);
+    	
 		
 		form.setNumCols(4);  
 		columnChooserCombobox.setTitle("Column");  
@@ -71,17 +69,24 @@ public class FilterTab extends Tab{
 	}
 
 	public void setData(final ListGrid listGrid) {
+		filterStack.removeMembers(filterStack.getMembers());
+		//Filter Builder
+		filterBuilder  = new FilterBuilder();
+		filterBuilder.setSaveOnEnter(true);
 		filterBuilder.setDataSource(listGrid.getDataSource());
 		filterBuilder.addSearchHandler(new SearchHandler(){
 			public void onSearch(FilterSearchEvent event) {
 				listGrid.fetchData(filterBuilder.getCriteria());
 			}
 		});
+		//Filter Stack
+		filterButton = new IButton("Filter");
 		filterButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				listGrid.filterData(filterBuilder.getCriteria());
 			}
 		});
+		
 		
 		replaceButton.addClickHandler(new ClickHandler() {  
     		public void onClick(ClickEvent event) {  
@@ -95,13 +100,14 @@ public class FilterTab extends Tab{
     		}
     	});
 		
-		guiMediator.updateColumns(listGrid.getAllFields());
+		guiMediator.updateColumnsInComboBoxes(listGrid.getAllFields());
 		
 		//Layout
 		filterStack.addMember(filterBuilder);
 		filterStack.addMember(filterButton);
     	filterStack.addMember(form);
     	filterStack.addMember(replaceButton);
+    	filterStack.redraw();
 		
 	}
 	/**

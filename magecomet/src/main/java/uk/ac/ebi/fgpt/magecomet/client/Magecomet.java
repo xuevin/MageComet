@@ -136,12 +136,12 @@ public class Magecomet implements EntryPoint {
 		
 		topTabSet.setTabBarPosition(Side.TOP);
 		topTabSet.setTabBarAlign(Side.LEFT);
-		topTabSet.setHeight("750px");
-		topTabSet.setWidth("98%");
+		topTabSet.setHeight100();
+		topTabSet.setWidth100();
 		topTabSet.addTab(editTab);
 		topTabSet.addTab(errorTab);
 		topTabSet.setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER, saveSDRFButton);
-		topTabSet.moveBy(10, 200);
+		topTabSet.moveBy(0, 80);
 		topTabSet.show();
 
 		Canvas gwtUploadCanvas = new Canvas();

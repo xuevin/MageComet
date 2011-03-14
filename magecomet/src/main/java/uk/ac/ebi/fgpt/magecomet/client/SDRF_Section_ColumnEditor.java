@@ -149,7 +149,8 @@ public class SDRF_Section_ColumnEditor extends Window{
     			savedActiveRecords=activeGrid.getDataAsRecordList();
     			
     			//Update other gui components with the change
-    			guiMediator.updateColumns(newActiveColumns);
+//    			guiMediator.updateColumnsInComboBoxes(newActiveColumns);
+    			guiMediator.updateDataSource(newActiveColumns);
     			hide();
     		}
     	});
