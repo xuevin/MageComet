@@ -40,12 +40,12 @@
 
 
 	<servlet>
-		<servlet-name>fileServiceImpl</servlet-name>
+		<servlet-name>FileServiceImpl</servlet-name>
 		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.FileServiceImpl</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>fileServiceImpl</servlet-name>
+		<servlet-name>FileServiceImpl</servlet-name>
 		<url-pattern>/magecomet/FileService</url-pattern>
 	</servlet-mapping>
 
@@ -66,6 +66,16 @@
 		<servlet-name>EFOServiceImpl</servlet-name>
 		<url-pattern>/magecomet/EFOService</url-pattern>
 	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>SearchServiceImpl</servlet-name>
+		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.SearchServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SearchServiceImpl</servlet-name>
+		<url-pattern>/magecomet/SearchService</url-pattern>
+	</servlet-mapping>
+
 
 	<!-- Default page to serve -->
 	<welcome-file-list>
