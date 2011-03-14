@@ -39,6 +39,9 @@ public class TestEFOServiceImpl {
 		} catch (URISyntaxException e) {
 			System.err.println("DEFAULT EFO_inferred_v142.owl IS NOT FOUND");
 			e.printStackTrace();
+		} catch (OntologyServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}		
 	}
 	@Test
