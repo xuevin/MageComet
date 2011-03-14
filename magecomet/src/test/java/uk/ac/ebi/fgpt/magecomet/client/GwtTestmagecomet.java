@@ -16,7 +16,4 @@ public class GwtTestmagecomet extends GWTTestCase {
   public String getModuleName() {
     return "uk.ac.ebi.fgpt.magecomet.Magecomet";
   }
-  public void testSomething(){
-	assertEquals(true,true);
-  }
 }
