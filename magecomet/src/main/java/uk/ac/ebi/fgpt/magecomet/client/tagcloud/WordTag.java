@@ -1,4 +1,5 @@
-package uk.ac.ebi.fgpt.magecomet.client;
+package uk.ac.ebi.fgpt.magecomet.client.tagcloud;
+
 
 public class WordTag {
 	private String word;

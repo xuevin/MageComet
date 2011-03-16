@@ -2,9 +2,6 @@ package uk.ac.ebi.fgpt.magecomet.client;
 
 import java.util.LinkedHashMap;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.events.ClickEvent;

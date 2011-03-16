@@ -10,7 +10,6 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>GWT Maven Archetype</name>
 
-
 	<properties>
 		<!-- Convenience property to set the GWT version -->
 		<gwtVersion>2.1.0</gwtVersion>
@@ -118,12 +117,16 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>uk.ac.ebi.microarray</groupId>-->
-<!--			<artifactId>ontoCAT</artifactId>-->
-<!--			<version>0.9.6.1</version>-->
-<!--		</dependency>-->
-
+		<!--		<dependency>-->
+		<!--			<groupId>uk.ac.ebi.microarray</groupId>-->
+		<!--			<artifactId>ontoCAT</artifactId>-->
+		<!--			<version>0.9.6.1</version>-->
+		<!--		</dependency>-->
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>2.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -153,6 +156,7 @@
 					gwt-maven-plugin documentation at codehaus.org
 				-->
 				<configuration>
+		            <extraJvmArgs>-XX:MaxPermSize=4000M -Xmx6000M</extraJvmArgs>
 					<runTarget>magecomet.html</runTarget>
 					<hostedWebapp>${webappDirectory}</hostedWebapp>
 					<i18nMessagesBundle>uk.ac.ebi.fgpt.magecomet.client.Messages</i18nMessagesBundle>

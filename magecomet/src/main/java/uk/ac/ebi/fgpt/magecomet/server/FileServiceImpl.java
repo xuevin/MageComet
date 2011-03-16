@@ -7,7 +7,7 @@ import java.io.FileWriter;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import uk.ac.ebi.fgpt.magecomet.client.FileService;
+import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileService;
 
 
 public class FileServiceImpl extends RemoteServiceServlet implements FileService{

@@ -12,9 +12,12 @@ import com.smartgwt.client.widgets.tab.Tab;
 
 public class ErrorsTab extends Tab{
 
+	GuiMediator guiMediator;
 	private ListGrid errorsListGrid;
-	public ErrorsTab(){
+	public ErrorsTab(GuiMediator guiMediator){
 		super("Errors");
+		this.guiMediator=guiMediator;
+		this.guiMediator.registerErrorsTab(this);
 		setIcon("[SKIN]actions/exclamation.png");
 		errorsListGrid = new ListGrid();
 
@@ -28,8 +31,11 @@ public class ErrorsTab extends Tab{
 		this.setPane(errorsListGrid);
 		
 	}
-	public void handelJSONArrayOfErrors(JSONArray errors){
-		
+	public void handelJSONArrayOfErrors(JSONObject object){
+		JSONArray errors = object.get("error").isArray();
+		if(errors==null){
+			return;
+		}
 
 		int size = errors.size();
 		ListGridRecord[] records= new ListGridRecord[size];

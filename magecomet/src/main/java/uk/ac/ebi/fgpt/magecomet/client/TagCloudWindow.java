@@ -1,5 +1,10 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
+import uk.ac.ebi.fgpt.magecomet.client.tagcloud.ClickAction;
+import uk.ac.ebi.fgpt.magecomet.client.tagcloud.EFOService;
+import uk.ac.ebi.fgpt.magecomet.client.tagcloud.EFOServiceAsync;
+import uk.ac.ebi.fgpt.magecomet.client.tagcloud.TagCloud;
+
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.types.HeaderControls;
 import com.smartgwt.client.types.Overflow;

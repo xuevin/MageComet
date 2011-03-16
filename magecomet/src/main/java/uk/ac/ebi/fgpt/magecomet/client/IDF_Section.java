@@ -43,13 +43,14 @@ public class IDF_Section extends SectionStackSection{
 		
 		idfGrid = new ListGrid();
 		idfGrid.setCanEdit(true);
-		idfGrid.setEditEvent(ListGridEditEvent.CLICK);
+		idfGrid.setEditEvent(ListGridEditEvent.DOUBLECLICK);
 		idfGrid.setCanSort(false);
 		idfGrid.setWidth("60%");
 		rows = new ArrayList<ListGridRecord>();
 		listOfAvailableFields = new ArrayList<String>();
 		textBox.setWidth("40%");
 		textBox.setOverflow(Overflow.AUTO);
+		textBox.setMargin(5);
 		
 		hStack.addMember(idfGrid);
 		hStack.addMember(textBox);
@@ -66,8 +67,6 @@ public class IDF_Section extends SectionStackSection{
 				editRowWindow.setHeight(400);
 				editRowWindow.centerInPage();
 				editRowWindow.show();
-				
-				
 				
 				
 				//Available Fields that the user can select from
@@ -156,10 +155,9 @@ public class IDF_Section extends SectionStackSection{
 		for(int i = 1; i<longestRow;i++){
 			listOfFields[i] = new ListGridField((""+i),"");
 			listOfFields[i].setEditorType(new TextAreaItem());  
-
 		}
 		listOfFields[0] = new ListGridField("0","Field"); 
-		listOfFields[0].setWidth(220);
+		listOfFields[0].setWidth(240);
 		
 		idfGrid.setFields(listOfFields);
 		idfGrid.setData(listOfRows);

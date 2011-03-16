@@ -23,7 +23,7 @@ import com.smartgwt.client.widgets.layout.VStack;
 public class SDRF_Section_ColumnEditor extends Window{
 	//Saved states of column editor
 	private RecordList savedActiveRecords;
-	private RecordList savedScratcRecords;
+	private RecordList savedClipboardRecords;
 	private final ListGrid clipboardGrid = new ListGrid();
 	private final ListGrid activeGrid = new ListGrid();
 	private ListGrid sdrfTable;
@@ -49,7 +49,7 @@ public class SDRF_Section_ColumnEditor extends Window{
 		
 		setTitle("Customize SDRF Columns");
 		
-		//Scratch Grid
+		//Clipboard
 		clipboardGrid.setVisible(true);
 		clipboardGrid.setWidth("45%");
 		clipboardGrid.setHeight("95%");
@@ -59,7 +59,6 @@ public class SDRF_Section_ColumnEditor extends Window{
 		clipboardGrid.setCanDragRecordsOut(true);
 		clipboardGrid.setCanReorderRecords(true);  
 		clipboardGrid.setCanEdit(true);
-	
 		
 		//Active Grid
 		activeGrid.setVisible(true);
@@ -79,15 +78,19 @@ public class SDRF_Section_ColumnEditor extends Window{
 		clipboardKey.setHidden(true);
 		clipboardGrid.setFields(clipboardKey,clipboardField);
 		
-		
 		ListGridField activeKey= new ListGridField("key","Key");
 		ListGridField activeField = new ListGridField("title","Visible Column");
 		activeKey.setHidden(true);
 		activeGrid.setFields(activeKey,activeField);
+
 		
 		//Get the fields in the table and make them records. This allows 
 		//users to reorder them vertically instead of horizontally with lots of scrolling
 		activeGrid.setData(convertFieldsToRecords());
+		
+		//Save Column States
+		savedClipboardRecords=clipboardGrid.getDataAsRecordList();
+		savedActiveRecords=activeGrid.getDataAsRecordList();
 		
 		//******************
 		// Buttons
@@ -131,27 +134,8 @@ public class SDRF_Section_ColumnEditor extends Window{
     	save.setLeft(0);  
     	save.addClickHandler(new ClickHandler() {  
     		public void onClick(ClickEvent event) {  
-    			Record[] activeFieldArray = activeGrid.getRecords();
-    			
-    			//Set the grid to reflect the new columns
-    			ListGridField[] newActiveColumns = new ListGridField[activeFieldArray.length+1];
-    			newActiveColumns[0]=new ListGridField("key","Key");
-    			for(int i =0;i<activeFieldArray.length;i++){
-    				newActiveColumns[i+1]=new ListGridField(	activeFieldArray[i].getAttribute("key"),
-    															activeFieldArray[i].getAttribute("title"));
-    				newActiveColumns[i+1].setAutoFitWidthApproach(AutoFitWidthApproach.BOTH);
-    				newActiveColumns[i+1].setAutoFitWidth(true);
-    			}
-    			sdrfTable.setFields(newActiveColumns);   
-    			
-    			//Save Column States
-    			savedScratcRecords=clipboardGrid.getDataAsRecordList();
-    			savedActiveRecords=activeGrid.getDataAsRecordList();
-    			
-    			//Update other gui components with the change
-//    			guiMediator.updateColumnsInComboBoxes(newActiveColumns);
-    			guiMediator.updateDataSource(newActiveColumns);
-    			hide();
+    			saveAction();
+    			guiMediator.refreshTable();
     		}
     	});
     	
@@ -160,13 +144,12 @@ public class SDRF_Section_ColumnEditor extends Window{
 		cancel.setLeft(0);  
     	cancel.addClickHandler(new ClickHandler() {  
     		public void onClick(ClickEvent event) {
-    			//discard changes... restore the original
-    			activeGrid.setData(savedActiveRecords);
-    			clipboardGrid.setData(savedScratcRecords);
-    			hide();
+    			discardAction();
     		}
     	});
 
+		
+    	
     	//******************
     	// Layout
     	//******************
@@ -195,6 +178,40 @@ public class SDRF_Section_ColumnEditor extends Window{
 		addItem(hStack);
 		addItem(actionButtons);		
 	}
+	private void discardAction() {
+		//discard changes... restore the original
+		activeGrid.setData(savedActiveRecords);
+		clipboardGrid.setData(savedClipboardRecords);
+		hide();		
+	}
+	private void saveAction() {
+		Record[] activeFieldArray = activeGrid.getRecords();
+		
+		//Set the grid to reflect the new columns
+		ListGridField[] newActiveColumns = new ListGridField[activeFieldArray.length+1];
+		newActiveColumns[0]=new ListGridField("key","Key");
+		for(int i =0;i<activeFieldArray.length;i++){
+			newActiveColumns[i+1]=new ListGridField(	activeFieldArray[i].getAttribute("key"),
+														activeFieldArray[i].getAttribute("title"));
+			if(GlobalConfigs.shouldExclude(activeFieldArray[i].getAttribute("title"))){
+				newActiveColumns[i+1].setHidden(true);
+			}else{
+				//Only set autowidth for visible columns (Speed Up?)
+				newActiveColumns[i+1].setAutoFitWidthApproach(AutoFitWidthApproach.BOTH);
+				newActiveColumns[i+1].setAutoFitWidth(true);	
+			}
+		}
+		sdrfTable.setFields(newActiveColumns);   
+		
+		//Save Column States
+		savedClipboardRecords=clipboardGrid.getDataAsRecordList();
+		savedActiveRecords=activeGrid.getDataAsRecordList();
+		
+		//Update other gui components with the change
+		guiMediator.updateDataSource(newActiveColumns);
+		hide();
+		
+	}
 	/**
 	 * Updates the list of columns in the editor.
 	 */
@@ -202,7 +219,7 @@ public class SDRF_Section_ColumnEditor extends Window{
 		savedActiveRecords=convertFieldsToRecords();
 		activeGrid.setData(savedActiveRecords);
 	}
-	public String addNewColumnAndGetKey(String title){
+	public String addNewColumnToClipboardAndGetKey(String title){
 		int uniqueKey = getNewUniqueKey();
 		ListGridRecord newColumn = new ListGridRecord();
 		newColumn.setAttribute("key",uniqueKey);
@@ -210,9 +227,46 @@ public class SDRF_Section_ColumnEditor extends Window{
 		clipboardGrid.addData(newColumn);
 		
 		//Save
-		savedScratcRecords=clipboardGrid.getDataAsRecordList();
+		savedClipboardRecords=clipboardGrid.getDataAsRecordList();
 		return uniqueKey+"";
 	}
+	public String addNewCharacteristicColumnAndGetKey(String title){
+		int uniqueKey = getNewUniqueKey();
+		ListGridRecord newColumn = new ListGridRecord();
+		newColumn.setAttribute("key",uniqueKey);
+		newColumn.setAttribute("title", "Characteristics["+title+"]");
+		
+		
+		//Find the right place to put this!
+		for(int i = 0;i<savedActiveRecords.getLength();i++){
+			if(savedActiveRecords.get(i).getAttributeAsString("title").contains("Source Name")){
+				savedActiveRecords.addAt(newColumn, i+1);
+				break;
+			}
+		}
+	
+		//Save
+		saveAction();
+		return uniqueKey+"";
+
+	}
+	public String addNewFactorValueColumnAndGetKey(String title){
+		int uniqueKey = getNewUniqueKey();
+		ListGridRecord newColumn = new ListGridRecord();
+		newColumn.setAttribute("key",uniqueKey);
+		newColumn.setAttribute("title", "Factor Value["+title+"]");
+		activeGrid.addData(newColumn);
+		
+		//Save
+		saveAction();
+		return uniqueKey+"";
+	}
+	
+	
+	
+	
+	
+	
 	/**
 	 * Gets a unique key that represents a column
 	 * 

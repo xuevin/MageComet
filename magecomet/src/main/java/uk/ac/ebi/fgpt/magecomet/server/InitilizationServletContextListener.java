@@ -1,9 +1,5 @@
 package uk.ac.ebi.fgpt.magecomet.server;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -13,7 +9,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import uk.ac.ebi.fgpt.magecomet.client.SearchSuggestion;
+import uk.ac.ebi.fgpt.magecomet.client.searchservice.SearchSuggestion;
 import uk.ac.ebi.ontocat.OntologyService;
 import uk.ac.ebi.ontocat.OntologyServiceException;
 import uk.ac.ebi.ontocat.OntologyTerm;
@@ -25,7 +21,7 @@ import uk.ac.ebi.ontocat.file.FileOntologyService;
 public class InitilizationServletContextListener implements ServletContextListener{
 
 	private ServletContext context = null;
-
+	OntologyService ontoService;
 	public void contextDestroyed(ServletContextEvent arg0) {
 		
 		
@@ -37,7 +33,7 @@ public class InitilizationServletContextListener implements ServletContextListen
 			System.out.println("Downloading EFO Service");
 			//During Testing
 //            OntologyService ontoService = new FileOntologyService(new URI("http://www.ebi.ac.uk/efo/efo.owl"));
-			OntologyService ontoService = new FileOntologyService(getClass().getClassLoader().getResource("EFO_inferred_v142.owl").toURI());
+			ontoService = new FileOntologyService(getClass().getClassLoader().getResource("EFO_inferred_v142.owl").toURI());
 			context.setAttribute("ontoService", ontoService);
             context.setAttribute("monqInput", termsToInputReader(ontoService.getAllTerms(null)));
             context.setAttribute("ontoCatDict", createDictionary(ontoService));
@@ -52,8 +48,6 @@ public class InitilizationServletContextListener implements ServletContextListen
 	}
 
 	private String termsToInputReader(Set<OntologyTerm> allTerms) {
-		InputStream inputStream = null;
-		
 		StringBuilder input = new StringBuilder();
 	 
 		//Print Headers
@@ -69,6 +63,19 @@ public class InitilizationServletContextListener implements ServletContextListen
 			input.append("\""+term.getAccession()+"\"");
 			input.append(" p2=\""+term.getLabel()+"\"");
 			input.append(">"+term.getLabel()+"</t>");
+//			try {
+//				for(String syn:ontoService.getSynonyms(term)){
+//					String syn2 = syn.replaceAll("[^a-zA-Z0-9]", "");
+//					input.append("\n");
+//					input.append("<t p1=");
+//					input.append("\""+term.getAccession()+"\"");
+//					input.append(" p2=\""+syn2+"\"");
+//					input.append(">"+syn2+"</t>");	
+//				}
+//			} catch (OntologyServiceException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 		//output closing tag
 		input.append("\n</mwt>");

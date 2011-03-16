@@ -1,92 +1,111 @@
 /** Add css rules here for your application. */
-
-/** Example rules used by the template application (remove for your app) */
-
+	/** Example rules used by the template application (remove for your app) */
 .sendButton {
-  display: block;
-  font-size: 16pt;
+	display: block;
+	font-size: 16pt;
 }
 
 /** Most GWT widgets already have a style name defined */
 .gwt-DialogBox {
-  width: 400px;
+	width: 400px;
 }
 
 .dialogVPanel {
-  margin: 5px;
+	margin: 5px;
 }
 
 .serverResponseLabelError {
-  color: red;
+	color: red;
 }
 
 /** Set ids using widget.getElement().setId("idOfElement") */
 #closeButton {
-  margin: 15px 6px 6px;
+	margin: 15px 6px 6px;
 }
-.tagcloud{
+
+.tagcloud {
 	color: black;
 	text-decoration: none;
-	margin: 1px;	
+	margin: 1px;
 	border: 0px;
 	background: white;
 	cursor: pointer;
 }
-.tagcloud:hover{
-	color:black;
-	text-decoration:underline
+
+.tagcloud:hover {
+	color: black;
+	text-decoration: underline
 }
-.tagcloud-size1{
+
+.tagcloud-size1 {
 	font-size: 12pt;
 }
-.tagcloud-size2{
+
+.tagcloud-size2 {
 	font-size: 16pt;
 }
-.tagcloud-size3{
+
+.tagcloud-size3 {
 	font-size: 20pt;
 }
-.tagcloud-size4{
+
+.tagcloud-size4 {
 	font-size: 24pt;
 }
-.tagcloud-size5{
+
+.tagcloud-size5 {
 	font-size: 38pt;
 }
-.overflow{
-	overflow:visible;
+
+.overflow {
+	overflow: visible;
 }
-.header{
+
+.header {
 	font-size: 30pt;
 }
+
 .gwt-SuggestBoxPopup {
-    background-color: #edf4f4;
-    border: 1px #336666 solid;
-    padding-left: 2px;
-    padding-right: 2px;
+	background-color: #edf4f4;
+	border: 1px #336666 solid;
+	padding-left: 2px;
+	padding-right: 2px;
+	z-index: 1000000;
 }
+
 .gwt-SuggestBoxPopup .item {
-    background-color: #edf4f4;
-    padding-left: 2px;
-    padding-right: 2px;
+	background-color: #edf4f4;
+	padding-left: 2px;
+	padding-right: 2px;
 }
+
 .gwt-SuggestBoxPopup .item-selected {
-    background-color: #lightgrey;
+	background-color: #lightgrey;
 }
-td.contentsarea2  {
-	/*background-color:#ffffff; */
+.gwt-SuggestBoxCanvas {
+	width: 200px;
+	height: 20px;
+	background: #ffffff;
+	border: none;
+}
+td.contentsarea2 { /*background-color:#ffffff; */
 	color: #000000;
-	width:100%;
-	padding:0;
-	margin:0;
+	width: 100%;
+	padding: 0;
+	margin: 0;
 	font-size: 9pt;
 	font-family: helvetica, "trebuchet MS", arial, sans-serif;
 }
+
+
 
 td.contentsarea2 {
 	font-size: 9pt;
 	font-family: helvetica, "trebuchet MS", arial, sans-serif;
 }
-table td.contentsarea2{
-	margin:0;
+
+table td.contentsarea2 {
+	margin: 0;
 	/*border-left: 1px solid #dedede;*/
 	border-left: 1px solid #ffffff;
 	border-right: 1px solid #dedede;
@@ -99,7 +118,8 @@ table td.contentsarea2{
 	padding-left: 10px;
 	padding-right: 10px;
 }
-h1.webapp{
-   height: 750px;
-   visibility:hidden;
+
+h1.webapp {
+	height: 750px;
+	visibility: hidden;
 }

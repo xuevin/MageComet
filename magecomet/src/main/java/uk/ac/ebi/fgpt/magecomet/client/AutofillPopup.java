@@ -1,14 +1,14 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
 
-import com.google.gwt.core.client.GWT;
+import uk.ac.ebi.fgpt.magecomet.client.tagcloud.EFOServiceAsync;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.HTMLFlow;
-import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -138,21 +138,21 @@ public class AutofillPopup extends Window{
 			
 				if(addToAllRecordsCheckBox.getValueAsBoolean()==true){
 					if(characteristicChecked){
-						guiMediator.addColumnToScratchAndAddValueToAllRecords("Characteristics["+characteristicString+"]", efoTerm);
+						guiMediator.addColumnToClipboardAndAddValueToAllRecords("Characteristics["+characteristicString+"]", efoTerm);
 						if(termSourceNumberChecked){
-							guiMediator.addColumnToScratchAndAddValueToAllRecords("Term Accession Number", termSourceNum.getDisplayValue());
+							guiMediator.addColumnToClipboardAndAddValueToAllRecords("Term Accession Number", termSourceNum.getDisplayValue());
 						}
 						if(termSourceRefChecked){
-							guiMediator.addColumnToScratchAndAddValueToAllRecords("Term Source REF", "EFO");
+							guiMediator.addColumnToClipboardAndAddValueToAllRecords("Term Source REF", "EFO");
 						}
 					}
 					if(factorValueChecked){
-						guiMediator.addColumnToScratchAndAddValueToAllRecords("Factor Value["+factorValueString+"]", efoTerm);
+						guiMediator.addColumnToClipboardAndAddValueToAllRecords("Factor Value["+factorValueString+"]", efoTerm);
 						if(termSourceNumberChecked){
-							guiMediator.addColumnToScratchAndAddValueToAllRecords("Term Accession Number", termSourceNum.getDisplayValue());
+							guiMediator.addColumnToClipboardAndAddValueToAllRecords("Term Accession Number", termSourceNum.getDisplayValue());
 						}
 						if(termSourceRefChecked){
-							guiMediator.addColumnToScratchAndAddValueToAllRecords("Term Source REF", "EFO");
+							guiMediator.addColumnToClipboardAndAddValueToAllRecords("Term Source REF", "EFO");
 						}
 					}
 				}else{

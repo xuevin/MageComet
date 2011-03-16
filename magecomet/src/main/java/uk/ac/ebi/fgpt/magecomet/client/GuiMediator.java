@@ -3,9 +3,8 @@ package uk.ac.ebi.fgpt.magecomet.client;
 
 import java.util.LinkedHashMap;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
@@ -17,6 +16,11 @@ public class GuiMediator {
 	private SDRF_Section_ColumnEditor sdrfSectionColumnEditor;
 	private FilterTab filterTab;
 	private ExtractTab extractTab;
+	private LoadTab loadTab;
+	private ErrorsTab errorsTab;
+	private String currentIDF;
+	private String currentSDRF;
+	private EditTab editTab;
 	
 
 	public GuiMediator(){
@@ -40,11 +44,17 @@ public class GuiMediator {
 	public void registerExtractTab(ExtractTab extractTab){
 		this.extractTab=extractTab;
 	}
-	public void addWordToTagCloud(final String word, int weight) {
-		if(tagCloudWindow!=null){
-			tagCloudWindow.addWord(word,weight);
-		}
+	public void registerLoadTab(LoadTab loadTab) {
+		this.loadTab = loadTab;
 	}
+	public void registerErrorsTab(ErrorsTab errorsTab){
+		this.errorsTab=errorsTab;
+	}
+	public void registerEditTab(EditTab editTab) {
+		this.editTab = editTab;
+	}
+	
+	
 	/**
 	 * Updates the columns. Should be called every time the table changes
 	 */
@@ -61,13 +71,27 @@ public class GuiMediator {
 			extractTab.updateColumnsInComboBox(valueMap);	
 		}
 	}
+	/**
+	 * Updates the DataSource in the SDRFSection. Also updates columns in the combo boxes
+	 * Also calls updateColumnsInComboBoxes
+	 * @param listGridFields a list of ListGridFields (which represents the title of a column)
+	 */
 	public void updateDataSource(ListGridField[] listGridFields){
 		sdrfSection.updateDataSource(listGridFields);
 	}
-	public void addColumnToScratchAndAddValueToAllRecords(String title,String value){
-		String uniqueKey = sdrfSectionColumnEditor.addNewColumnAndGetKey(title);
+	public void addColumnToClipboardAndAddValueToAllRecords(String title,String value){
+		String uniqueKey = sdrfSectionColumnEditor.addNewColumnToClipboardAndGetKey(title);
 		sdrfSection.addAttributeToAllRecords(uniqueKey,value);
 		sdrfSectionColumnEditor.show();
+	}
+	public String addFactorValueToActiveGrid(String title){
+		return sdrfSectionColumnEditor.addNewFactorValueColumnAndGetKey(title);
+	}
+	public String addCharacteristicToActiveGrid(String title){
+		return sdrfSectionColumnEditor.addNewCharacteristicColumnAndGetKey(title);
+	}
+	public String addColumnToClipboard(String title){
+		return sdrfSectionColumnEditor.addNewColumnToClipboardAndGetKey(title);
 	}
 	public void passDataToFilterTab(ListGrid sdrfTable) {
 		filterTab.setData(sdrfTable);
@@ -75,9 +99,65 @@ public class GuiMediator {
 	public void passAllRecordsToExtractTab(ListGridRecord[] listGridRecords,ListGrid sdrfTable){
 		extractTab.setRecords(listGridRecords,sdrfTable);
 	}
-	public String addColumnToScratch(String title){
-		return sdrfSectionColumnEditor.addNewColumnAndGetKey(title);
+	public void refreshTable(){
+		sdrfSection.refreshTable();
 	}
+	public void passDataToSDRFSection(JSONObject object){
+		sdrfSection.handleJSONObject(object);
+	}
+	public void passDataToIDFSection(JSONObject object){
+		idfSection.handleJSONObject(object);
+	}
+	public void passDataToErrorsTab(JSONObject object){
+		errorsTab.handelJSONArrayOfErrors(object);
+	}
+	public void setCurrentIDF(String currentIDF) {
+		this.currentIDF = currentIDF;
+	}
+	public String getCurrentIDF() {
+		return currentIDF;
+	}
+	public void setCurrentSDRF(String currentSDRF) {
+		this.currentSDRF = currentSDRF;
+	}
+	public String getCurrentSDRF() {
+		return currentSDRF;
+	}
+	public String getSDRFAsString() {
+		return sdrfSection.getSDRFAsString();
+	}
+	public void passDataToTagCloud(JSONObject jsonObject) {
+//		System.out.println("I dont get it");
+		
+		if(jsonObject.get("whatizitIDF")!=null){
+//			System.out.println("NOt Null");
+			JSONArray tagWords = jsonObject.get("whatizitIDF").isArray() ;
+			for (int i = 0; i < tagWords.size(); i++) {
+				final String word = tagWords.get(i).isString().stringValue();
+				tagCloudWindow.addWord(word,1);
+			}
+		}
+//		System.out.println("I dont get it?");
+		
+		if((jsonObject.get("whatizitSDRF")!=null)){
+			JSONArray tagWords=jsonObject.get("whatizitSDRF").isArray();
+//			System.out.println("Still not null");
+
+			for (int i = 0; i < tagWords.size(); i++) {
+				final String word = tagWords.get(i).isString().stringValue();
+				tagCloudWindow.addWord(word,2);
+			}
+		}
+//		System.out.println("It never finishes...");
+	}
+//	public void addWordToTagCloud(final String word, int weight) {
+//		if(tagCloudWindow!=null){
+//			tagCloudWindow.addWord(word,weight);
+//		}//TODO make this a special Tab
+//	}
+
+
+	
 
 
 }

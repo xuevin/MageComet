@@ -23,12 +23,19 @@ import com.smartgwt.client.widgets.tab.TabSet;
 
 public class SDRF_Section extends SectionStackSection{
 	private final ListGrid sdrfTable = new ListGrid();;
-	private final TabSet automaticFunctionsEditor = new TabSet();
+	private final TabSet automaticFunctionEditor = new TabSet();
 	private final IButton editColumnsButton = new IButton("Edit Columns");  
 
-	private ListGridRecord[] listOfAllRecords; //Used to modify ALL of the records even after filter
-	private SDRF_Section_ColumnEditor columnWindow;
+	/*
+	 * Used to modify all of the records even after filtering
+	 * If you plan to add/remove anything to the grid, you must edit this list
+	 */
+	private ListGridRecord[] listOfAllRecords;
+	
+	private SDRF_Section_ColumnEditor columnEditorWindow;
+	
 	private int numColumnsBeforeModification;
+	
 	private GuiMediator guiMediator;
 	
 	public SDRF_Section(final GuiMediator guiMediator){
@@ -44,9 +51,7 @@ public class SDRF_Section extends SectionStackSection{
         sdrfTable.setEditByCell(true); 
         sdrfTable.setCanReorderRecords(true);    
         sdrfTable.setCellHeight(22); 
-  
-
-//        sdrfTable.setDragDataAction(DragDataAction.MOVE);  
+//      sdrfTable.setDragDataAction(DragDataAction.MOVE);  
         sdrfTable.setShowRollOver(false);
         sdrfTable.setPadding(0);
         sdrfTable.setMargin(0);
@@ -59,23 +64,23 @@ public class SDRF_Section extends SectionStackSection{
         editColumnsButton.setTop(250);  
         editColumnsButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				if(columnWindow==null){
+				if(columnEditorWindow==null){
 					//If there are no fields, it does not continue,
 					//Must load data first
 					if(sdrfTable.getAllFields().length==0){
 						return;
 					}else{
 						//Create New Window
-						columnWindow = new SDRF_Section_ColumnEditor(sdrfTable,numColumnsBeforeModification,guiMediator);
-						columnWindow.setWidth(600);
-						columnWindow.setHeight(400);
-						columnWindow.centerInPage();
-						columnWindow.show();
+						columnEditorWindow = new SDRF_Section_ColumnEditor(sdrfTable,numColumnsBeforeModification,guiMediator);
+						columnEditorWindow.setWidth(600);
+						columnEditorWindow.setHeight(400);
+						columnEditorWindow.centerInPage();
+						columnEditorWindow.show();
 					}
 				}else{
-					columnWindow.updateColumns();
-					columnWindow.centerInPage();
-					columnWindow.show();
+					columnEditorWindow.updateColumns();
+					columnEditorWindow.centerInPage();
+					columnEditorWindow.show();
 				}
 			}
 		});
@@ -83,17 +88,17 @@ public class SDRF_Section extends SectionStackSection{
         FilterTab filterAndReplaceTab = new FilterTab(guiMediator);
         ExtractTab createNewColumnsTab = new ExtractTab(guiMediator);
         
-        automaticFunctionsEditor.setWidth100();
-        automaticFunctionsEditor.setHeight(60);
-        automaticFunctionsEditor.setTabBarControls(TabBarControls.TAB_PICKER);
-        automaticFunctionsEditor.setPaneContainerOverflow(Overflow.VISIBLE);
-        automaticFunctionsEditor.setOverflow(Overflow.VISIBLE);
-        automaticFunctionsEditor.setTabs(filterAndReplaceTab,createNewColumnsTab);
-        automaticFunctionsEditor.setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER,editColumnsButton);
-        automaticFunctionsEditor.setTabBarAlign(Side.LEFT);
-        automaticFunctionsEditor.setTabBarPosition(Side.TOP);
+        automaticFunctionEditor.setWidth100();
+        automaticFunctionEditor.setHeight(60);
+        automaticFunctionEditor.setTabBarControls(TabBarControls.TAB_PICKER);
+        automaticFunctionEditor.setPaneContainerOverflow(Overflow.VISIBLE);
+        automaticFunctionEditor.setOverflow(Overflow.VISIBLE);
+        automaticFunctionEditor.setTabs(filterAndReplaceTab,createNewColumnsTab);
+        automaticFunctionEditor.setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER,editColumnsButton);
+        automaticFunctionEditor.setTabBarAlign(Side.LEFT);
+        automaticFunctionEditor.setTabBarPosition(Side.TOP);
         
-        addItem(automaticFunctionsEditor);
+        addItem(automaticFunctionEditor);
         addItem(sdrfTable);
 	}
 	public void handleJSONObject(JSONObject jsonObject) {
@@ -121,10 +126,10 @@ public class SDRF_Section extends SectionStackSection{
 
 		
     	//Create New Column Editor Window
-		columnWindow = new SDRF_Section_ColumnEditor(sdrfTable,numColumnsBeforeModification,guiMediator);
-		columnWindow.setWidth(600);
-		columnWindow.setHeight(400);
-		columnWindow.centerInPage();
+		columnEditorWindow = new SDRF_Section_ColumnEditor(sdrfTable,numColumnsBeforeModification,guiMediator);
+		columnEditorWindow.setWidth(600);
+		columnEditorWindow.setHeight(400);
+		columnEditorWindow.centerInPage();
     	
 	}
 	
@@ -169,8 +174,8 @@ public class SDRF_Section extends SectionStackSection{
 //		sdrfTable.clearCriteria(callback, null);
 			
 			for(DataClass record:sdrfTable.getDataSource().getTestData()){
-				System.out.println(record.getAttribute("key"));
-				System.out.println(record.getAttribute("1"));
+//				System.out.println(record.getAttribute("key"));
+//				System.out.println(record.getAttribute("1"));
 				for(ListGridField column:listOfFields){
 					if(!column.getTitle().equals("Key")){
 						
@@ -273,9 +278,13 @@ public class SDRF_Section extends SectionStackSection{
 		
 		for(int i=0;i<firstRow.size();i++){
 			arrayOfFields[i+1]= new ListGridField(i+1+"",firstRow.get(i).isString().stringValue());
-			arrayOfFields[i+1].setAutoFitWidthApproach(AutoFitWidthApproach.BOTH);
-			arrayOfFields[i+1].setAutoFitWidth(true);
-			
+			//Should the column be hidden? If true hide, else set it to auto width
+			if(GlobalConfigs.shouldExclude(arrayOfFields[i+1].getAttribute("title"))){
+				arrayOfFields[i+1].setHidden(true);
+			}else{
+				arrayOfFields[i+1].setAutoFitWidthApproach(AutoFitWidthApproach.BOTH);
+				arrayOfFields[i+1].setAutoFitWidth(true);
+			}
 		}
 		//At first, the unique key count is instantiated to the number of fields present
 		numColumnsBeforeModification=firstRow.size();
@@ -288,8 +297,14 @@ public class SDRF_Section extends SectionStackSection{
 		return arrayOfFields; 
 	}
 
+	/**
+	 * Updates the DataSource to reflect the new columns added
+	 * Because the data is edited via the listOfAllRecords, there is no worries about making 
+	 * a new data source.  
+	 * @param newListGridFields A new array of ListGridFields
+	 */
 	public void updateDataSource(ListGridField[] newListGridFields){
-		
+		//Create a new datasource based on the list of records and the fields specified.
 		DataSource data = new DataSource("sdrf_ds");
 		DataSourceField[] fields = new DataSourceField[newListGridFields.length];
 		for(int i =1;i<newListGridFields.length;i++){
@@ -309,6 +324,8 @@ public class SDRF_Section extends SectionStackSection{
 		sdrfTable.setDataSource(data);
 		guiMediator.passDataToFilterTab(sdrfTable);
 		sdrfTable.setFields(newListGridFields);
-		sdrfTable.fetchData();
+	}
+	public void refreshTable() {
+		sdrfTable.fetchData();;		
 	}
 }

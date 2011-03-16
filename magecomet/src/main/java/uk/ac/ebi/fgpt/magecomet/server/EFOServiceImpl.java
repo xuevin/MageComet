@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import uk.ac.ebi.fgpt.magecomet.client.EFOService;
+import uk.ac.ebi.fgpt.magecomet.client.tagcloud.EFOService;
 import uk.ac.ebi.ontocat.OntologyService;
 import uk.ac.ebi.ontocat.OntologyServiceException;
 import uk.ac.ebi.ontocat.OntologyTerm;

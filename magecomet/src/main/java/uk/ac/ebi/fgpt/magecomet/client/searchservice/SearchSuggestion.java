@@ -1,4 +1,4 @@
-package uk.ac.ebi.fgpt.magecomet.client;
+package uk.ac.ebi.fgpt.magecomet.client.searchservice;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
@@ -22,7 +22,7 @@ public class SearchSuggestion implements IsSerializable, Suggestion, Comparable<
 		return term;
 	}
 	public String getReplacementString() {
-		return efoAccession;
+		return preferred;
 	}
 	public String getTerm(){
 		return term;

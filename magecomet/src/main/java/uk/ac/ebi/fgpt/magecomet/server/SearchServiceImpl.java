@@ -3,8 +3,8 @@ package uk.ac.ebi.fgpt.magecomet.server;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.ebi.fgpt.magecomet.client.SearchService;
-import uk.ac.ebi.fgpt.magecomet.client.SearchSuggestion;
+import uk.ac.ebi.fgpt.magecomet.client.searchservice.SearchService;
+import uk.ac.ebi.fgpt.magecomet.client.searchservice.SearchSuggestion;
 
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Request;
