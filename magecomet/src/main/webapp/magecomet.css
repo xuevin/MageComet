@@ -123,3 +123,6 @@ h1.webapp {
 	height: 750px;
 	visibility: hidden;
 }
+SPAN.searchword { 
+	background-color:yellow;
+}

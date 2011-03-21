@@ -9,7 +9,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,11 +30,16 @@ import org.json.JSONObject;
 import org.mged.annotare.validator.SemanticValidator;
 import org.mged.magetab.error.ErrorItem;
 
+import uk.ac.ebi.arrayexpress2.magetab.datamodel.IDF;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.MAGETABInvestigation;
-import uk.ac.ebi.arrayexpress2.magetab.exception.ErrorItemListener;
+import uk.ac.ebi.arrayexpress2.magetab.datamodel.SDRF;
+//import uk.ac.ebi.arrayexpress2.magetab.exception.ErrorItemListener;
 import uk.ac.ebi.arrayexpress2.magetab.exception.ParseException;
-import uk.ac.ebi.arrayexpress2.magetab.handler.ParserMode;
+import uk.ac.ebi.arrayexpress2.magetab.exception.WriteException;
+import uk.ac.ebi.arrayexpress2.magetab.listener.ErrorItemListener;
 import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
+import uk.ac.ebi.arrayexpress2.magetab.renderer.IDFWriter;
+import uk.ac.ebi.arrayexpress2.magetab.renderer.SDRFWriter;
 import uk.ac.ebi.arrayexpress2.magetab.validator.Validator;
 
 public class JSONUtils {
@@ -82,32 +89,32 @@ public class JSONUtils {
 		}		
 	}
 	public static JSONArray getErrorArray(File idf, File sdrf) throws UploadActionException {
+		
 		try {
-			
-			// make a new parser, in read only mode
-			MAGETABParser parser = new MAGETABParser(ParserMode.READ_ONLY);
-
-			// register error item listener
+//			// make a new parser, in read only mode
+//			MAGETABParser parser = new MAGETABParser();
+//
+//			// register error item listener
 			final List<ErrorItem> errorList = new ArrayList<ErrorItem>();
-
-			parser.addErrorItemListener(new ErrorItemListener() {
-				public void errorOccurred(ErrorItem item) {
-					errorList.add(item);
-				}
-			});
-			
-			// Create validataor 
-			Validator<MAGETABInvestigation> validator = new SemanticValidator(idf.getAbsolutePath());
-
-			// set validator on the parser
-			parser.setValidator(validator);
-
-			// do parse
-			System.out.println("Parsing " + idf.getAbsolutePath() + "...");
-
-			// need to get the url of this file, as the parser only takes urls
-			parser.parse(idf.toURI().toURL());
-			
+//
+//			parser.addErrorItemListener(new ErrorItemListener() {
+//				public void errorOccurred(ErrorItem item) {
+//					errorList.add(item);
+//				}
+//			});
+//			
+//			// Create validataor 
+//			Validator<MAGETABInvestigation> validator = new SemanticValidator(idf.getAbsolutePath());
+//
+//			// set validator on the parser
+//			parser.setValidator(validator);
+//
+//			// do parse
+//			System.out.println("Parsing " + idf.getAbsolutePath() + "...");
+//
+//			// need to get the url of this file, as the parser only takes urls
+//			parser.parse(idf.toURI().toURL());
+//			
 			int i =0;
 			JSONArray errorArray= new JSONArray();
 
@@ -123,22 +130,48 @@ public class JSONUtils {
 			}
 			return errorArray;
 			
-		} catch (ParseException e) {
-			// This happens if parsing failed.
-			// Any errors here will also have been reported by the listener
-			e.printStackTrace();
-			throw new UploadActionException("Validation Failed");
-		} catch (MalformedURLException e) {
-			// This is if the url from the file is bad
-			e.printStackTrace();
-			throw new UploadActionException("Validation Failed");
+//		} catch (ParseException e) {
+//			// This happens if parsing failed.
+//			// Any errors here will also have been reported by the listener
+//			e.printStackTrace();
+//			throw new UploadActionException("Validation Failed");
+//		} catch (MalformedURLException e) {
+//			// This is if the url from the file is bad
+//			e.printStackTrace();
+//			throw new UploadActionException("Validation Failed");
 		} catch (JSONException e) {
 			e.printStackTrace();
 			throw new UploadActionException("Validation Failed");
+		} catch (Exception e){
+			e.printStackTrace();
+			throw new UploadActionException("Something else failed");
 		}
+	}
+	public static JSONArray getJSONArrayFromIDF(IDF object){
+		StringWriter out = new StringWriter();
+		IDFWriter writer = new IDFWriter(out);
+		try {
+			writer.write(object);
+			return getJSONArrayFromString(out.toString());	
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return getJSONArrayFromString("Error Writing Parsing");
 		
 	}
-	public static JSONArray getJSONArrayFromString(String oneLongString){
+	public static JSONArray getJSONArrayFromSDRF(SDRF object){
+		StringWriter out = new StringWriter();
+		SDRFWriter writer = new SDRFWriter(out);
+		try {
+			writer.write(object);
+			return getJSONArrayFromString(out.toString());	
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return getJSONArrayFromString("Error Writing Parsing");
+		
+	}
+	private static JSONArray getJSONArrayFromString(String oneLongString){
 		//01_Create Array Of rows by splitting on new line
 		String[] rows = oneLongString.split("\\r?\\n");
 		

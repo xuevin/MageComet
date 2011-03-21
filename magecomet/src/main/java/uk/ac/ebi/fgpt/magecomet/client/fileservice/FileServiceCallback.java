@@ -15,7 +15,6 @@ public class FileServiceCallback implements AsyncCallback<String> {
 	public void onSuccess(String url) {
 		String fileDownloadURL = GWT.getHostPageBaseURL()
 				+ "magecomet/DownloadServlet" + "?fileURL=" + URL.encode(url);
-
 		Frame fileDownloadFrame = new Frame(fileDownloadURL);
 		fileDownloadFrame.setSize("0px", "0px");
 		fileDownloadFrame.setVisible(false);

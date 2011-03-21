@@ -9,7 +9,7 @@ import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
-public class GuiMediator {
+public class GuiMediator{
 	private TagCloudWindow tagCloudWindow;
 	private SDRF_Section sdrfSection;
 	private IDF_Section idfSection;
@@ -124,7 +124,10 @@ public class GuiMediator {
 		return currentSDRF;
 	}
 	public String getSDRFAsString() {
-		return sdrfSection.getSDRFAsString();
+		return sdrfSection.getString();
+	}
+	public String getIDFAsString() {
+		return idfSection.getString();
 	}
 	public void passDataToTagCloud(JSONObject jsonObject) {
 //		System.out.println("I dont get it");

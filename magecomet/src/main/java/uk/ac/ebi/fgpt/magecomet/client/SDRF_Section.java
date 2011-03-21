@@ -21,7 +21,7 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
 import com.smartgwt.client.widgets.tab.TabSet;
 
-public class SDRF_Section extends SectionStackSection{
+public class SDRF_Section extends SectionStackSection implements MageTabFile{
 	private final ListGrid sdrfTable = new ListGrid();;
 	private final TabSet automaticFunctionEditor = new TabSet();
 	private final IButton editColumnsButton = new IButton("Edit Columns");  
@@ -133,7 +133,7 @@ public class SDRF_Section extends SectionStackSection{
     	
 	}
 	
-	public String getSDRFAsString(){
+	public String getString(){
 		String sdrfAsString ="";
 		if(sdrfTable.getFields().length!=0){
 			
@@ -146,36 +146,8 @@ public class SDRF_Section extends SectionStackSection{
 				sdrfAsString.replaceAll("\\s+$", "");//Remove last tab
 			}
 			sdrfAsString+="\n";
-			
-//		final String stringRecords="";
-//		//Print out all records
-//		DSCallback callback = new DSCallback() {
-//			
-//			public void execute(DSResponse response, Object rawData, DSRequest request) {
-//				String recordsString ="";
-//				ListGridField[] listOfFields = sdrfTable.getAllFields();
-//				
-//				//For all records
-//				for(ListGridRecord rec:sdrfTable.getRecords()){
-//					//and for each column
-//					String output = "";
-//					for(ListGridField column:listOfFields){
-//						if(!column.getTitle().equals("Key")){
-//								output+=(rec.getAttribute(column.getName())+"\n");
-//						}
-//					}
-//					output.replaceAll("\\s+$", "");//Remove last tab
-//					recordsString+=output+"\n";
-//				}
-//				recordsString.replaceAll("\\s+$", "");//Remove last line return
-//				stringRecords.concat(recordsString);
-//			}
-//		};
-//		sdrfTable.clearCriteria(callback, null);
-			
+
 			for(DataClass record:sdrfTable.getDataSource().getTestData()){
-//				System.out.println(record.getAttribute("key"));
-//				System.out.println(record.getAttribute("1"));
 				for(ListGridField column:listOfFields){
 					if(!column.getTitle().equals("Key")){
 						
@@ -190,7 +162,6 @@ public class SDRF_Section extends SectionStackSection{
 				sdrfAsString+="\n";
 			}
 			sdrfAsString=sdrfAsString.trim();//Remove last new line
-			
 			
 			return sdrfAsString;
 		}

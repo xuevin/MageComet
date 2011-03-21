@@ -11,7 +11,6 @@ import gwtupload.client.IUploadStatus.Status;
 import gwtupload.client.IUploader.UploadedInfo;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -35,7 +34,6 @@ import com.smartgwt.client.widgets.layout.VStack;
 import com.smartgwt.client.widgets.tab.Tab;
 
 public class LoadTab extends Tab{
-	private SuggestBox EFOSuggestBox;
 	private GuiMediator guiMediator;
 	private final TextItem accessionInput = new TextItem("accession","Experiment Accession");
 	private FTPServiceAsync ftpServiceAsync = GWT.create(FTPService.class);
@@ -71,7 +69,6 @@ public class LoadTab extends Tab{
 		});
 
 		
-		
 		loadImage.setSize(16);
 		HStack hStack = new HStack();
 		hStack.setHeight(15);
@@ -79,7 +76,6 @@ public class LoadTab extends Tab{
 		hStack.addMember(submit);
 		hStack.addMember(loadImage);
 		hStack.setDefaultLayoutAlign(VerticalAlignment.CENTER);
-		
 		loadImage.setVisibility(Visibility.HIDDEN);
 		
 		
@@ -87,16 +83,13 @@ public class LoadTab extends Tab{
 		/*
 		 * GWT Components 
 		 */
-		SearchOracle searchOracle = new SearchOracle();
-		EFOSuggestBox = new SuggestBox(searchOracle);
-		EFOSuggestBox.setLimit(3);   // Set the limit to 5 suggestions
+		
 		
 		MultiUploader dataUploader = new MultiUploader();
 		dataUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
 		
 		HorizontalPanel uploadPanel = new HorizontalPanel();
 		uploadPanel.add(dataUploader);
-		uploadPanel.add(EFOSuggestBox);
 		uploadPanel.add(new com.google.gwt.user.client.ui.Label("EFO Search"));
 		uploadPanel.setHeight("70px");
 		
@@ -132,8 +125,8 @@ public class LoadTab extends Tab{
 				guiMediator.passDataToIDFSection(jsonObject);
 				guiMediator.passDataToErrorsTab(jsonObject);
 				guiMediator.passDataToTagCloud(jsonObject);
-				guiMediator.setCurrentIDF((accessionInput.getDisplayValue()+".idf.txt").toUpperCase());
-				guiMediator.setCurrentSDRF((accessionInput.getDisplayValue()+"sdrf.txt").toUpperCase());
+				guiMediator.setCurrentIDF((accessionInput.getDisplayValue()).toUpperCase()+".idf.txt");
+				guiMediator.setCurrentSDRF((accessionInput.getDisplayValue()).toUpperCase()+"sdrf.txt");
 				loadImage.setVisibility(Visibility.HIDDEN);
 			}
 			
@@ -153,7 +146,7 @@ public class LoadTab extends Tab{
 			if (uploader.getStatus() == Status.SUCCESS) {
 				
 				UploadedInfo info = uploader.getServerInfo();
-				
+
 				System.out.println("File name " + info.name);
 				
 				if(info.name==null){
@@ -162,6 +155,7 @@ public class LoadTab extends Tab{
 				}
 
 				// Here is the string returned in your servlet
+			
 				JSONObject jsonObject = JSONParser.parseStrict(info.message)
 						.isObject();
 				

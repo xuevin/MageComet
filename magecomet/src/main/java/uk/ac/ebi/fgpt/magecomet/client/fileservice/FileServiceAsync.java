@@ -4,6 +4,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface FileServiceAsync {
 	
-	void writeFile(String experimentAccession,String tableAsAString, AsyncCallback<String> callback);
+	void writeFile(String fileName,String tableAsAString, AsyncCallback<String> callback);
 
 }

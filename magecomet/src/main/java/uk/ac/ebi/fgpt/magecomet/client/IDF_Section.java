@@ -4,8 +4,7 @@ import java.util.ArrayList;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.data.RecordList;
+import com.smartgwt.client.core.DataClass;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridEditEvent;
 import com.smartgwt.client.types.Overflow;
@@ -23,10 +22,9 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
 
-public class IDF_Section extends SectionStackSection{
+public class IDF_Section extends SectionStackSection implements MageTabFile{
 	
 	private ArrayList<ListGridRecord> rows;
-	private ArrayList<String> listOfAvailableFields;
 	private ListGrid idfGrid;
 	private final HTMLFlow textBox = new HTMLFlow("Experiment Description" 
 //			+ "Experiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment DescriptionExperiment Description"
@@ -46,8 +44,10 @@ public class IDF_Section extends SectionStackSection{
 		idfGrid.setEditEvent(ListGridEditEvent.DOUBLECLICK);
 		idfGrid.setCanSort(false);
 		idfGrid.setWidth("60%");
+		
+		
 		rows = new ArrayList<ListGridRecord>();
-		listOfAvailableFields = new ArrayList<String>();
+		
 		textBox.setWidth("40%");
 		textBox.setOverflow(Overflow.AUTO);
 		textBox.setMargin(5);
@@ -101,25 +101,8 @@ public class IDF_Section extends SectionStackSection{
 				
 				editRowWindow.addItem(hStack);
 				
-				// TODO Auto-generated method stub
-				
 			}
 		});
-		
-//		addItem(editFieldsButton);
-		
-		//TODO make a HLayout for this
-		
-
-//		IButton nameButton = new IButton("Click to Print");
-//		nameButton.setLeft(0);
-//		nameButton.addClickHandler(new ClickHandler() {
-//			public void onClick(ClickEvent event) {
-//				getIDF();
-//			}
-//		});
-		
-		//addItem(nameButton); 
 	}
 	public void handleJSONObject(JSONObject jsonObject){
 		JSONArray jsonArray = jsonObject.get("idfArray").isArray();
@@ -162,81 +145,39 @@ public class IDF_Section extends SectionStackSection{
 		idfGrid.setFields(listOfFields);
 		idfGrid.setData(listOfRows);
 	}
-//	public void handleJSONObject(JSONObject jsonObject){
-//		IDF_Client idf = new IDF_Client(jsonObject);
-//		Map<String,String> singleMaps = idf.getAllSingleMaps();
-//		
-//		//Iterate through the list of single valued keys and make a row (which is a listGridRecord)
-//		for(String fieldName:singleMaps.keySet()){
-//			ListGridRecord newRecord = new ListGridRecord();
-//			newRecord.setAttribute("0", fieldName);
-//			newRecord.setAttribute("1",singleMaps.get(fieldName));
-//			rows.add(newRecord);
-//		}
-//		
-//		Map<String,List<String>> multiMaps = idf.getAllMultiMaps();
-//		
-//		//Iterate through the list of multi valued keys and make a row (which is a listGridRecord)
-//		for(String fieldName:multiMaps.keySet()){
-//			ListGridRecord newRecord = new ListGridRecord();
-//			newRecord.setAttribute("0", fieldName);
-//			for(int i =0;i<multiMaps.get(fieldName).size();i++){
-//				newRecord.setAttribute(((i+1)+""),multiMaps.get(fieldName).get(i));	
+	public String getString(){
+		String isfAsString ="";
+		if(idfGrid.getFields().length!=0){
+			
+//			//Print out all fields
+			ListGridField[] listOfFields = idfGrid.getAllFields();
+//			for(ListGridField column:listOfFields){
+//				if(!column.getTitle().equals("Key")){
+//					isfAsString+=column.getTitle()+"\t";
+//				}
+//				isfAsString.replaceAll("\\s+$", "");//Remove last tab
 //			}
-//			rows.add(newRecord);
-//		}
-//
-//		
-//		updateGrid();
-////		idf.getAllMultiMaps();
-//
-//	}
-	private void updateGrid() {
-		//Get greatest number of columns
-		int longestRow = 0;
-		for(ListGridRecord record:rows){
-			if(longestRow<record.getAttributes().length){
-				longestRow=record.getAttributes().length;
-			}
-		}
-		longestRow = longestRow-2;
-		
-		//Add columns
-		ListGridField[] columnsArray = new ListGridField[longestRow]; 
-		
-		ListGridField fieldColumn = new ListGridField("0","Field");
-		fieldColumn.setCanEdit(false);
-		columnsArray[0]=fieldColumn;
-		
-		
-		for(int i=1; i < longestRow; i++){
-			columnsArray[i]=new ListGridField((""+i),(""+i));
-		}
-	
-		idfGrid.setFields(columnsArray);
-	
-		//Very round about way to get the data into an array of ListGridRecord
-		ListGridRecord[] arrayOfData = new ListGridRecord[rows.size()];
-		for(int i =0;i<rows.size();i++){
-			arrayOfData[i]=rows.get(i);
-		}
-		idfGrid.setData(arrayOfData);
-		
-	}
-	public JSONObject getIDF(){
-		//TODO -- Broken
-		RecordList recordList = idfGrid.getDataAsRecordList();
-		Record[] recordArray = recordList.toArray();
-		for(int row =0;row<recordArray.length;row++){
-			String[] rowAttribs = recordArray[row].getAttributes();
-			for(int column =0;column<rowAttribs.length;column++){
-				System.out.print(recordArray[row].getAttribute(column+"") + "\t");
-			}
-			System.out.println();
-		}
-		
-		return null;
-		
-	}
+//			isfAsString+="\n";
 
+//			for(DataClass record:idfGrid.getDataSource().getTestData()){
+			for(ListGridRecord record:idfGrid.getRecords()){
+				for(ListGridField column:listOfFields){
+//					if(!column.getTitle().equals("Key")){
+						if(record.getAttribute(column.getName())==null){
+							isfAsString+="\t";
+						}else{
+							isfAsString+=record.getAttribute(column.getName())+"\t";
+						}
+//					}
+				}
+				isfAsString=isfAsString.trim();//Remove last tab and make it a new line
+				isfAsString+="\n";
+			}
+			isfAsString=isfAsString.trim();//Remove last new line
+			
+			return isfAsString;
+		}
+		return "";
+		
+	}
 }

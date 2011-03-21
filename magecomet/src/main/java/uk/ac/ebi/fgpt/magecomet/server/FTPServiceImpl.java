@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.SocketException;
-import java.security.spec.ECField;
 import java.util.HashMap;
 
 import monq.jfa.CompileDfaException;
@@ -21,6 +20,7 @@ import uk.ac.ebi.arrayexpress2.magetab.datamodel.IDF;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.SDRF;
 import uk.ac.ebi.arrayexpress2.magetab.exception.ParseException;
 import uk.ac.ebi.arrayexpress2.magetab.parser.IDFParser;
+import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
 import uk.ac.ebi.arrayexpress2.magetab.parser.SDRFParser;
 import uk.ac.ebi.fgpt.magecomet.client.ftpservice.FTPException;
 import uk.ac.ebi.fgpt.magecomet.client.ftpservice.FTPService;
@@ -50,15 +50,20 @@ public class FTPServiceImpl extends RemoteServiceServlet implements FTPService {
 				System.out.println("DULL");
 			}
 			
-			//SDRF Parser
+			//SDRF Parser			
 			SDRFParser sdrfParser = new SDRFParser();
-			SDRF sdrf = sdrfParser.parse(sdrfFile.toURI().toURL());
-			responseJSONObject.put("sdrfArray", JSONUtils.getJSONArrayFromString(sdrf.toString()));
+			SDRF sdrf = sdrfParser.parse(sdrfFile.toURI().toURL().openStream());
+//			SDRF sdrf = sdrfParser.parse(sdrfFile.toURI().toURL());
+
+			responseJSONObject.put("sdrfArray", JSONUtils.getJSONArrayFromSDRF(sdrf));
 			
 			//IDF Parser
 			IDFParser idfParser = new IDFParser();
-			IDF idf = idfParser.parse(idfFile.toURI().toURL());
-			responseJSONObject.put("idfArray",JSONUtils.getJSONArrayFromString(idf.toString()));
+			IDF idf = idfParser.parse(idfFile.toURI().toURL().openStream());
+//			System.out.println((idf.experimentDescription));
+//			IDF idf = idfParser.parse(idfFile.toURI().toURL());
+
+			responseJSONObject.put("idfArray",JSONUtils.getJSONArrayFromIDF(idf));
 			
 			//Error Items
 			responseJSONObject.put("error",JSONUtils.getErrorArray(hashOfAccessionFilesForIDF.get(experimentAccession),

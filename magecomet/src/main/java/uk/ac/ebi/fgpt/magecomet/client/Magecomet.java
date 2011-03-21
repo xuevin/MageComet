@@ -3,6 +3,7 @@ package uk.ac.ebi.fgpt.magecomet.client;
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileService;
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileServiceAsync;
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileServiceCallback;
+import uk.ac.ebi.fgpt.magecomet.client.searchservice.SearchOracle;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -10,7 +11,9 @@ import com.google.gwt.user.client.Window;
 import com.smartgwt.client.types.Side;
 import com.smartgwt.client.types.TabBarControls;
 import com.smartgwt.client.widgets.Button;
+import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.tab.TabSet;
 
 /**
@@ -28,6 +31,7 @@ public class Magecomet implements EntryPoint {
 	private final GuiMediator guiMediator = new GuiMediator();
 
 	private final Button exportSDRFButton = new Button("Export SDRF");
+	private final Button exportIDFButton = new Button("Export IDF");
 	private final TabSet topTabSet = new TabSet();
 	private final EditTab editTab = new EditTab(guiMediator);
 	private final ErrorsTab errorTab = new ErrorsTab(guiMediator);
@@ -53,16 +57,22 @@ public class Magecomet implements EntryPoint {
 		topTabSet.addTab(editTab);
 		topTabSet.addTab(errorTab);
 		
-		topTabSet.setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER,exportSDRFButton);
+	
+		SearchOracle searchOracle = new SearchOracle();
+		SuggestCanvasItem suggestCanvasItem= new SuggestCanvasItem("suggestBox", "suggestBox", searchOracle);
+		
+		
+		topTabSet.setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER,suggestCanvasItem,exportIDFButton,exportSDRFButton);
 //		topTabSet.moveBy(0, 80);
 		topTabSet.show();
 
 		
 
-		
-		//===================
+		/*
+		 * Buttons
+		 */
 		exportSDRFButton.setIcon("[SKIN]actions/download.png");
-		exportSDRFButton.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
+		exportSDRFButton.addClickHandler(new ClickHandler() {
 			
 			public void onClick(ClickEvent event) {
 				if(!guiMediator.getSDRFAsString().equals("")){
@@ -71,7 +81,18 @@ public class Magecomet implements EntryPoint {
 				
 			}
 		});
-		//====================
+		exportIDFButton.setIcon("[SKIN]actions/download.png");
+		exportIDFButton.addClickHandler(new ClickHandler() {
+			
+			public void onClick(ClickEvent event) {
+				if(!guiMediator.getSDRFAsString().equals("")){
+					fileService.writeFile(guiMediator.getCurrentIDF(), guiMediator.getIDFAsString(), new FileServiceCallback());	
+				}
+				
+			}
+		});
+		
+		
 		
 		
 		

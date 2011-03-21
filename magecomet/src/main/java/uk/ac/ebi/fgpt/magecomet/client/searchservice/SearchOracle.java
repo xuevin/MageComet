@@ -1,5 +1,7 @@
 package uk.ac.ebi.fgpt.magecomet.client.searchservice;
 
+import uk.ac.ebi.fgpt.magecomet.client.Highlight;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.SuggestOracle;
 
@@ -10,6 +12,7 @@ public class SearchOracle extends SuggestOracle{
 	public void requestSuggestions(Request req, Callback callback) {
 		//Adds a layer of callbacks (this makes it call the server)
 //		SearchService.Util.getInstance().getEFO(req, new SearchCallback(req, callback));
+		Highlight.highlightTerm(req.getQuery());
 		searchService.getEFO(req, new SearchServiceCallback(req, callback));
 	}
     public boolean isDisplayStringHTML() { return true; }

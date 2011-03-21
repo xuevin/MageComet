@@ -79,14 +79,16 @@ public class UploadServlet extends UploadAction{
 						// 03_Parse files. 
 						if(file.getName().contains("sdrf")){		
 							SDRFParser sdrfParser = new SDRFParser();
-							SDRF sdrf = sdrfParser.parse(file.toURI().toURL());
-							responseJSONObject.put("sdrfArray", JSONUtils.getJSONArrayFromString(sdrf.toString()));
+							SDRF sdrf = sdrfParser.parse(file.toURI().toURL().openStream());
+//							SDRF sdrf = sdrfParser.parse(file.toURI().toURL());
+							responseJSONObject.put("sdrfArray", JSONUtils.getJSONArrayFromSDRF(sdrf));
 							//Add tagcloud array of terms to JSON Object
 							responseJSONObject.put("whatizitSDRF",JSONUtils.getJSONArrayFromWhatIzIt(file, monqInput));
 						}else if(file.getName().contains("idf")){
 							IDFParser idfParser = new IDFParser();
-							IDF idf = idfParser.parse(file.toURI().toURL());
-							responseJSONObject.put("idfArray",JSONUtils.getJSONArrayFromString(idf.toString())); 
+							IDF idf = idfParser.parse(file.toURI().toURL().openStream());
+//							IDF idf = idfParser.parse(file.toURI().toURL());
+							responseJSONObject.put("idfArray",JSONUtils.getJSONArrayFromIDF(idf)); 
 							//Add tagcloud array of terms to JSON Object
 							responseJSONObject.put("whatizitIDF",JSONUtils.getJSONArrayFromWhatIzIt(file, monqInput));
 						}else{
@@ -159,6 +161,13 @@ public class UploadServlet extends UploadAction{
 			file.delete();
 		}
 	}
+//	
+//	IDF idf2 = new IDF();
+//	idf2.setLocation(URL);
+//	idfParser.parse(file.toURI().toURL().openStream(),idf2);
+	
+	
+	
 //	private List<String[]> convertMapToListOfArrays(Map<String, Set<String>> map) {
 //		List<String[]> listOfArrays = new ArrayList<String[]>();
 //		
