@@ -12,7 +12,6 @@ public class SearchOracle extends SuggestOracle{
 	public void requestSuggestions(Request req, Callback callback) {
 		//Adds a layer of callbacks (this makes it call the server)
 //		SearchService.Util.getInstance().getEFO(req, new SearchCallback(req, callback));
-		Highlight.highlightTerm(req.getQuery());
 		searchService.getEFO(req, new SearchServiceCallback(req, callback));
 	}
     public boolean isDisplayStringHTML() { return true; }

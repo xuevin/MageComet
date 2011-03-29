@@ -4,7 +4,6 @@ package uk.ac.ebi.fgpt.magecomet.client;
 import uk.ac.ebi.fgpt.magecomet.client.ftpservice.FTPException;
 import uk.ac.ebi.fgpt.magecomet.client.ftpservice.FTPService;
 import uk.ac.ebi.fgpt.magecomet.client.ftpservice.FTPServiceAsync;
-import uk.ac.ebi.fgpt.magecomet.client.searchservice.SearchOracle;
 import gwtupload.client.IUploader;
 import gwtupload.client.MultiUploader;
 import gwtupload.client.IUploadStatus.Status;
@@ -15,8 +14,6 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.SuggestBox;
-import com.smartgwt.client.types.CharacterCasing;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.types.Visibility;
 import com.smartgwt.client.widgets.Canvas;
@@ -47,7 +44,8 @@ public class LoadTab extends Tab{
 		VStack vstack = new VStack();
 		accessionInput.setWrapTitle(false);
 		accessionInput.setWidth(200);
-		accessionInput.setCharacterCasing(CharacterCasing.UPPER);  
+//		accessionInput.setCharacterCasing(CharacterCasing.UPPER);
+//		accessionInput.setMask(">");
 
 		
 		DynamicForm form = new DynamicForm();
@@ -90,7 +88,6 @@ public class LoadTab extends Tab{
 		
 		HorizontalPanel uploadPanel = new HorizontalPanel();
 		uploadPanel.add(dataUploader);
-		uploadPanel.add(new com.google.gwt.user.client.ui.Label("EFO Search"));
 		uploadPanel.setHeight("70px");
 		
 		Canvas gwtUploadCanvas = new Canvas();
@@ -125,8 +122,8 @@ public class LoadTab extends Tab{
 				guiMediator.passDataToIDFSection(jsonObject);
 				guiMediator.passDataToErrorsTab(jsonObject);
 				guiMediator.passDataToTagCloud(jsonObject);
-				guiMediator.setCurrentIDF((accessionInput.getDisplayValue()).toUpperCase()+".idf.txt");
-				guiMediator.setCurrentSDRF((accessionInput.getDisplayValue()).toUpperCase()+"sdrf.txt");
+				guiMediator.setCurrentIDFTitle((accessionInput.getDisplayValue()).toUpperCase()+".idf.txt");
+				guiMediator.setCurrentSDRFTitle((accessionInput.getDisplayValue()).toUpperCase()+"sdrf.txt");
 				loadImage.setVisibility(Visibility.HIDDEN);
 			}
 			
@@ -163,11 +160,11 @@ public class LoadTab extends Tab{
 				if (info.name.contains("sdrf")) {
 					guiMediator.passDataToSDRFSection(jsonObject);
 					guiMediator.passDataToTagCloud(jsonObject);
-					guiMediator.setCurrentSDRF(info.name);
+					guiMediator.setCurrentSDRFTitle(info.name);
 				} else if (info.name.contains("idf")) {
 					guiMediator.passDataToIDFSection(jsonObject);
 					guiMediator.passDataToTagCloud(jsonObject);
-					guiMediator.setCurrentIDF(info.name);
+					guiMediator.setCurrentIDFTitle(info.name);
 				} else {
 					// Do Nothing
 				}

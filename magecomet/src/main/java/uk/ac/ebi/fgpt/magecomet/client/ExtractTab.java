@@ -18,6 +18,7 @@ import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
 import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
+import com.smartgwt.client.widgets.form.validator.IsOneOfValidator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HStack;
@@ -62,6 +63,8 @@ public class ExtractTab extends Tab{
 		
 		columnComboBoxItem.setTitle("From");
 		columnComboBoxItem.setRequired(true);
+		columnComboBoxItem.setValidators(new IsOneOfValidator());
+
 		
         leftInput.setTitle("Left");
         leftInput.setRequired(true);
@@ -78,12 +81,14 @@ public class ExtractTab extends Tab{
 
 		
 		destinationComboBoxItem.setTitle("Type");
+		destinationComboBoxItem.setRequired(true);
 		LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
 		valueMap.put("clipboard", "Clipboard");
 		valueMap.put("characteristic", "Characteristic");
 		valueMap.put("factorvalue", "Factor Value");
 		valueMap.put("both", "Both");	        
 		destinationComboBoxItem.setValueMap(valueMap);
+		destinationComboBoxItem.setValidators(new IsOneOfValidator());
 		destinationComboBoxItem.addChangeHandler(new ChangeHandler() {  
 	            public void onChange(ChangeEvent event) {  
 	                String selectedItem = destinationComboBoxItem.getDisplayValue();
@@ -228,7 +233,6 @@ public class ExtractTab extends Tab{
 		RegExp pattern = RegExp.compile("("+left+")(.*?)("+right+")");
 		
 		String textInColumn = input;
-		
 		
 		MatchResult matcher = pattern.exec(textInColumn);
 		if(pattern.test(textInColumn)){

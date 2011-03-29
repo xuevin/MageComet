@@ -59,6 +59,9 @@ function highlightWord(node,word,doc) {
 		}
 	}
 }
+function unhighlightAll() {
+	unhighlight(document.getElementsByTagName('body')[0])
+}
 
 function unhighlight(node) {
 	// Iterate into this nodes childNodes
@@ -89,10 +92,10 @@ function localSearchHighlight(searchStr,doc) {
 	// Trim leading and trailing spaces after unescaping
 	searchstr = unescape(searchStr).replace(/^\s+|\s+$/g, "");
 	if( searchStr == '' ) return;
-	phrases = searchStr.replace(/\+/g,' ').split(/\"/);
+	//phrases = searchStr.replace(/\+/g,' ').split(/\"/);
 	// Use this next line if you would like to force the script to always
 	// search for phrases. See below as well!!!
-	//phrases = new Array(); phrases[0] = ''; phrases[1] = searchStr.replace(/\+/g,' ');
+	phrases = new Array(); phrases[0] = ''; phrases[1] = searchStr.replace(/\+/g,' ');
 	for(p=0;p<phrases.length;p++) {
 	        phrases[p] = unescape(phrases[p]).replace(/^\s+|\s+$/g, "");
 		if( phrases[p] == '' ) continue;

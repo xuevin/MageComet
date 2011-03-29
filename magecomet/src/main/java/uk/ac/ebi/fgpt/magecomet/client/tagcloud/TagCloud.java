@@ -19,23 +19,19 @@ public class TagCloud extends FlowPanel{
 		for(WordTag wtag: listOfWordTags){
 			if(wtag.getWord().equals(word)){
 				wtag.addHit();
-				refresh();
 				return;
 			}
 		}
 		listOfWordTags.add(new WordTag(word,action));
-		refresh();
 	}
 	public void addWord(String word,ClickAction action,int number){
 		for(WordTag wtag: listOfWordTags){
 			if(wtag.getWord().equals(word)){
 				wtag.addHit(number);
-				refresh();
 				return;
 			}
 		}
 		listOfWordTags.add(new WordTag(word,action,number));
-		refresh();
 	}
 	public void refresh(){
 		clear();		
@@ -45,7 +41,6 @@ public class TagCloud extends FlowPanel{
 			lbl.addClickHandler(new com.google.gwt.event.dom.client.ClickHandler() {
 				public void onClick(ClickEvent arg0) {
 					item.getClickAction().execute();
-					
 				}
 			});
 			lbl.setStyleName("");

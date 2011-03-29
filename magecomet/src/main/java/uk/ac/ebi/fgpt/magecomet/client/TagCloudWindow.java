@@ -1,5 +1,7 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
+import java.util.ArrayList;
+
 import uk.ac.ebi.fgpt.magecomet.client.tagcloud.ClickAction;
 import uk.ac.ebi.fgpt.magecomet.client.tagcloud.EFOService;
 import uk.ac.ebi.fgpt.magecomet.client.tagcloud.EFOServiceAsync;
@@ -18,10 +20,14 @@ import com.smartgwt.client.widgets.tab.TabSet;
 public class TagCloudWindow extends Window{
 	
 	private final Tab tagCloudTab1 = new Tab("Weight By Location");
-	private final Tab tagCloudTab2 = new Tab("Weight By Errors");
-	private final TagCloud tagCloud = new TagCloud();
+	private final Tab tagCloudTab2 = new Tab("Highlight Mode");
+	private final TagCloud tagCloudAutofillPopup = new TagCloud();
+	private final TagCloud tagCloudHighlight = new TagCloud();
+
 	private GuiMediator guiMediator;
 	private EFOServiceAsync efoServiceAsync = GWT.create(EFOService.class);
+	private final ArrayList<AutofillPopup> listOfActiveAutofillPopups= new ArrayList<AutofillPopup>();
+	private final ArrayList<String> listOfHighlightedTerms = new ArrayList<String>();
 
 
 	public TagCloudWindow(GuiMediator guiMediator){
@@ -29,6 +35,7 @@ public class TagCloudWindow extends Window{
 		this.guiMediator=guiMediator;
 		this.guiMediator.registerTagCloud(this);
 		
+		listOfActiveAutofillPopups.add(new AutofillPopup("RNA",efoServiceAsync,guiMediator));
 		
 		
 		setHeaderControls(HeaderControls.HEADER_LABEL,HeaderControls.MINIMIZE_BUTTON);
@@ -51,16 +58,20 @@ public class TagCloudWindow extends Window{
 		
 		
 		
-		tagCloud.setWidth("100%");
+		tagCloudAutofillPopup.setWidth("100%");
+		tagCloudHighlight.setWidth("100%");
 		
 		Canvas gwtCanvas = new Canvas();
-		gwtCanvas.addChild(tagCloud);
+		gwtCanvas.addChild(tagCloudAutofillPopup);
+		
+		Canvas gwtCanvas2 = new Canvas();
+		gwtCanvas2.addChild(tagCloudHighlight);
 
 		tagCloudTab1.setPane(gwtCanvas);
 		
 		
-		HTMLFlow temp = new HTMLFlow("Development");
-		tagCloudTab2.setPane(temp);
+//		HTMLFlow temp = new HTMLFlow("Development");
+		tagCloudTab2.setPane(gwtCanvas2);
 	
 
 
@@ -69,12 +80,54 @@ public class TagCloudWindow extends Window{
 		minimize();
 	}
 	public void addWord(final String word, int number){
-		ClickAction action = new ClickAction() {
+		
+		
+		ClickAction popupAction = new ClickAction() {
 			public void execute(){
-				new AutofillPopup(word,efoServiceAsync,guiMediator);				
+				for(AutofillPopup popup: listOfActiveAutofillPopups){
+					if(popup.getTitle().equals(word)){
+							popup.updateColumns();
+							popup.centerInPage();
+							popup.show();
+							return;
+					}
+				}
+				listOfActiveAutofillPopups.add(new AutofillPopup(word,efoServiceAsync,guiMediator));
 			}
-			
 		};
-		tagCloud.addWord(word, action, number);
+		
+		ClickAction highlightAction = new ClickAction() {
+			public void execute(){
+				boolean found = false;
+				for(String title: listOfHighlightedTerms){
+					if(title.equals(word)){
+						listOfHighlightedTerms.remove(title);
+						found=true;
+						break;
+					}
+				}
+				//If it was not found, add it to the list;
+				if(!found){
+					listOfHighlightedTerms.add(word);
+					Highlight.highlightTerm(word);	
+					
+				}else{
+					Highlight.unhighlightAll();
+					for(String word:listOfHighlightedTerms){
+						Highlight.highlightTerm(word);	
+					}
+				}
+				
+				
+				
+			}
+		};
+		tagCloudAutofillPopup.addWord(word, popupAction, number);
+		tagCloudHighlight.addWord(word, highlightAction, number);
+		
+	}
+	public void refreshTagClouds(){
+		tagCloudAutofillPopup.refresh();
+		tagCloudHighlight.refresh();
 	}
 }

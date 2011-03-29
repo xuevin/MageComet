@@ -18,9 +18,10 @@ public class GuiMediator{
 	private ExtractTab extractTab;
 	private LoadTab loadTab;
 	private ErrorsTab errorsTab;
+	private EditTab editTab;
+	private LinkedHashMap<String, String> columnValueMap; 
 	private String currentIDF;
 	private String currentSDRF;
-	private EditTab editTab;
 	
 
 	public GuiMediator(){
@@ -60,15 +61,15 @@ public class GuiMediator{
 	 */
 	public void updateColumnsInComboBoxes(ListGridField[] listGridFields) {
 		//Update Data source in table
-		LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();  
+		columnValueMap = new LinkedHashMap<String, String>();  
 		for(ListGridField field:listGridFields){
-			valueMap.put(field.getName(), field.getTitle());
+			columnValueMap.put(field.getName(), field.getTitle());
 		}
 		if(filterTab!=null){
-			filterTab.updateColumnsInComboBox(valueMap);
+			filterTab.updateColumnsInComboBox(columnValueMap);
 		}
 		if(extractTab!=null){
-			extractTab.updateColumnsInComboBox(valueMap);	
+			extractTab.updateColumnsInComboBox(columnValueMap);	
 		}
 	}
 	/**
@@ -84,6 +85,15 @@ public class GuiMediator{
 		sdrfSection.addAttributeToAllRecords(uniqueKey,value);
 		sdrfSectionColumnEditor.show();
 	}
+	/**
+	 * Adds a Characteristic column to the end of the document
+	 * @param title the name of the field
+	 * @param value the value to be filled in for all records
+	 */
+	public void addColumnToCharacteristicAndAddValueToAllRecords(String title,String value){
+		String uniqueKey = sdrfSectionColumnEditor.addNewCharacteristicColumnAndGetKey(title);
+		sdrfSection.addAttributeToAllRecords(uniqueKey,value);
+	}
 	public String addFactorValueToActiveGrid(String title){
 		return sdrfSectionColumnEditor.addNewFactorValueColumnAndGetKey(title);
 	}
@@ -93,14 +103,11 @@ public class GuiMediator{
 	public String addColumnToClipboard(String title){
 		return sdrfSectionColumnEditor.addNewColumnToClipboardAndGetKey(title);
 	}
-	public void passDataToFilterTab(ListGrid sdrfTable) {
-		filterTab.setData(sdrfTable);
-	}
 	public void passAllRecordsToExtractTab(ListGridRecord[] listGridRecords,ListGrid sdrfTable){
 		extractTab.setRecords(listGridRecords,sdrfTable);
 	}
-	public void refreshTable(){
-		sdrfSection.refreshTable();
+	public void passDataToFilterTab(ListGrid sdrfTable) {
+		filterTab.setData(sdrfTable);
 	}
 	public void passDataToSDRFSection(JSONObject object){
 		sdrfSection.handleJSONObject(object);
@@ -111,16 +118,42 @@ public class GuiMediator{
 	public void passDataToErrorsTab(JSONObject object){
 		errorsTab.handelJSONArrayOfErrors(object);
 	}
-	public void setCurrentIDF(String currentIDF) {
+	public void passDataToTagCloud(JSONObject jsonObject) {
+	//		System.out.println("I dont get it");
+			
+			if(jsonObject.get("whatizitIDF")!=null){
+	//			System.out.println("NOt Null");
+				JSONArray tagWords = jsonObject.get("whatizitIDF").isArray() ;
+				for (int i = 0; i < tagWords.size(); i++) {
+					final String word = tagWords.get(i).isString().stringValue();
+					tagCloudWindow.addWord(word,1);
+				}
+			}
+	//		System.out.println("I dont get it?");
+			
+			if((jsonObject.get("whatizitSDRF")!=null)){
+				JSONArray tagWords=jsonObject.get("whatizitSDRF").isArray();
+	//			System.out.println("Still not null");
+	
+				for (int i = 0; i < tagWords.size(); i++) {
+					final String word = tagWords.get(i).isString().stringValue();
+					tagCloudWindow.addWord(word,2);
+				}
+			}
+			tagCloudWindow.refreshTagClouds();
+	
+	//		System.out.println("It never finishes...");
+		}
+	public void setCurrentIDFTitle(String currentIDF) {
 		this.currentIDF = currentIDF;
 	}
-	public String getCurrentIDF() {
+	public String getCurrentIDFTitle() {
 		return currentIDF;
 	}
-	public void setCurrentSDRF(String currentSDRF) {
+	public void setCurrentSDRFTitle(String currentSDRF) {
 		this.currentSDRF = currentSDRF;
 	}
-	public String getCurrentSDRF() {
+	public String getCurrentSDRFTitle() {
 		return currentSDRF;
 	}
 	public String getSDRFAsString() {
@@ -129,38 +162,45 @@ public class GuiMediator{
 	public String getIDFAsString() {
 		return idfSection.getString();
 	}
-	public void passDataToTagCloud(JSONObject jsonObject) {
-//		System.out.println("I dont get it");
-		
-		if(jsonObject.get("whatizitIDF")!=null){
-//			System.out.println("NOt Null");
-			JSONArray tagWords = jsonObject.get("whatizitIDF").isArray() ;
-			for (int i = 0; i < tagWords.size(); i++) {
-				final String word = tagWords.get(i).isString().stringValue();
-				tagCloudWindow.addWord(word,1);
-			}
+	public LinkedHashMap<String,String> getColumnValueMap(){
+		if(columnValueMap==null){
+			System.err.println("COLUMN VALUE MAP IS NULL!");
+			return new LinkedHashMap<String, String>();
 		}
-//		System.out.println("I dont get it?");
-		
-		if((jsonObject.get("whatizitSDRF")!=null)){
-			JSONArray tagWords=jsonObject.get("whatizitSDRF").isArray();
-//			System.out.println("Still not null");
-
-			for (int i = 0; i < tagWords.size(); i++) {
-				final String word = tagWords.get(i).isString().stringValue();
-				tagCloudWindow.addWord(word,2);
-			}
-		}
-//		System.out.println("It never finishes...");
+		return columnValueMap;
 	}
-//	public void addWordToTagCloud(final String word, int weight) {
-//		if(tagCloudWindow!=null){
-//			tagCloudWindow.addWord(word,weight);
-//		}//TODO make this a special Tab
-//	}
-
-
-	
-
-
+	public LinkedHashMap<String,String> getFactorValuesMap(){
+		if(columnValueMap==null){
+			System.err.println("COLUMN VALUE MAP IS NULL!");
+			return new LinkedHashMap<String, String>();
+		}
+		LinkedHashMap<String,String> factorValuesMap = new LinkedHashMap<String, String>();
+		for(String key:columnValueMap.keySet()){
+			String value = columnValueMap.get(key);
+			if(value.contains("Factor Value")){
+				factorValuesMap.put(key, value);	
+			}
+		}
+		return factorValuesMap;
+	}
+	public LinkedHashMap<String,String> getCharacteristicMap(){
+		if(columnValueMap==null){
+			System.err.println("COLUMN VALUE MAP IS NULL!");
+			return new LinkedHashMap<String, String>();
+		}
+		LinkedHashMap<String,String> characteristicValuesMap = new LinkedHashMap<String, String>();
+		for(String key:columnValueMap.keySet()){
+			String value = columnValueMap.get(key);
+			if(value.contains("Characteristics")){
+				characteristicValuesMap.put(key, value);	
+			}
+		}
+		return characteristicValuesMap;
+	}
+	public void refreshTable(){
+		sdrfSection.refreshTable();
+	}
+	public void addAttributeToSelectedRecords(String fromColumn, String destinationColumn, String filterTerm){
+		sdrfSection.addAttributeToSelectedRecords(fromColumn, destinationColumn, filterTerm);
+	}
 }

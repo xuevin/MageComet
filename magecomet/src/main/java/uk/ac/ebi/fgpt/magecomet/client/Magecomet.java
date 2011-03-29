@@ -59,11 +59,13 @@ public class Magecomet implements EntryPoint {
 		
 	
 		SearchOracle searchOracle = new SearchOracle();
-		SuggestCanvasItem suggestCanvasItem= new SuggestCanvasItem("suggestBox", "suggestBox", searchOracle);
+		final SuggestCanvas suggestCanvasItem= new SuggestCanvas("suggestBox", "suggestBox", searchOracle);
+		
+		
 		
 		
 		topTabSet.setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER,suggestCanvasItem,exportIDFButton,exportSDRFButton);
-//		topTabSet.moveBy(0, 80);
+//		topTabSet.moveBy(0, 140);
 		topTabSet.show();
 
 		
@@ -76,7 +78,7 @@ public class Magecomet implements EntryPoint {
 			
 			public void onClick(ClickEvent event) {
 				if(!guiMediator.getSDRFAsString().equals("")){
-					fileService.writeFile(guiMediator.getCurrentSDRF(), guiMediator.getSDRFAsString(), new FileServiceCallback());	
+					fileService.writeFile(guiMediator.getCurrentSDRFTitle(), guiMediator.getSDRFAsString(), new FileServiceCallback());	
 				}
 				
 			}
@@ -86,7 +88,7 @@ public class Magecomet implements EntryPoint {
 			
 			public void onClick(ClickEvent event) {
 				if(!guiMediator.getSDRFAsString().equals("")){
-					fileService.writeFile(guiMediator.getCurrentIDF(), guiMediator.getIDFAsString(), new FileServiceCallback());	
+					fileService.writeFile(guiMediator.getCurrentIDFTitle(), guiMediator.getIDFAsString(), new FileServiceCallback());	
 				}
 				
 			}

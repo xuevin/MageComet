@@ -58,6 +58,8 @@ public class SDRF_Section extends SectionStackSection implements MageTabFile{
         sdrfTable.setSelectionType(SelectionStyle.MULTIPLE);
         sdrfTable.setShowBackgroundComponent(false);
         sdrfTable.setCanReorderFields(true);
+        sdrfTable.setDrawAheadRatio((float)2);
+        
         
         editColumnsButton.setWidth(120);
 		editColumnsButton.setIcon("[SKIN]DatabaseBrowser/column.png");
@@ -116,14 +118,11 @@ public class SDRF_Section extends SectionStackSection implements MageTabFile{
 		sdrfTable.setFields(JSONToListGridField(jsonArray));
 		sdrfTable.fetchData();
 		
-		
-		
 		//Pass data to FilterTab
 		guiMediator.passDataToFilterTab(sdrfTable);
 		
 		//Pass all fields to Extract Tab
 		guiMediator.passAllRecordsToExtractTab(listOfAllRecords,sdrfTable);
-
 		
     	//Create New Column Editor Window
 		columnEditorWindow = new SDRF_Section_ColumnEditor(sdrfTable,numColumnsBeforeModification,guiMediator);
@@ -174,6 +173,15 @@ public class SDRF_Section extends SectionStackSection implements MageTabFile{
 			sdrfTable.updateData(record);
 		}
 		sdrfTable.saveAllEdits();	
+	}
+	public void addAttributeToSelectedRecords(final String fromColumn, final String destinationColumn, final String efoTerm){
+		for(ListGridRecord record:listOfAllRecords){
+			if(record.getAttribute(fromColumn).contains(efoTerm)){
+				record.setAttribute(destinationColumn, efoTerm);	
+			}
+			sdrfTable.updateData(record);
+		}
+		sdrfTable.saveAllEdits();
 	}
 	/**
 	 * Converts a JSON array into an array of ListGridRecords.
@@ -297,6 +305,6 @@ public class SDRF_Section extends SectionStackSection implements MageTabFile{
 		sdrfTable.setFields(newListGridFields);
 	}
 	public void refreshTable() {
-		sdrfTable.fetchData();;		
+		sdrfTable.fetchData();	
 	}
 }

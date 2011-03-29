@@ -44,6 +44,7 @@ public class IDF_Section extends SectionStackSection implements MageTabFile{
 		idfGrid.setEditEvent(ListGridEditEvent.DOUBLECLICK);
 		idfGrid.setCanSort(false);
 		idfGrid.setWidth("60%");
+		idfGrid.setShowAllRecords(true);
 		
 		
 		rows = new ArrayList<ListGridRecord>();
