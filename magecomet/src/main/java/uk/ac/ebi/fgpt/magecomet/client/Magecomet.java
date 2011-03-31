@@ -36,7 +36,8 @@ public class Magecomet implements EntryPoint {
 	private final EditTab editTab = new EditTab(guiMediator);
 	private final ErrorsTab errorTab = new ErrorsTab(guiMediator);
 	private final LoadTab loadTab = new LoadTab(guiMediator);
-	
+	private final SearchOracle searchOracle = new SearchOracle();
+	private final SuggestCanvas suggestCanvasItem= new SuggestCanvas("suggestBox", "suggestBox", searchOracle);
 
 	/**
 	 * Declares the Variables that will be instantiated on module load / file load
@@ -45,7 +46,6 @@ public class Magecomet implements EntryPoint {
 	private FileServiceAsync fileService = GWT.create(FileService.class);
 	
 	public void onModuleLoad() {
-        
 		/*
 		 * SmartGWT components
 		 */
@@ -56,14 +56,6 @@ public class Magecomet implements EntryPoint {
 		topTabSet.addTab(loadTab);
 		topTabSet.addTab(editTab);
 		topTabSet.addTab(errorTab);
-		
-	
-		SearchOracle searchOracle = new SearchOracle();
-		final SuggestCanvas suggestCanvasItem= new SuggestCanvas("suggestBox", "suggestBox", searchOracle);
-		
-		
-		
-		
 		topTabSet.setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER,suggestCanvasItem,exportIDFButton,exportSDRFButton);
 //		topTabSet.moveBy(0, 140);
 		topTabSet.show();
@@ -75,7 +67,6 @@ public class Magecomet implements EntryPoint {
 		 */
 		exportSDRFButton.setIcon("[SKIN]actions/download.png");
 		exportSDRFButton.addClickHandler(new ClickHandler() {
-			
 			public void onClick(ClickEvent event) {
 				if(!guiMediator.getSDRFAsString().equals("")){
 					fileService.writeFile(guiMediator.getCurrentSDRFTitle(), guiMediator.getSDRFAsString(), new FileServiceCallback());	
@@ -83,6 +74,7 @@ public class Magecomet implements EntryPoint {
 				
 			}
 		});
+		
 		exportIDFButton.setIcon("[SKIN]actions/download.png");
 		exportIDFButton.addClickHandler(new ClickHandler() {
 			
@@ -93,10 +85,6 @@ public class Magecomet implements EntryPoint {
 				
 			}
 		});
-		
-		
-		
-		
 		
 		//*****************************
         // Layout

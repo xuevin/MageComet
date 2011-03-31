@@ -32,16 +32,19 @@ import com.smartgwt.client.widgets.tab.Tab;
 
 public class LoadTab extends Tab{
 	private GuiMediator guiMediator;
+	
 	private final TextItem accessionInput = new TextItem("accession","Experiment Accession");
 	private FTPServiceAsync ftpServiceAsync = GWT.create(FTPService.class);
-	private Img loadImage = new Img("[SKIN]loadingSmall.gif");
+	private final Img loadImage = new Img("[SKIN]loadingSmall.gif");
+	private final VStack vstack = new VStack();
+	
 	public LoadTab(GuiMediator guiMediator){
 		super("Load");
 		this.guiMediator=guiMediator;
 		this.guiMediator.registerLoadTab(this);
 		
 		
-		VStack vstack = new VStack();
+		
 		accessionInput.setWrapTitle(false);
 		accessionInput.setWidth(200);
 //		accessionInput.setCharacterCasing(CharacterCasing.UPPER);

@@ -64,10 +64,10 @@ public class FilterTab extends Tab{
     	setPane(filterStack);
 
 	}
-
 	public void setData(final ListGrid listGrid) {
+		//Clear all previous filters
 		filterStack.removeMembers(filterStack.getMembers());
-		//Filter Builder
+		//Make a new filter builder
 		filterBuilder  = new FilterBuilder();
 		filterBuilder.setSaveOnEnter(true);
 		filterBuilder.setDataSource(listGrid.getDataSource());
@@ -76,7 +76,8 @@ public class FilterTab extends Tab{
 				listGrid.fetchData(filterBuilder.getCriteria());
 			}
 		});
-		//Filter Stack
+		
+		//Make a filter filter Button
 		filterButton = new IButton("Filter");
 		filterButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {

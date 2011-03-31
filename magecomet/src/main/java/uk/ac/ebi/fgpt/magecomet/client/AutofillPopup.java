@@ -1,7 +1,6 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
 
-import java.util.LinkedHashMap;
 
 import uk.ac.ebi.fgpt.magecomet.client.tagcloud.EFOServiceAsync;
 
@@ -27,23 +26,24 @@ import com.smartgwt.client.widgets.layout.VStack;
 public class AutofillPopup extends Window{
 
 
+	private final HTMLFlow efo_description = new HTMLFlow();
     private final StaticTextItem termSourceNum = new StaticTextItem();
+    private final StaticTextItem termSourceRef = new StaticTextItem();
+    private final StaticTextItem sourceColumnInstructions = new StaticTextItem();
     private final CheckboxItem newCharacteristicCheckbox = new CheckboxItem();  
     private final CheckboxItem newFactorValueCheckbox = new CheckboxItem();  
     private final CheckboxItem termSourceRefCheckbox = new CheckboxItem();  
-    private final StaticTextItem termSourceRef = new StaticTextItem();
     private final CheckboxItem termSourceNumberCheckbox = new CheckboxItem();
     private final CheckboxItem addToAllRecordsCheckBox = new CheckboxItem();
-    private final ComboBoxItem characteristicInput = new ComboBoxItem();
-    private final ComboBoxItem factorValueInput = new ComboBoxItem();
-	private final HTMLFlow efo_description = new HTMLFlow();
-	private final ComboBoxItem sourceColumnCombobox = new ComboBoxItem();
-	private final StaticTextItem sourceColumnInstructions = new StaticTextItem();
 	private final CheckboxItem existingFactorValueCheckbox = new CheckboxItem();
 	private final CheckboxItem existingCharacteristicCheckbox = new CheckboxItem();
 	private final ComboBoxItem existingFactorValueInput = new ComboBoxItem();
+	private final ComboBoxItem characteristicInput = new ComboBoxItem();
+	private final ComboBoxItem sourceColumnCombobox = new ComboBoxItem();
+	private final ComboBoxItem factorValueInput = new ComboBoxItem();
     private final ComboBoxItem existingCharacteristicInput = new ComboBoxItem();
 	private final DynamicForm form = new DynamicForm();
+	private final VStack vStack = new VStack();
 
     private GuiMediator guiMediator;
 
@@ -240,18 +240,18 @@ public class AutofillPopup extends Window{
 							return;
 						}
 						if(existingCharacteristicChecked){
-							guiMediator.addAttributeToSelectedRecords(sourceColumn, existingCharacteristicInputColumnName, efoTerm);
+							guiMediator.addValueToSelectedRecords(sourceColumn, existingCharacteristicInputColumnName, efoTerm);
 						}
 						if(existingFactorValueChecked){
-							guiMediator.addAttributeToSelectedRecords(sourceColumn, existingFactorValueInputColumnName, efoTerm);
+							guiMediator.addValueToSelectedRecords(sourceColumn, existingFactorValueInputColumnName, efoTerm);
 						}
 						if(newCharacteristicChecked){
-							String newColumnName = guiMediator.addCharacteristicToActiveGrid(characteristicString);
-							guiMediator.addAttributeToSelectedRecords(sourceColumn, newColumnName, efoTerm);
+							String newColumnName = guiMediator.addCharacteristicToActiveGridAndGetKey(characteristicString);
+							guiMediator.addValueToSelectedRecords(sourceColumn, newColumnName, efoTerm);
 						}
 						if(newFactorValueChecked){
-							String newColumnName = guiMediator.addFactorValueToActiveGrid(factorValueString);
-							guiMediator.addAttributeToSelectedRecords(sourceColumn, newColumnName, efoTerm);
+							String newColumnName = guiMediator.addFactorValueToActiveGridAndGetKey(factorValueString);
+							guiMediator.addValueToSelectedRecords(sourceColumn, newColumnName, efoTerm);
 
 						}
 					}
@@ -277,7 +277,7 @@ public class AutofillPopup extends Window{
         buttonsStack.addMember(saveButton);
 		buttonsStack.addMember(cancelButton);
 		
-		VStack vStack = new VStack();
+		
 		vStack.setPadding(10);
 		vStack.setAlign(Alignment.LEFT);
 		vStack.setAlign(VerticalAlignment.TOP);
@@ -295,7 +295,6 @@ public class AutofillPopup extends Window{
 		sourceColumnCombobox.setValueMap(guiMediator.getColumnValueMap());
 		existingCharacteristicInput.setValueMap(guiMediator.getCharacteristicMap());
 		existingFactorValueInput.setValueMap(guiMediator.getFactorValuesMap());
-		
 	}
 	
 	

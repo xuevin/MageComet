@@ -94,19 +94,19 @@ public class GuiMediator{
 		String uniqueKey = sdrfSectionColumnEditor.addNewCharacteristicColumnAndGetKey(title);
 		sdrfSection.addAttributeToAllRecords(uniqueKey,value);
 	}
-	public String addFactorValueToActiveGrid(String title){
+	public String addFactorValueToActiveGridAndGetKey(String title){
 		return sdrfSectionColumnEditor.addNewFactorValueColumnAndGetKey(title);
 	}
-	public String addCharacteristicToActiveGrid(String title){
+	public String addCharacteristicToActiveGridAndGetKey(String title){
 		return sdrfSectionColumnEditor.addNewCharacteristicColumnAndGetKey(title);
 	}
-	public String addColumnToClipboard(String title){
+	public String addColumnToClipboardAndGetKey(String title){
 		return sdrfSectionColumnEditor.addNewColumnToClipboardAndGetKey(title);
 	}
 	public void passAllRecordsToExtractTab(ListGridRecord[] listGridRecords,ListGrid sdrfTable){
 		extractTab.setRecords(listGridRecords,sdrfTable);
 	}
-	public void passDataToFilterTab(ListGrid sdrfTable) {
+	public void passDataToFilterTab(final ListGrid sdrfTable) {
 		filterTab.setData(sdrfTable);
 	}
 	public void passDataToSDRFSection(JSONObject object){
@@ -119,30 +119,21 @@ public class GuiMediator{
 		errorsTab.handelJSONArrayOfErrors(object);
 	}
 	public void passDataToTagCloud(JSONObject jsonObject) {
-	//		System.out.println("I dont get it");
-			
 			if(jsonObject.get("whatizitIDF")!=null){
-	//			System.out.println("NOt Null");
 				JSONArray tagWords = jsonObject.get("whatizitIDF").isArray() ;
 				for (int i = 0; i < tagWords.size(); i++) {
 					final String word = tagWords.get(i).isString().stringValue();
 					tagCloudWindow.addWord(word,1);
 				}
 			}
-	//		System.out.println("I dont get it?");
-			
 			if((jsonObject.get("whatizitSDRF")!=null)){
 				JSONArray tagWords=jsonObject.get("whatizitSDRF").isArray();
-	//			System.out.println("Still not null");
-	
 				for (int i = 0; i < tagWords.size(); i++) {
 					final String word = tagWords.get(i).isString().stringValue();
 					tagCloudWindow.addWord(word,2);
 				}
 			}
 			tagCloudWindow.refreshTagClouds();
-	
-	//		System.out.println("It never finishes...");
 		}
 	public void setCurrentIDFTitle(String currentIDF) {
 		this.currentIDF = currentIDF;
@@ -200,7 +191,7 @@ public class GuiMediator{
 	public void refreshTable(){
 		sdrfSection.refreshTable();
 	}
-	public void addAttributeToSelectedRecords(String fromColumn, String destinationColumn, String filterTerm){
-		sdrfSection.addAttributeToSelectedRecords(fromColumn, destinationColumn, filterTerm);
+	public void addValueToSelectedRecords(String fromColumn, String destinationColumn, String value){
+		sdrfSection.addValueToSelectedRecords(fromColumn, destinationColumn, value);
 	}
 }

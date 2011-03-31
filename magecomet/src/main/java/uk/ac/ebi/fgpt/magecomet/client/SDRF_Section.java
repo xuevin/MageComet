@@ -174,14 +174,45 @@ public class SDRF_Section extends SectionStackSection implements MageTabFile{
 		}
 		sdrfTable.saveAllEdits();	
 	}
-	public void addAttributeToSelectedRecords(final String fromColumn, final String destinationColumn, final String efoTerm){
+	public void addValueToSelectedRecords(final String fromColumn, final String destinationColumn, final String efoTerm){
 		for(ListGridRecord record:listOfAllRecords){
-			if(record.getAttribute(fromColumn).contains(efoTerm)){
-				record.setAttribute(destinationColumn, efoTerm);	
+			if(record.getAttribute(fromColumn).toLowerCase().contains(efoTerm.toLowerCase())){
+				record.setAttribute(destinationColumn, efoTerm);		
 			}
 			sdrfTable.updateData(record);
 		}
 		sdrfTable.saveAllEdits();
+	}
+	/**
+	 * Updates the DataSource to reflect the new columns added
+	 * Because the data is edited via the listOfAllRecords, there is no worries about making 
+	 * a new data source.  
+	 * @param newListGridFields A new array of ListGridFields
+	 */
+	public void updateDataSource(ListGridField[] newListGridFields){
+		//Create a new datasource based on the list of records and the fields specified.
+		DataSource data = new DataSource("sdrf_ds");
+		DataSourceField[] fields = new DataSourceField[newListGridFields.length];
+		for(int i =1;i<newListGridFields.length;i++){
+			fields[i]=new DataSourceField(newListGridFields[i].getName(),
+					FieldType.TEXT,newListGridFields[i].getTitle());
+		}
+		//Make a primary key
+		DataSourceField key = new DataSourceField("key",FieldType.INTEGER ,"Key");
+		key.setPrimaryKey(true);
+		fields[0]=key;
+		
+		data.setFields(fields); // Need this to do filtering (Limited to filtering of input data)
+		data.setTestData(listOfAllRecords);
+		data.setClientOnly(true);
+		
+		
+		sdrfTable.setDataSource(data);
+		guiMediator.passDataToFilterTab(sdrfTable);
+		sdrfTable.setFields(newListGridFields);
+	}
+	public void refreshTable() {
+		sdrfTable.fetchData();	
 	}
 	/**
 	 * Converts a JSON array into an array of ListGridRecords.
@@ -274,37 +305,5 @@ public class SDRF_Section extends SectionStackSection implements MageTabFile{
 		key.setAutoFitWidth(true);
 		arrayOfFields[0]=key;
 		return arrayOfFields; 
-	}
-
-	/**
-	 * Updates the DataSource to reflect the new columns added
-	 * Because the data is edited via the listOfAllRecords, there is no worries about making 
-	 * a new data source.  
-	 * @param newListGridFields A new array of ListGridFields
-	 */
-	public void updateDataSource(ListGridField[] newListGridFields){
-		//Create a new datasource based on the list of records and the fields specified.
-		DataSource data = new DataSource("sdrf_ds");
-		DataSourceField[] fields = new DataSourceField[newListGridFields.length];
-		for(int i =1;i<newListGridFields.length;i++){
-			fields[i]=new DataSourceField(newListGridFields[i].getName(),
-					FieldType.TEXT,newListGridFields[i].getTitle());
-		}
-		//Make a primary key
-		DataSourceField key = new DataSourceField("key",FieldType.INTEGER ,"Key");
-		key.setPrimaryKey(true);
-		fields[0]=key;
-		
-		data.setFields(fields); // Need this to do filtering (Limited to filtering of input data)
-		data.setTestData(listOfAllRecords);
-		data.setClientOnly(true);
-		
-		
-		sdrfTable.setDataSource(data);
-		guiMediator.passDataToFilterTab(sdrfTable);
-		sdrfTable.setFields(newListGridFields);
-	}
-	public void refreshTable() {
-		sdrfTable.fetchData();	
 	}
 }

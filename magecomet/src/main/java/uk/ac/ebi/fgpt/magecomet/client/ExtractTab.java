@@ -34,22 +34,24 @@ public class ExtractTab extends Tab{
 	private final ComboBoxItem newColumn = new ComboBoxItem();
     private final TextItem leftInput = new TextItem();
 	private final TextItem rightInput = new TextItem();
-	private final HTMLFlow sampleOutput = new HTMLFlow();
 	private final ComboBoxItem destinationComboBoxItem = new ComboBoxItem("type");
+	private final HTMLFlow sampleOutput = new HTMLFlow();
+	private final HTMLFlow directions = new HTMLFlow();
+
 	private GuiMediator guiMediator;
 
 
 	public ExtractTab(GuiMediator guiMediator) {
 		this.guiMediator=guiMediator;
 		this.guiMediator.registerExtractTab(this);
-		
 		setTitle("Extract");
 		
+		
 		vstack.setHeight(40);
+		
 		hstack.setHeight(16);
 		hstack.setDefaultLayoutAlign(VerticalAlignment.CENTER);
 
-		HTMLFlow directions = new HTMLFlow();
 		directions.setHeight(20);
 		directions.setContents("Input the characters surrounding the the value that will be extracted into a new column.<br>" +
 				"To indicate the beginning of the row use \"^\" and to indicate the end of a row use \"$\"");
@@ -68,6 +70,7 @@ public class ExtractTab extends Tab{
 		
         leftInput.setTitle("Left");
         leftInput.setRequired(true);
+        
 		rightInput.setTitle("Right");
 		rightInput.setRequired(true);
 	
@@ -157,18 +160,18 @@ public class ExtractTab extends Tab{
 			//TODO add extra validation to make sure that column names are spelled correctly
 			if(destinationComboBoxItem.getValue().equals("clipboard")){
 				extractToColumnName(sdrfTable,listOfAllRecords,
-						guiMediator.addColumnToClipboard(newColumn.getValueAsString()));
+						guiMediator.addColumnToClipboardAndGetKey(newColumn.getValueAsString()));
 			}else if (destinationComboBoxItem.getValue().equals("factorvalue")){
 				extractToColumnName(sdrfTable,listOfAllRecords,
-						guiMediator.addFactorValueToActiveGrid(newColumn.getValueAsString()));
+						guiMediator.addFactorValueToActiveGridAndGetKey(newColumn.getValueAsString()));
 			}else if (destinationComboBoxItem.getValue().equals("characteristic")){
 				extractToColumnName(sdrfTable,listOfAllRecords,
-						guiMediator.addCharacteristicToActiveGrid(newColumn.getValueAsString()));
+						guiMediator.addCharacteristicToActiveGridAndGetKey(newColumn.getValueAsString()));
 			}else if (destinationComboBoxItem.getValue().equals("both")){
 				extractToColumnName(sdrfTable,listOfAllRecords,
-						guiMediator.addFactorValueToActiveGrid(newColumn.getValueAsString()));
+						guiMediator.addFactorValueToActiveGridAndGetKey(newColumn.getValueAsString()));
 				extractToColumnName(sdrfTable,listOfAllRecords,
-						guiMediator.addCharacteristicToActiveGrid(newColumn.getValueAsString()));
+						guiMediator.addCharacteristicToActiveGridAndGetKey(newColumn.getValueAsString()));
 			}
 			//Reset everything back to blanks to indicate that the extract was successful
 			leftInput.clearValue();

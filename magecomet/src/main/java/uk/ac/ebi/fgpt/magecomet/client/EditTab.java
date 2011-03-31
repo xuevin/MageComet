@@ -13,10 +13,12 @@ public class EditTab extends Tab{
 	public EditTab(GuiMediator guiMediator){
 		super("Edit");
 		this.guiMediator=guiMediator;
+		this.guiMediator.registerEditTab(this);
+		setPane(sectionStack);
+		setIcon("[SKIN]actions/edit.png");
+		
 		idfSection = new IDF_Section(guiMediator);
 		sdrfSection = new SDRF_Section(guiMediator);
-		
-		guiMediator.registerEditTab(this);
 		
 		
 		sectionStack.setVisibilityMode(VisibilityMode.MULTIPLE);
@@ -25,10 +27,9 @@ public class EditTab extends Tab{
 		sectionStack.setWidth100();
 		sectionStack.setMargin(0);
 		sectionStack.setPadding(0);
+		sectionStack.expandSection(0);
 		sectionStack.expandSection(1);
 		
-		setPane(sectionStack);
-		setIcon("[SKIN]actions/edit.png");
 	}
 
 }

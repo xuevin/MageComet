@@ -19,8 +19,8 @@ import com.smartgwt.client.widgets.tab.TabSet;
 
 public class TagCloudWindow extends Window{
 	
-	private final Tab tagCloudTab1 = new Tab("Weight By Location");
-	private final Tab tagCloudTab2 = new Tab("Highlight Mode");
+	private final Tab autofillCloud = new Tab("Weight By Location");
+	private final Tab highlightCloud = new Tab("Highlight Mode");
 	private final TagCloud tagCloudAutofillPopup = new TagCloud();
 	private final TagCloud tagCloudHighlight = new TagCloud();
 
@@ -35,7 +35,7 @@ public class TagCloudWindow extends Window{
 		this.guiMediator=guiMediator;
 		this.guiMediator.registerTagCloud(this);
 		
-		listOfActiveAutofillPopups.add(new AutofillPopup("RNA",efoServiceAsync,guiMediator));
+//		listOfActiveAutofillPopups.add(new AutofillPopup("RNA",efoServiceAsync,guiMediator));
 		
 		
 		setHeaderControls(HeaderControls.HEADER_LABEL,HeaderControls.MINIMIZE_BUTTON);
@@ -53,9 +53,8 @@ public class TagCloudWindow extends Window{
 		tagCloudTabSet.setWidth100();
 		tagCloudTabSet.setPaneContainerOverflow(Overflow.VISIBLE);
 		tagCloudTabSet.setOverflow(Overflow.VISIBLE);
-		tagCloudTabSet.addTab(tagCloudTab1);
-		tagCloudTabSet.addTab(tagCloudTab2);
-		
+		tagCloudTabSet.addTab(autofillCloud);
+		tagCloudTabSet.addTab(highlightCloud);
 		
 		
 		tagCloudAutofillPopup.setWidth("100%");
@@ -67,20 +66,15 @@ public class TagCloudWindow extends Window{
 		Canvas gwtCanvas2 = new Canvas();
 		gwtCanvas2.addChild(tagCloudHighlight);
 
-		tagCloudTab1.setPane(gwtCanvas);
-		
-		
-//		HTMLFlow temp = new HTMLFlow("Development");
-		tagCloudTab2.setPane(gwtCanvas2);
+		autofillCloud.setPane(gwtCanvas);
+
+		highlightCloud.setPane(gwtCanvas2);
 	
-
-
 		addItem(tagCloudTabSet);
 		
 		minimize();
 	}
 	public void addWord(final String word, int number){
-		
 		
 		ClickAction popupAction = new ClickAction() {
 			public void execute(){
@@ -117,11 +111,9 @@ public class TagCloudWindow extends Window{
 						Highlight.highlightTerm(word);	
 					}
 				}
-				
-				
-				
 			}
 		};
+		
 		tagCloudAutofillPopup.addWord(word, popupAction, number);
 		tagCloudHighlight.addWord(word, highlightAction, number);
 		
