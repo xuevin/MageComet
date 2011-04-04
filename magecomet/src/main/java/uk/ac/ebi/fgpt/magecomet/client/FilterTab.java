@@ -2,6 +2,7 @@ package uk.ac.ebi.fgpt.magecomet.client;
 
 import java.util.LinkedHashMap;
 
+import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -14,8 +15,6 @@ import com.smartgwt.client.widgets.form.events.FilterSearchEvent;
 import com.smartgwt.client.widgets.form.events.SearchHandler;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
-import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.tab.Tab;
 
@@ -64,16 +63,16 @@ public class FilterTab extends Tab{
     	setPane(filterStack);
 
 	}
-	public void setData(final ListGrid listGrid) {
+	public void setData(final DataSource datasource) {
 		//Clear all previous filters
 		filterStack.removeMembers(filterStack.getMembers());
 		//Make a new filter builder
 		filterBuilder  = new FilterBuilder();
 		filterBuilder.setSaveOnEnter(true);
-		filterBuilder.setDataSource(listGrid.getDataSource());
+		filterBuilder.setDataSource(datasource);
 		filterBuilder.addSearchHandler(new SearchHandler(){
 			public void onSearch(FilterSearchEvent event) {
-				listGrid.fetchData(filterBuilder.getCriteria());
+				guiMediator.filterTable(filterBuilder.getCriteria());
 			}
 		});
 		
@@ -81,24 +80,17 @@ public class FilterTab extends Tab{
 		filterButton = new IButton("Filter");
 		filterButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				listGrid.filterData(filterBuilder.getCriteria());
+				guiMediator.filterTable(filterBuilder.getCriteria());
 			}
 		});
-		
-		
 		replaceButton.addClickHandler(new ClickHandler() {  
-    		public void onClick(ClickEvent event) {  
-    			//This updates based on what is filtered
-    			for(ListGridRecord record:listGrid.getRecords()){
-    				String columnName = columnChooserCombobox.getValue().toString();
-    				record.setAttribute(columnName, cellValueTextItem.getValue().toString());
-    				listGrid.updateData(record);
-    			}
-    			listGrid.saveAllEdits();
+    		public void onClick(ClickEvent event) {
+				String uniqueKey = columnChooserCombobox.getValue().toString();
+				String value = cellValueTextItem.getValue().toString();
+    			guiMediator.filterAndReplace(filterBuilder.getCriteria(),uniqueKey, value);
+    			guiMediator.refreshTable();
     		}
     	});
-		
-		guiMediator.updateColumnsInComboBoxes(listGrid.getAllFields());
 		
 		//Layout
 		filterStack.addMember(filterBuilder);

@@ -40,18 +40,13 @@ public class ExtractTab extends Tab{
 
 	private GuiMediator guiMediator;
 
-
 	public ExtractTab(GuiMediator guiMediator) {
 		this.guiMediator=guiMediator;
 		this.guiMediator.registerExtractTab(this);
 		setTitle("Extract");
 		
 		
-		vstack.setHeight(40);
 		
-		hstack.setHeight(16);
-		hstack.setDefaultLayoutAlign(VerticalAlignment.CENTER);
-
 		directions.setHeight(20);
 		directions.setContents("Input the characters surrounding the the value that will be extracted into a new column.<br>" +
 				"To indicate the beginning of the row use \"^\" and to indicate the end of a row use \"$\"");
@@ -67,7 +62,6 @@ public class ExtractTab extends Tab{
 		columnComboBoxItem.setRequired(true);
 		columnComboBoxItem.setValidators(new IsOneOfValidator());
 
-		
         leftInput.setTitle("Left");
         leftInput.setRequired(true);
         
@@ -82,14 +76,14 @@ public class ExtractTab extends Tab{
 		newColumn.setRequired(true);
 		newColumn.setShowPickerIcon(false);
 
-		
-		destinationComboBoxItem.setTitle("Type");
-		destinationComboBoxItem.setRequired(true);
 		LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
 		valueMap.put("clipboard", "Clipboard");
 		valueMap.put("characteristic", "Characteristic");
 		valueMap.put("factorvalue", "Factor Value");
 		valueMap.put("both", "Both");	        
+		
+		destinationComboBoxItem.setTitle("Type");
+		destinationComboBoxItem.setRequired(true);
 		destinationComboBoxItem.setValueMap(valueMap);
 		destinationComboBoxItem.setValidators(new IsOneOfValidator());
 		destinationComboBoxItem.addChangeHandler(new ChangeHandler() {  
@@ -116,12 +110,13 @@ public class ExtractTab extends Tab{
 		// Layout
 		//*****************************
 		form.setItems(columnComboBoxItem,leftInput,rightInput,destinationComboBoxItem,newColumn);
-
 		
+		hstack.setHeight(16);
+		hstack.setDefaultLayoutAlign(VerticalAlignment.CENTER);
 		hstack.addMember(form);
 		hstack.addMember(submit);
-		
 
+		vstack.setHeight(40);
 		vstack.addMember(directions);
 		vstack.addMember(hstack);
 		vstack.setMembersMargin(10);
@@ -141,13 +136,13 @@ public class ExtractTab extends Tab{
 		};		
 		ClickHandler addToColumnEditor = new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				submitForm(sdrfTable,listGridRecords);
+				submit(sdrfTable,listGridRecords);
 			}
 		};
 		newColumn.addKeyPressHandler(new KeyPressHandler() {
 			public void onKeyPress(KeyPressEvent event) {
 				if(event.getKeyName().equals("Enter")){
-					submitForm(sdrfTable,listGridRecords);
+					submit(sdrfTable,listGridRecords);
 				}
 			}
 		});
@@ -155,23 +150,22 @@ public class ExtractTab extends Tab{
 		rightInput.addChangedHandler(inputChanged);
 		submit.addClickHandler(addToColumnEditor);
 	}
-	private void submitForm(final ListGrid sdrfTable, final ListGridRecord[] listOfAllRecords){
+	private void submit(final ListGrid sdrfTable, final ListGridRecord[] listOfAllRecords){
 		if(form.validate()){
-			//TODO add extra validation to make sure that column names are spelled correctly
 			if(destinationComboBoxItem.getValue().equals("clipboard")){
 				extractToColumnName(sdrfTable,listOfAllRecords,
 						guiMediator.addColumnToClipboardAndGetKey(newColumn.getValueAsString()));
 			}else if (destinationComboBoxItem.getValue().equals("factorvalue")){
 				extractToColumnName(sdrfTable,listOfAllRecords,
-						guiMediator.addFactorValueToActiveGridAndGetKey(newColumn.getValueAsString()));
+						guiMediator.addFactorValueColumnAndGetKey(newColumn.getValueAsString()));
 			}else if (destinationComboBoxItem.getValue().equals("characteristic")){
 				extractToColumnName(sdrfTable,listOfAllRecords,
-						guiMediator.addCharacteristicToActiveGridAndGetKey(newColumn.getValueAsString()));
+						guiMediator.addCharacteristicColumnAndGetKey(newColumn.getValueAsString()));
 			}else if (destinationComboBoxItem.getValue().equals("both")){
 				extractToColumnName(sdrfTable,listOfAllRecords,
-						guiMediator.addFactorValueToActiveGridAndGetKey(newColumn.getValueAsString()));
+						guiMediator.addFactorValueColumnAndGetKey(newColumn.getValueAsString()));
 				extractToColumnName(sdrfTable,listOfAllRecords,
-						guiMediator.addCharacteristicToActiveGridAndGetKey(newColumn.getValueAsString()));
+						guiMediator.addCharacteristicColumnAndGetKey(newColumn.getValueAsString()));
 			}
 			//Reset everything back to blanks to indicate that the extract was successful
 			leftInput.clearValue();
@@ -190,8 +184,7 @@ public class ExtractTab extends Tab{
 					record.getAttributeAsString(columnComboBoxItem.getValueAsString())==null){
 				return;
 			}
-			String textInColumn = 
-				record.getAttributeAsString(columnComboBoxItem.getValueAsString());
+			String textInColumn = record.getAttributeAsString(columnComboBoxItem.getValueAsString());
 				record.setAttribute(newColumnName, extract(textInColumn));
 			sdrfTable.updateData(record);
 		}

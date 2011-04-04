@@ -88,8 +88,6 @@ public class AutofillPopup extends Window{
 		form.setWidth(450);
 		form.setAlign(Alignment.LEFT);
 		
-		
-		
 		efo_description.setContents("Description:");
 		efo_description.setHeight(20);
 		
@@ -114,9 +112,6 @@ public class AutofillPopup extends Window{
         existingFactorValueInput.setTitle("Existing Column");
         existingFactorValueInput.setValueMap(guiMediator.getFactorValuesMap());
         existingFactorValueInput.setValidators(new IsOneOfValidator());
-        
-        
-
         
         termSourceRefCheckbox.setTitle("Term Source REF");
        
@@ -149,20 +144,12 @@ public class AutofillPopup extends Window{
 		sourceColumnCombobox.setRequired(true);
         
         
-        
-        
         FormItemIfFunction ifNotChecked = new FormItemIfFunction() {
         	//If addAll is not checked, then this item is visible
             public boolean execute(FormItem item, Object value, DynamicForm form) {  
                 return !(Boolean)form.getValue("addToAllRecordsCheckBox");  
             }  
         };
-//        FormItemIfFunction ifChecked = new FormItemIfFunction() {
-//        	//If addAll is not checked, then this item is visible
-//            public boolean execute(FormItem item, Object value, DynamicForm form) {  
-//                return (Boolean)form.getValue("addToAllRecordsCheckBox");  
-//            }  
-//        };
         
         newFactorValueCheckbox.setShowIfCondition(ifNotChecked);
         factorValueInput.setShowIfCondition(ifNotChecked);
@@ -196,7 +183,6 @@ public class AutofillPopup extends Window{
 		
 		
 		
-		
         //*****************************
         // Buttons
         //*****************************
@@ -204,59 +190,9 @@ public class AutofillPopup extends Window{
 		Button saveButton = new Button("Save");
         saveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				if(form.validate()){
-					boolean termSourceRefChecked = termSourceRefCheckbox.getValueAsBoolean();
-					boolean termSourceNumberChecked = termSourceNumberCheckbox.getValueAsBoolean();
-					
-					boolean newCharacteristicChecked = newCharacteristicCheckbox.getValueAsBoolean(); 
-					boolean newFactorValueChecked = newFactorValueCheckbox.getValueAsBoolean();
-					
-					boolean existingCharacteristicChecked = existingCharacteristicCheckbox.getValueAsBoolean();
-					boolean existingFactorValueChecked = existingFactorValueCheckbox.getValueAsBoolean();
-					
-					String characteristicString = characteristicInput.getValueAsString();
-					String factorValueString = factorValueInput.getValueAsString();
-					String existingCharacteristicInputColumnName = existingCharacteristicInput.getValueAsString();
-					String existingFactorValueInputColumnName = existingFactorValueInput.getValueAsString();
-					String sourceColumn = sourceColumnCombobox.getValueAsString();
 				
-					if(addToAllRecordsCheckBox.getValueAsBoolean()==true){
-						if(newCharacteristicChecked){
-							if(termSourceNumberChecked){
-								guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Accession Number", termSourceNum.getDisplayValue());
-							}
-							if(termSourceRefChecked){
-								guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Source REF", "EFO");
-							}
-							guiMediator.addColumnToCharacteristicAndAddValueToAllRecords(characteristicString, efoTerm);
-						}
-					}else{
-						if(existingCharacteristicChecked && newCharacteristicChecked){
-							System.out.println("TWO CHECKED");
-							return;
-						}
-						if(existingFactorValueChecked && newFactorValueChecked){
-							System.out.println("TWO CHECKED");
-							return;
-						}
-						if(existingCharacteristicChecked){
-							guiMediator.addValueToSelectedRecords(sourceColumn, existingCharacteristicInputColumnName, efoTerm);
-						}
-						if(existingFactorValueChecked){
-							guiMediator.addValueToSelectedRecords(sourceColumn, existingFactorValueInputColumnName, efoTerm);
-						}
-						if(newCharacteristicChecked){
-							String newColumnName = guiMediator.addCharacteristicToActiveGridAndGetKey(characteristicString);
-							guiMediator.addValueToSelectedRecords(sourceColumn, newColumnName, efoTerm);
-						}
-						if(newFactorValueChecked){
-							String newColumnName = guiMediator.addFactorValueToActiveGridAndGetKey(factorValueString);
-							guiMediator.addValueToSelectedRecords(sourceColumn, newColumnName, efoTerm);
-
-						}
-					}
-					guiMediator.refreshTable();
-					hide();
+				if(form.validate()){
+					submit(efoTerm);
 				}
 			}
 		});
@@ -289,6 +225,96 @@ public class AutofillPopup extends Window{
 		
 		addItem(vStack);
 		addItem(buttonsStack);
+	}
+
+	private void submit(String efoTerm) {
+
+		//Convenience Booleans
+		boolean termSourceRefChecked = termSourceRefCheckbox.getValueAsBoolean();
+		boolean termSourceNumberChecked = termSourceNumberCheckbox.getValueAsBoolean();
+		
+		boolean newCharacteristicChecked = newCharacteristicCheckbox.getValueAsBoolean(); 
+		boolean newFactorValueChecked = newFactorValueCheckbox.getValueAsBoolean();
+		
+		boolean existingCharacteristicChecked = existingCharacteristicCheckbox.getValueAsBoolean();
+		boolean existingFactorValueChecked = existingFactorValueCheckbox.getValueAsBoolean();
+		
+		//Convenience Values
+		String characteristicString = characteristicInput.getValueAsString();
+		String factorValueString = factorValueInput.getValueAsString();
+		String existingCharacteristicInputColumnName = existingCharacteristicInput.getValueAsString();
+		String existingFactorValueInputColumnName = existingFactorValueInput.getValueAsString();
+		String sourceColumn = sourceColumnCombobox.getValueAsString();
+	
+		/*
+		 * If you are adding a value to all records, it must be a characteristic
+		 */
+		if(addToAllRecordsCheckBox.getValueAsBoolean()==true){
+			if(newCharacteristicChecked){
+				if(termSourceNumberChecked){
+					guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Accession Number", termSourceNum.getDisplayValue());
+				}
+				if(termSourceRefChecked){
+					guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Source REF", "EFO");
+				}
+				guiMediator.addColumnToCharacteristicAndAddValueToAllRecords(characteristicString, efoTerm);
+			}
+		/*
+		 * If your using the feature to add values to specific rows, then there 
+		 * is much more to check
+		 */
+		}else{
+			if(hasConflictingValuesChecked()){
+				//Conflicting values are checked! Must warn user
+				return;
+			}
+			if(existingCharacteristicChecked){
+				guiMediator.addValueToSelectedRecords(sourceColumn, existingCharacteristicInputColumnName, efoTerm);
+			}
+			if(existingFactorValueChecked){
+				guiMediator.addValueToSelectedRecords(sourceColumn, existingFactorValueInputColumnName, efoTerm);
+			}
+			if(newCharacteristicChecked){
+				if(termSourceNumberChecked){
+					guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Accession Number", termSourceNum.getDisplayValue());
+				}
+				if(termSourceRefChecked){
+					guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Source REF", "EFO");
+				}
+				String newColumnName = guiMediator.addCharacteristicColumnAndGetKey(characteristicString);
+				guiMediator.addValueToSelectedRecords(sourceColumn, newColumnName, efoTerm);
+			}
+			if(newFactorValueChecked){
+				String newColumnName = guiMediator.addFactorValueColumnAndGetKey(factorValueString);
+				guiMediator.addValueToSelectedRecords(sourceColumn, newColumnName, efoTerm);
+				if(termSourceRefChecked){
+					guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Source REF", "EFO");
+				}
+				if(termSourceNumberChecked){
+					guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Accession Number", termSourceNum.getDisplayValue());
+				}
+			}
+		}
+		guiMediator.refreshTable();
+		hide();
+		
+	}
+
+	private boolean hasConflictingValuesChecked() {
+		boolean newCharacteristicChecked = newCharacteristicCheckbox.getValueAsBoolean(); 
+		boolean newFactorValueChecked = newFactorValueCheckbox.getValueAsBoolean();
+		boolean existingCharacteristicChecked = existingCharacteristicCheckbox.getValueAsBoolean();
+		boolean existingFactorValueChecked = existingFactorValueCheckbox.getValueAsBoolean();
+		
+		if(existingCharacteristicChecked && newCharacteristicChecked){
+			System.out.println("TWO CHECKED");
+			return true;
+		}
+		if(existingFactorValueChecked && newFactorValueChecked){
+			System.out.println("TWO CHECKED");
+			return true;
+		}
+		return false;
 	}
 
 	public void updateColumns() {

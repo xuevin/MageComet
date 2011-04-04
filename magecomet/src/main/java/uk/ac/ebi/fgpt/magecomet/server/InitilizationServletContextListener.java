@@ -21,7 +21,6 @@ import uk.ac.ebi.ontocat.file.FileOntologyService;
 public class InitilizationServletContextListener implements ServletContextListener{
 
 	private ServletContext context = null;
-	OntologyService ontoService;
 	public void contextDestroyed(ServletContextEvent arg0) {
 		
 		
@@ -32,8 +31,9 @@ public class InitilizationServletContextListener implements ServletContextListen
 		try {
 			System.out.println("Downloading EFO Service");
 			//During Testing
-//            OntologyService ontoService = new FileOntologyService(new URI("http://www.ebi.ac.uk/efo/efo.owl"));
-			ontoService = new FileOntologyService(getClass().getClassLoader().getResource("EFO_inferred_v142.owl").toURI());
+			OntologyService ontoService;
+            ontoService = new FileOntologyService(new URI("http://www.ebi.ac.uk/efo/efo.owl"));
+//			ontoService = new FileOntologyService(getClass().getClassLoader().getResource("EFO_inferred_v142.owl").toURI());
 			context.setAttribute("ontoService", ontoService);
             context.setAttribute("monqInput", termsToInputReader(ontoService.getAllTerms(null)));
             context.setAttribute("ontoCatDict", createDictionary(ontoService));

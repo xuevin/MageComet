@@ -33,12 +33,11 @@ import org.mged.magetab.error.ErrorItem;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.IDF;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.MAGETABInvestigation;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.SDRF;
-//import uk.ac.ebi.arrayexpress2.magetab.exception.ErrorItemListener;
-import uk.ac.ebi.arrayexpress2.magetab.exception.ParseException;
 import uk.ac.ebi.arrayexpress2.magetab.listener.ErrorItemListener;
 import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
 import uk.ac.ebi.arrayexpress2.magetab.renderer.IDFWriter;
 import uk.ac.ebi.arrayexpress2.magetab.renderer.SDRFWriter;
+import uk.ac.ebi.arrayexpress2.magetab.validator.MAGETABValidator;
 import uk.ac.ebi.arrayexpress2.magetab.validator.Validator;
 
 public class JSONUtils {
@@ -90,30 +89,33 @@ public class JSONUtils {
 	public static JSONArray getErrorArray(File idf, File sdrf) throws UploadActionException {
 		
 		try {
-//			// make a new parser, in read only mode
-//			MAGETABParser parser = new MAGETABParser();
-//
-//			// register error item listener
+			// Create validataor 
+			Validator<MAGETABInvestigation> validator = new SemanticValidator(idf.getAbsolutePath());
+
+			
+			MAGETABValidator v = new MAGETABValidator();
+			
+			
+			MAGETABParser parser = new MAGETABParser(v);
+			
+			
+			
+			// register error item listener
 			final List<ErrorItem> errorList = new ArrayList<ErrorItem>();
-//
-//			parser.addErrorItemListener(new ErrorItemListener() {
-//				public void errorOccurred(ErrorItem item) {
-//					errorList.add(item);
-//				}
-//			});
-//			
-//			// Create validataor 
-//			Validator<MAGETABInvestigation> validator = new SemanticValidator(idf.getAbsolutePath());
-//
-//			// set validator on the parser
-//			parser.setValidator(validator);
-//
-//			// do parse
-//			System.out.println("Parsing " + idf.getAbsolutePath() + "...");
-//
-//			// need to get the url of this file, as the parser only takes urls
-//			parser.parse(idf.toURI().toURL());
-//			
+
+			parser.addErrorItemListener(new ErrorItemListener() {
+				public void errorOccurred(ErrorItem item) {
+					errorList.add(item);
+				}
+			});
+			
+			// need to get the url of this file, as the parser only takes urls
+			parser.parse(idf);
+
+			// do parse
+			System.out.println("Parsing " + idf.getAbsolutePath() + "...");
+
+			
 			int i =0;
 			JSONArray errorArray= new JSONArray();
 
@@ -127,6 +129,8 @@ public class JSONUtils {
 				errorArray.put(i,errorItem);
 				i++;
 			}
+			System.out.println("Finished " + idf.getAbsolutePath() + "...");
+
 			return errorArray;
 			
 //		} catch (ParseException e) {

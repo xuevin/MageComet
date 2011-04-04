@@ -43,8 +43,6 @@ public class LoadTab extends Tab{
 		this.guiMediator=guiMediator;
 		this.guiMediator.registerLoadTab(this);
 		
-		
-		
 		accessionInput.setWrapTitle(false);
 		accessionInput.setWidth(200);
 //		accessionInput.setCharacterCasing(CharacterCasing.UPPER);
@@ -121,7 +119,7 @@ public class LoadTab extends Tab{
 			
 			public void onSuccess(String arg0) {
 				JSONObject jsonObject = JSONParser.parseStrict(arg0).isObject();
-				guiMediator.passDataToSDRFSection(jsonObject);
+				guiMediator.loadSDRFData(jsonObject);
 				guiMediator.passDataToIDFSection(jsonObject);
 				guiMediator.passDataToErrorsTab(jsonObject);
 				guiMediator.passDataToTagCloud(jsonObject);
@@ -161,7 +159,7 @@ public class LoadTab extends Tab{
 				
 				// Parse the response according to the name of the file
 				if (info.name.contains("sdrf")) {
-					guiMediator.passDataToSDRFSection(jsonObject);
+					guiMediator.loadSDRFData(jsonObject);
 					guiMediator.passDataToTagCloud(jsonObject);
 					guiMediator.setCurrentSDRFTitle(info.name);
 				} else if (info.name.contains("idf")) {

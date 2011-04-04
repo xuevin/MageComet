@@ -22,11 +22,17 @@ public class TestEFOServiceImpl {
 		EFOServiceImpl test = new EFOServiceImpl();
 		assertNotNull(test);
 	}
+	/**
+	 * Only works when server is running
+	 */
 	@Test
 	public void testGetEfoAccessionIdByName(){
 		EFOServiceImpl impl = new EFOServiceImpl();
 		assertEquals("EFO_0000860",impl.getEfoAccessionIdByName("thymus"));
 	}
+	/**
+	 * Only works when server is running
+	 */
 	@Test
 	public void testgetEfoDescriptionByName() {
 		EFOServiceImpl impl = new EFOServiceImpl();

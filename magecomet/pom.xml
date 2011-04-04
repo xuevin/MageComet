@@ -17,9 +17,9 @@
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding> 
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>       
-		      
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
 	</properties>
 
 
@@ -104,11 +104,11 @@
 			<artifactId>gwtupload</artifactId>
 			<version>0.6.4-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>annotare</groupId>
-			<artifactId>annotare-validator</artifactId>
-			<version>1.1</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>annotare</groupId>-->
+<!--			<artifactId>annotare-validator</artifactId>-->
+<!--			<version>1.1</version>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>uk.ac.ebi</groupId>
 			<artifactId>ontoCAT</artifactId>
@@ -129,6 +129,17 @@
 			<groupId>commons-net</groupId>
 			<artifactId>commons-net</artifactId>
 			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>annotare</groupId>
+			<artifactId>limpopo-validator-annotare</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+
+			<groupId>uk.ac.ebi.arrayexpress2</groupId>
+			<artifactId>limpopo-validator-ebi</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
@@ -159,7 +170,7 @@
 					gwt-maven-plugin documentation at codehaus.org
 				-->
 				<configuration>
-		            <extraJvmArgs>-XX:MaxPermSize=4000M -Xmx6000M</extraJvmArgs>
+					<extraJvmArgs>-XX:MaxPermSize=4000M -Xmx6000M</extraJvmArgs>
 					<runTarget>magecomet.html</runTarget>
 					<hostedWebapp>${webappDirectory}</hostedWebapp>
 					<i18nMessagesBundle>uk.ac.ebi.fgpt.magecomet.client.Messages</i18nMessagesBundle>
