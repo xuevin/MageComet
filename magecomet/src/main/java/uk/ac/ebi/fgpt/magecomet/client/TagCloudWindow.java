@@ -51,7 +51,7 @@ public class TagCloudWindow extends Window{
 		tagCloudTabSet.setHeight100();
 		tagCloudTabSet.setWidth100();
 		tagCloudTabSet.setPaneContainerOverflow(Overflow.VISIBLE);
-		tagCloudTabSet.setOverflow(Overflow.VISIBLE);
+//		tagCloudTabSet.setOverflow(Overflow.VISIBLE);
 		tagCloudTabSet.addTab(autofillCloud);
 		tagCloudTabSet.addTab(highlightCloud);
 		
@@ -61,12 +61,13 @@ public class TagCloudWindow extends Window{
 		
 		Canvas gwtCanvas = new Canvas();
 		gwtCanvas.addChild(tagCloudAutofillPopup);
+		gwtCanvas.setOverflow(Overflow.AUTO);
 		
 		Canvas gwtCanvas2 = new Canvas();
 		gwtCanvas2.addChild(tagCloudHighlight);
-
+		gwtCanvas2.setOverflow(Overflow.AUTO);
+		
 		autofillCloud.setPane(gwtCanvas);
-
 		highlightCloud.setPane(gwtCanvas2);
 	
 		addItem(tagCloudTabSet);
