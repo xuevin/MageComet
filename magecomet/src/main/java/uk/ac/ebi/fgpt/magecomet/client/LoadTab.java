@@ -124,7 +124,7 @@ public class LoadTab extends Tab{
 				guiMediator.passDataToErrorsTab(jsonObject);
 				guiMediator.passDataToTagCloud(jsonObject);
 				guiMediator.setCurrentIDFTitle((accessionInput.getDisplayValue()).toUpperCase()+".idf.txt");
-				guiMediator.setCurrentSDRFTitle((accessionInput.getDisplayValue()).toUpperCase()+"sdrf.txt");
+				guiMediator.setCurrentSDRFTitle((accessionInput.getDisplayValue()).toUpperCase()+".sdrf.txt");
 				loadImage.setVisibility(Visibility.HIDDEN);
 			}
 			

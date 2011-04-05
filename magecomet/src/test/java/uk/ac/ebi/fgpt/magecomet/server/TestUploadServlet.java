@@ -1,26 +1,5 @@
 package uk.ac.ebi.fgpt.magecomet.server;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.junit.Test;
-
-import org.mged.annotare.validator.SemanticValidator;
-import org.mged.magetab.error.ErrorItem;
-
-
-
-import uk.ac.ebi.arrayexpress2.magetab.datamodel.MAGETABInvestigation;
-import uk.ac.ebi.arrayexpress2.magetab.exception.ParseException;
-import uk.ac.ebi.arrayexpress2.magetab.listener.ErrorItemListener;
-import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
-import uk.ac.ebi.arrayexpress2.magetab.validator.Validator;
 
 
 //public class TestUploadServlet {

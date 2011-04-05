@@ -1,4 +1,4 @@
-package uk.ac.ebi.fgpt.magecomet.server;
+package uk.ac.ebi.fgpt.magecomet.server.services;
 
 
 import java.util.List;

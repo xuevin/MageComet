@@ -6,7 +6,7 @@
 <web-app>
 	<listener>
 		<listener-class>
-			uk.ac.ebi.fgpt.magecomet.server.InitilizationServletContextListener
+			uk.ac.ebi.fgpt.magecomet.server.services.InitilizationServletContextListener
   		</listener-class>
 	</listener>
 
@@ -30,7 +30,7 @@
 	<servlet>
 		<servlet-name>uploadServlet</servlet-name>
 		<!-- This is the default servlet, it puts files in session -->
-		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.UploadServlet</servlet-class>
+		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.services.UploadServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -41,7 +41,7 @@
 
 	<servlet>
 		<servlet-name>FileServiceImpl</servlet-name>
-		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.FileServiceImpl</servlet-class>
+		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.services.FileServiceImpl</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -51,7 +51,7 @@
 
 	<servlet>
 		<servlet-name>DownloadServlet</servlet-name>
-		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.DownloadServlet</servlet-class>
+		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.services.DownloadServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>DownloadServlet</servlet-name>
@@ -60,7 +60,7 @@
 
 	<servlet>
 		<servlet-name>EFOServiceImpl</servlet-name>
-		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.EFOServiceImpl</servlet-class>
+		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.services.EFOServiceImpl</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>EFOServiceImpl</servlet-name>
@@ -69,7 +69,7 @@
 
 	<servlet>
 		<servlet-name>SearchServiceImpl</servlet-name>
-		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.SearchServiceImpl</servlet-class>
+		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.services.SearchServiceImpl</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SearchServiceImpl</servlet-name>
@@ -78,15 +78,23 @@
 	
 	<servlet>
 		<servlet-name>FTPServiceImpl</servlet-name>
-		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.FTPServiceImpl</servlet-class>
+		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.services.FTPServiceImpl</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>FTPServiceImpl</servlet-name>
 		<url-pattern>/magecomet/FTPService</url-pattern>
 	</servlet-mapping>
 	
-	FTPService
-
+	<servlet>
+		<servlet-name>ValidationService</servlet-name>
+		<servlet-class>uk.ac.ebi.fgpt.magecomet.server.services.ValidationServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ValidationService</servlet-name>
+		<url-pattern>/magecomet/ValidationService</url-pattern>
+	</servlet-mapping>
+	
+	
 	<!-- Default page to serve -->
 	<welcome-file-list>
 		<welcome-file>magecomet.html</welcome-file>

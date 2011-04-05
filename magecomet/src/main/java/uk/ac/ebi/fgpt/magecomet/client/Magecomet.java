@@ -4,6 +4,9 @@ import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileService;
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileServiceAsync;
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileServiceCallback;
 import uk.ac.ebi.fgpt.magecomet.client.searchservice.SearchOracle;
+import uk.ac.ebi.fgpt.magecomet.client.validationservice.ValidationService;
+import uk.ac.ebi.fgpt.magecomet.client.validationservice.ValidationServiceAsync;
+import uk.ac.ebi.fgpt.magecomet.client.validationservice.ValidationServiceCallback;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -11,7 +14,6 @@ import com.google.gwt.user.client.Window;
 import com.smartgwt.client.types.Side;
 import com.smartgwt.client.types.TabBarControls;
 import com.smartgwt.client.widgets.Button;
-import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.tab.TabSet;
@@ -38,12 +40,15 @@ public class Magecomet implements EntryPoint {
 	private final LoadTab loadTab = new LoadTab(guiMediator);
 	private final SearchOracle searchOracle = new SearchOracle();
 	private final SuggestCanvas suggestCanvasItem= new SuggestCanvas("suggestBox", "suggestBox", searchOracle);
-
+	private final Button revalidateButton = new Button("Revalidate");
 	/**
 	 * Declares the Variables that will be instantiated on module load / file load
 	 */
 	
 	private FileServiceAsync fileService = GWT.create(FileService.class);
+	private ValidationServiceAsync validationService = GWT.create(ValidationService.class);
+
+	
 	
 	public void onModuleLoad() {
 		/*
@@ -56,7 +61,9 @@ public class Magecomet implements EntryPoint {
 		topTabSet.addTab(loadTab);
 		topTabSet.addTab(editTab);
 		topTabSet.addTab(errorTab);
-		topTabSet.setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER,suggestCanvasItem,exportIDFButton,exportSDRFButton);
+		topTabSet.setTabBarControls(TabBarControls.TAB_SCROLLER,
+				TabBarControls.TAB_PICKER, suggestCanvasItem, exportIDFButton,
+				exportSDRFButton,revalidateButton);
 //		topTabSet.moveBy(0, 140);
 		topTabSet.show();
 
@@ -86,13 +93,27 @@ public class Magecomet implements EntryPoint {
 			}
 		});
 		
+		
+		revalidateButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				if(!guiMediator.getSDRFAsString().equals("")){
+					validationService.validate(	guiMediator.getCurrentIDFTitle(), 
+												guiMediator.getIDFAsString(), 
+												guiMediator.getCurrentSDRFTitle(),
+												guiMediator.getSDRFAsString(),
+												new ValidationServiceCallback(guiMediator));
+				}
+				
+			}
+		});
+		
 		//*****************************
         // Layout
         //*****************************		
 		
 		TagCloudWindow tagCloudWindow = new TagCloudWindow(guiMediator);
 		tagCloudWindow.show();
-		tagCloudWindow.moveTo(600,0);
+		tagCloudWindow.moveTo(500,0);
 //		tagCloudWindow.moveAbove(canvas)
 		
 //		mainLayout.setHtmlElement(DOM.getElementById("webapp"));

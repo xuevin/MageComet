@@ -1,4 +1,4 @@
-package uk.ac.ebi.fgpt.magecomet.server;
+package uk.ac.ebi.fgpt.magecomet.server.services;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,6 +34,9 @@ public class InitilizationServletContextListener implements ServletContextListen
 			OntologyService ontoService;
             ontoService = new FileOntologyService(new URI("http://www.ebi.ac.uk/efo/efo.owl"));
 //			ontoService = new FileOntologyService(getClass().getClassLoader().getResource("EFO_inferred_v142.owl").toURI());
+			
+			System.out.println("Finished Downloading EFO");
+
 			context.setAttribute("ontoService", ontoService);
             context.setAttribute("monqInput", termsToInputReader(ontoService.getAllTerms(null)));
             context.setAttribute("ontoCatDict", createDictionary(ontoService));
@@ -41,10 +44,8 @@ public class InitilizationServletContextListener implements ServletContextListen
 			System.err.println("EFO IS NOT FOUND");
 			e.printStackTrace();
 		} catch (OntologyServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 
 	private String termsToInputReader(Set<OntologyTerm> allTerms) {

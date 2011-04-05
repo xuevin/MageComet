@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import uk.ac.ebi.fgpt.magecomet.server.services.EFOServiceImpl;
 import uk.ac.ebi.ontocat.OntologyServiceException;
 import uk.ac.ebi.ontocat.OntologyTerm;
 import uk.ac.ebi.ontocat.OntologyService.SearchOptions;

@@ -3,9 +3,6 @@ package uk.ac.ebi.fgpt.magecomet.client;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.IButton;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
 
 public class SuggestCanvas extends Canvas{
 	public static final int HEIGHT = 17;

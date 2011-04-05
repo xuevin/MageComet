@@ -125,7 +125,8 @@ public class GuiMediator{
 		idfSection.handleJSONObject(object);
 	}
 	public void passDataToErrorsTab(JSONObject object){
-		errorsTab.handelJSONArrayOfErrors(object);
+		System.out.println("JSONObject was passed to Errors Tab");
+		errorsTab.handelJSONObject(object);
 	}
 	public void updateSDRFColumnNames(ListGridField[] newArrayOfListGridFields){
 		sdrfData.updateColumnNames(newArrayOfListGridFields);
@@ -215,5 +216,8 @@ public class GuiMediator{
 	}
 	public boolean dataHasBeenLoaded(){
 		return (sdrfData!=null);
+	}
+	public void passArrayToErrorsTab(JSONArray array) {
+		errorsTab.handleJSONArrayOfErrors(array);
 	}
 }

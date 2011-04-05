@@ -11,8 +11,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -89,23 +87,23 @@ public class JSONUtils {
 	public static JSONArray getErrorArray(File idf, File sdrf) throws UploadActionException {
 		
 		try {
+			System.out.println("Started Validation");
 			// Create validataor 
 			Validator<MAGETABInvestigation> validator = new SemanticValidator(idf.getAbsolutePath());
-
 			
 			MAGETABValidator v = new MAGETABValidator();
 			
-			
-			MAGETABParser parser = new MAGETABParser(v);
-			
-			
+			MAGETABParser parser = new MAGETABParser(validator);
 			
 			// register error item listener
 			final List<ErrorItem> errorList = new ArrayList<ErrorItem>();
 
 			parser.addErrorItemListener(new ErrorItemListener() {
 				public void errorOccurred(ErrorItem item) {
-					errorList.add(item);
+					if(item.getErrorCode()!=1031){
+						errorList.add(item);	
+					}
+					
 				}
 			});
 			
@@ -129,19 +127,9 @@ public class JSONUtils {
 				errorArray.put(i,errorItem);
 				i++;
 			}
-			System.out.println("Finished " + idf.getAbsolutePath() + "...");
+			System.out.println("Finished Validation " + idf.getAbsolutePath() + "...");
 
 			return errorArray;
-			
-//		} catch (ParseException e) {
-//			// This happens if parsing failed.
-//			// Any errors here will also have been reported by the listener
-//			e.printStackTrace();
-//			throw new UploadActionException("Validation Failed");
-//		} catch (MalformedURLException e) {
-//			// This is if the url from the file is bad
-//			e.printStackTrace();
-//			throw new UploadActionException("Validation Failed");
 		} catch (JSONException e) {
 			e.printStackTrace();
 			throw new UploadActionException("Validation Failed");

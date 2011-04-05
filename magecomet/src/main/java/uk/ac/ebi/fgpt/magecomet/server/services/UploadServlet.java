@@ -1,4 +1,4 @@
-package uk.ac.ebi.fgpt.magecomet.server;
+package uk.ac.ebi.fgpt.magecomet.server.services;
 
 /*
  * Modified From GWTUpload_GettingStarted
@@ -23,6 +23,7 @@ import uk.ac.ebi.arrayexpress2.magetab.datamodel.SDRF;
 import uk.ac.ebi.arrayexpress2.magetab.exception.ParseException;
 import uk.ac.ebi.arrayexpress2.magetab.parser.IDFParser;
 import uk.ac.ebi.arrayexpress2.magetab.parser.SDRFParser;
+import uk.ac.ebi.fgpt.magecomet.server.JSONUtils;
 
 import gwtupload.server.UploadAction;
 import gwtupload.server.exceptions.UploadActionException;

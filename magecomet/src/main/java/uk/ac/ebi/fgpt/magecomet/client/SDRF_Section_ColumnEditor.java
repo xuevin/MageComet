@@ -78,15 +78,6 @@ public class SDRF_Section_ColumnEditor extends Window {
 		activeKey.setHidden(true);
 		activeGrid.setFields(activeKey, activeField);
 
-		// //Get the fields in the table and make them records. This allows
-		// //users to reorder them vertically instead of horizontally with lots
-		// of scrolling
-		// activeGrid.setData(convertFieldsToRecords());
-
-		// //Save Column States
-		// savedClipboardRecords=clipboardGrid.getDataAsRecordList();
-		// savedActiveRecords=activeGrid.getDataAsRecordList();
-
 		savedActiveRecords = new RecordList();
 		savedClipboardRecords = new RecordList();
 

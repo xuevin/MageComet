@@ -1,4 +1,4 @@
-package uk.ac.ebi.fgpt.magecomet.server;
+package uk.ac.ebi.fgpt.magecomet.server.services;
 
 import gwtupload.server.exceptions.UploadActionException;
 
@@ -24,6 +24,7 @@ import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
 import uk.ac.ebi.arrayexpress2.magetab.parser.SDRFParser;
 import uk.ac.ebi.fgpt.magecomet.client.ftpservice.FTPException;
 import uk.ac.ebi.fgpt.magecomet.client.ftpservice.FTPService;
+import uk.ac.ebi.fgpt.magecomet.server.JSONUtils;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -49,7 +50,7 @@ public class FTPServiceImpl extends RemoteServiceServlet implements FTPService {
 			if(sdrfFile==null){
 				System.out.println("DULL");
 			}
-			
+						
 			//SDRF Parser			
 			SDRFParser sdrfParser = new SDRFParser();
 			SDRF sdrf = sdrfParser.parse(sdrfFile.toURI().toURL().openStream());
@@ -68,6 +69,7 @@ public class FTPServiceImpl extends RemoteServiceServlet implements FTPService {
 			//Error Items
 			responseJSONObject.put("error",JSONUtils.getErrorArray(hashOfAccessionFilesForIDF.get(experimentAccession),
 					hashOfAccessionFilesForSDRF.get(experimentAccession)));
+			
 			//WhatIzIt Items
 			String monqInput = (String) getServletContext().getAttribute("monqInput");
 			responseJSONObject.put("whatizitIDF",JSONUtils.getJSONArrayFromWhatIzIt(idfFile, monqInput));
