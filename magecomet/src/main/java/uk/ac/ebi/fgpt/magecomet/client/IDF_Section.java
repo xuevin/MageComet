@@ -46,6 +46,9 @@ public class IDF_Section extends SectionStackSection{
 		
 		rows = new ArrayList<ListGridRecord>();
 		
+		
+		
+		
 		textBox.setWidth("40%");
 		textBox.setOverflow(Overflow.AUTO);
 		textBox.setMargin(5);
@@ -107,6 +110,7 @@ public class IDF_Section extends SectionStackSection{
 		ListGridRecord[] listOfRows = new ListGridRecord[jsonArray.size()];
 		
 		//Get the data from the rows and make each a record
+		String textBoxContents = "";
 		for(int row=0; row <jsonArray.size();row ++){
 			
 			JSONArray columnArray = jsonArray.get(row).isArray();
@@ -119,9 +123,20 @@ public class IDF_Section extends SectionStackSection{
 			
 			//Find the column with experiment description
 			if(columnArray.get(0).isString().stringValue().equals("Experiment Description")){
-				textBox.setContents(columnArray.get(1).isString().stringValue());
+				textBoxContents=(columnArray.get(1).isString().stringValue());
+			}
+			//Find the column with Protocol descriptions
+			if(columnArray.get(0).isString().stringValue().equals("Protocol Description")){
+				int i =1;
+				while(i<columnArray.size()){
+					textBoxContents+="<br>=============================<br>";
+					textBoxContents+=(columnArray.get(i).isString().stringValue());
+					i++;
+				}
 			}
 		}
+		textBox.setContents(textBoxContents);
+		
 		
 		//Iterate through JSON Array and find the one with the most number of columns
 		int longestRow = 0;
