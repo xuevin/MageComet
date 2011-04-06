@@ -75,6 +75,7 @@ public class ExtractTab extends Tab{
 		newColumn.setWrapTitle(false);
 		newColumn.setRequired(true);
 		newColumn.setShowPickerIcon(false);
+		
 
 		LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
 		valueMap.put("clipboard", "Clipboard");

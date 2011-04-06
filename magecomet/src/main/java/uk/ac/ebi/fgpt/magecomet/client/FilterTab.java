@@ -15,6 +15,8 @@ import com.smartgwt.client.widgets.form.events.FilterSearchEvent;
 import com.smartgwt.client.widgets.form.events.SearchHandler;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.tab.Tab;
 
@@ -38,22 +40,29 @@ public class FilterTab extends Tab{
         filterStack.setOverflow(Overflow.VISIBLE);
         filterStack.setHeight(40);
 
-        
-    	
 		
 		form.setNumCols(4);  
 		columnChooserCombobox.setTitle("Column");  
+		
 		cellValueTextItem.setTitle("Value");
+		cellValueTextItem.addKeyPressHandler(new KeyPressHandler() {
+			public void onKeyPress(KeyPressEvent event) {
+				if(event.getKeyName().equals("Enter")){
+					submit();
+				}
+			}
+		});
+		
 		form.setItems(columnChooserCombobox,cellValueTextItem);
 		
 		
 		//Make a button to handle changing all values in column 
     	replaceButton.setLeft(0);  
     	replaceButton.setCanHover(true);
+    	
     	replaceButton.addHoverHandler(new HoverHandler() {
-			
 			public void onHover(HoverEvent event) {
-                String prompt = "Click this button to change all the values in \"" +
+                String prompt = "Click this button to change all the visible values in \"" +
                 columnChooserCombobox.getDisplayValue() + "\" to \"" +
                 cellValueTextItem.getValueAsString()+"\"";  
                 replaceButton.setPrompt(prompt);
@@ -64,8 +73,11 @@ public class FilterTab extends Tab{
 
 	}
 	public void setData(final DataSource datasource) {
-		//Clear all previous filters
+		// Clear all previous filters because I can't change the data source after the filter 
+		// is made (slightly annoying)
+		// Workaround by removing all and then adding a new filter builder
 		filterStack.removeMembers(filterStack.getMembers());
+		
 		//Make a new filter builder
 		filterBuilder  = new FilterBuilder();
 		filterBuilder.setSaveOnEnter(true);
@@ -83,12 +95,11 @@ public class FilterTab extends Tab{
 				guiMediator.filterTable(filterBuilder.getCriteria());
 			}
 		});
+	
+		
 		replaceButton.addClickHandler(new ClickHandler() {  
     		public void onClick(ClickEvent event) {
-				String uniqueKey = columnChooserCombobox.getValue().toString();
-				String value = cellValueTextItem.getValue().toString();
-    			guiMediator.filterAndReplace(filterBuilder.getCriteria(),uniqueKey, value);
-    			guiMediator.refreshTable();
+    			submit();
     		}
     	});
 		
@@ -98,6 +109,13 @@ public class FilterTab extends Tab{
     	filterStack.addMember(form);
     	filterStack.addMember(replaceButton);
     	filterStack.redraw();
+		
+	}
+	private void submit() {
+		String uniqueKey = columnChooserCombobox.getValue().toString();
+		String value = cellValueTextItem.getValue().toString();
+		guiMediator.filterAndReplace(filterBuilder.getCriteria(),uniqueKey, value);
+		guiMediator.refreshTable();
 		
 	}
 	/**

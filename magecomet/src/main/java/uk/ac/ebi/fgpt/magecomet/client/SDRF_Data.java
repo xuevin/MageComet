@@ -1,5 +1,7 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
+import java.util.ArrayList;
+
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.smartgwt.client.core.DataClass;
@@ -44,27 +46,11 @@ public class SDRF_Data {
 		}
 		updateDataSource();
 	}
-	/**
-	 * Filters and finds all of the records that have the specified value. After, it adds the data
-	 * into the destination column.
-	 * 
-	 * @param fromColumn
-	 * @param destinationColumn
-	 * @param value
-	 */
-	public void addValueToSelectedRecords(final String fromColumn, final String destinationColumn, final String value){
-		for(ListGridRecord record:listOfAllRecords){
-			if(record.getAttribute(fromColumn).toLowerCase().contains(value.toLowerCase())){
-				record.setAttribute(destinationColumn, value);		
-			}
-		}
-		updateDataSource();
-	}
-	public String addNewColumn_Characteristic_AndGetKey(String title){
+	public String addNewColumn_Characteristic_AndGetKey(String fieldTitle){
 		int uniqueKey = getNewUniqueKey();
 		ListGridField newColumn = new ListGridField();
 		newColumn.setName(uniqueKey+"");
-		newColumn.setTitle("Characteristics["+title+"]");
+		newColumn.setTitle(fieldTitle);
 		newColumn.setAutoFitWidthApproach(AutoFitWidthApproach.BOTH);
 		newColumn.setAutoFitWidth(true);	
 		
@@ -83,11 +69,11 @@ public class SDRF_Data {
 		updateDataSource();
 		return uniqueKey+"";
 	}
-	public String addNewColumn_FactorValue_AndGetKey(String title){
+	public String addNewColumn_FactorValue_AndGetKey(String fieldAttribute){
 		int uniqueKey = getNewUniqueKey();
 		ListGridField newColumn = new ListGridField();
 		newColumn.setName(uniqueKey+"");
-		newColumn.setTitle("Factor Value["+title+"]");
+		newColumn.setTitle(fieldAttribute);
 		newColumn.setAutoFitWidthApproach(AutoFitWidthApproach.BOTH);
 		newColumn.setAutoFitWidth(true);	
 
@@ -116,10 +102,6 @@ public class SDRF_Data {
 	public void updateDataSource(ListGridField[] newListGridFields){
 		listOfAllFields=newListGridFields;
 		updateDataSource();
-		
-//		sdrfTable.setDataSource(data);
-//		guiMediator.passDataToFilterTab(sdrfTable);
-//		sdrfTable.setFields(newListGridFields);
 	}
 	public ListGridField[] getAllFields() {
 		return listOfAllFields;

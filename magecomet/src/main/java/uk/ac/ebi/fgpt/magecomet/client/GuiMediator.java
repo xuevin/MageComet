@@ -6,12 +6,11 @@ import java.util.LinkedHashMap;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.smartgwt.client.data.AdvancedCriteria;
-import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 public class GuiMediator{
+	private IDF_FactorValue_ValidatorWindow idfFactorValueWindow;
 	private TagCloudWindow tagCloudWindow;
 	private SDRF_Section sdrfSection;
 	private IDF_Section idfSection;
@@ -21,7 +20,7 @@ public class GuiMediator{
 	private LoadTab loadTab;
 	private ErrorsTab errorsTab;
 	private EditTab editTab;
-	private LinkedHashMap<String, String> columnValueMap; 
+//	private LinkedHashMap<String, String> columnValueMap; 
 	private String currentIDF;
 	private String currentSDRF;
 	private SDRF_Data sdrfData;
@@ -61,41 +60,25 @@ public class GuiMediator{
 	// End Registration
 	//*****************************************
 	
-	/**
-	 * Updates the columns. Should be called every time the table changes
-	 */
-	public void updateColumnsInComboBoxes(ListGridField[] listGridFields) {
-		//Update Data source in table
-		columnValueMap = new LinkedHashMap<String, String>();  
-		for(ListGridField field:listGridFields){
-			columnValueMap.put(field.getName(), field.getTitle());
-		}
-		if(filterTab!=null){
-			filterTab.updateColumnsInComboBox(columnValueMap);
-		}
-		if(extractTab!=null){
-			extractTab.updateColumnsInComboBox(columnValueMap);	
-		}
-	}
-	public void addColumnToClipboardAndAddValueToAllRecords(String title,String value){
-		String uniqueKey = sdrfSectionColumnEditor.addNewColumnToClipboardAndGetKey(title);
+	public void addColumnToClipboardAndAddValueToAllRecords(String fieldTitle,String value){
+		String uniqueKey = sdrfSectionColumnEditor.addNewColumnToClipboardAndGetKey(fieldTitle);
 		sdrfData.addAttributeToAllRecords(uniqueKey,value);
 		sdrfSectionColumnEditor.show();
 	}
 	/**
 	 * Adds a characteristic column, directly after sourceName and adds the specified value to all records
-	 * @param title the name of the field
+	 * @param fieldTitle the name of the field. WILL NOT BE SURROUNDED
 	 * @param value the value to be filled in for all records
 	 */
-	public void addColumnToCharacteristicAndAddValueToAllRecords(String title,String value){
-		String uniqueKey = sdrfData.addNewColumn_Characteristic_AndGetKey(title);
+	public void addColumnToCharacteristicAndAddValueToAllRecords(String fieldTitle,String value){
+		String uniqueKey = sdrfData.addNewColumn_Characteristic_AndGetKey(fieldTitle);
 		sdrfData.addAttributeToAllRecords(uniqueKey,value);
 	}
-	public String addFactorValueColumnAndGetKey(String title){
-		return sdrfData.addNewColumn_FactorValue_AndGetKey(title);
+	public String addFactorValueColumnAndGetKey(String fieldAttribute){
+		return sdrfData.addNewColumn_FactorValue_AndGetKey("Factor Value["+fieldAttribute+"]");
 	}
-	public String addCharacteristicColumnAndGetKey(String title){
-		return sdrfData.addNewColumn_Characteristic_AndGetKey(title);
+	public String addCharacteristicColumnAndGetKey(String fieldAttribute){
+		return sdrfData.addNewColumn_Characteristic_AndGetKey("Characteristics["+fieldAttribute+"]");
 	}
 	public String getNewColumnKey(){
 		return sdrfData.getNewColumnKey();
@@ -109,16 +92,15 @@ public class GuiMediator{
 		sdrfSection.filterTable(advancedCriteria);
 	}
 	@Deprecated
-	public void passAllRecordsToExtractTab(ListGridRecord[] listGridRecords,ListGrid sdrfTable){
-		extractTab.setRecords(listGridRecords,sdrfTable);
-	}
-	public void passDataSourceToFilterTab(final DataSource data) {
-		filterTab.setData(data);
+	public void passSDRFTableToExtractTab(ListGrid sdrfTable){
+		extractTab.setRecords(sdrfData.getAllRecords(),sdrfTable);
 	}
 	public void loadSDRFData(JSONObject object){
 		sdrfData= new SDRF_Data(object);
 		sdrfSection.setData(sdrfData.getDataSource(),sdrfData.getAllFields(),sdrfData.getAllRecords());
-		updateColumnsInComboBoxes(sdrfData.getAllFields());
+		filterTab.setData(sdrfData.getDataSource());
+		updateColumnsInComboBoxes();
+		idfFactorValueWindow = new IDF_FactorValue_ValidatorWindow(getFactorValuesMap());
 
 	}
 	public void passDataToIDFSection(JSONObject object){
@@ -171,18 +153,16 @@ public class GuiMediator{
 		return idfSection.getString();
 	}
 	public LinkedHashMap<String,String> getColumnValueMap(){
-		if(columnValueMap==null){
-			System.err.println("COLUMN VALUE MAP IS NULL!");
-			return new LinkedHashMap<String, String>();
+		LinkedHashMap<String, String> columnValueMap = new LinkedHashMap<String, String>();
+		for(ListGridField field:sdrfData.getAllFields()){
+			columnValueMap.put(field.getName(), field.getTitle());
 		}
 		return columnValueMap;
 	}
 	public LinkedHashMap<String,String> getFactorValuesMap(){
-		if(columnValueMap==null){
-			System.err.println("COLUMN VALUE MAP IS NULL!");
-			return new LinkedHashMap<String, String>();
-		}
 		LinkedHashMap<String,String> factorValuesMap = new LinkedHashMap<String, String>();
+		LinkedHashMap<String, String> columnValueMap = getColumnValueMap();
+		
 		for(String key:columnValueMap.keySet()){
 			String value = columnValueMap.get(key);
 			if(value.contains("Factor Value")){
@@ -192,11 +172,8 @@ public class GuiMediator{
 		return factorValuesMap;
 	}
 	public LinkedHashMap<String,String> getCharacteristicMap(){
-		if(columnValueMap==null){
-			System.err.println("COLUMN VALUE MAP IS NULL!");
-			return new LinkedHashMap<String, String>();
-		}
 		LinkedHashMap<String,String> characteristicValuesMap = new LinkedHashMap<String, String>();
+		LinkedHashMap<String, String> columnValueMap = getColumnValueMap();
 		for(String key:columnValueMap.keySet()){
 			String value = columnValueMap.get(key);
 			if(value.contains("Characteristics")){
@@ -207,9 +184,8 @@ public class GuiMediator{
 	}
 	public void refreshTable(){
 		sdrfSection.refreshTable(sdrfData.getDataSource(),sdrfData.getAllFields());
-	}
-	public void addValueToSelectedRecords(String fromColumn, String destinationColumn, String value){
-		sdrfData.addValueToSelectedRecords(fromColumn, destinationColumn, value);
+		filterTab.setData(sdrfData.getDataSource());
+		updateColumnsInComboBoxes();
 	}
 	public String addColumnToClipboardAndGetKey(String title) {
 		return sdrfSectionColumnEditor.addNewColumnToClipboardAndGetKey(title);
@@ -219,5 +195,29 @@ public class GuiMediator{
 	}
 	public void passArrayToErrorsTab(JSONArray array) {
 		errorsTab.handleJSONArrayOfErrors(array);
+	}
+	//*****************************************
+	// End Registration
+	//*****************************************
+	
+	public void showIDFFactorValue_ValidatorWindow() {
+		idfFactorValueWindow.updateFactorValues(getFactorValuesMap());
+		idfFactorValueWindow.show();
+	}
+	/**
+	 * Updates the columns. Should be called every time the table changes
+	 */
+	private void updateColumnsInComboBoxes() {
+		//Update Data source in table
+		LinkedHashMap<String, String> columnValueMap = new LinkedHashMap<String, String>();  
+		for(ListGridField field:sdrfData.getAllFields()){
+			columnValueMap.put(field.getName(), field.getTitle());
+		}
+		if(filterTab!=null){
+			filterTab.updateColumnsInComboBox(columnValueMap);
+		}
+		if(extractTab!=null){
+			extractTab.updateColumnsInComboBox(columnValueMap);	
+		}
 	}
 }

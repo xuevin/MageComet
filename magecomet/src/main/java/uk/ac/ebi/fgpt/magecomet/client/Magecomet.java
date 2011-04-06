@@ -1,5 +1,7 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
+import java.util.LinkedHashMap;
+
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileService;
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileServiceAsync;
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileServiceCallback;
@@ -41,6 +43,8 @@ public class Magecomet implements EntryPoint {
 	private final SearchOracle searchOracle = new SearchOracle();
 	private final SuggestCanvas suggestCanvasItem= new SuggestCanvas("suggestBox", "suggestBox", searchOracle);
 	private final Button revalidateButton = new Button("Revalidate");
+	private final Button confirmFactorValues = new Button("Confirm Factor Values");
+	
 	/**
 	 * Declares the Variables that will be instantiated on module load / file load
 	 */
@@ -62,7 +66,7 @@ public class Magecomet implements EntryPoint {
 		topTabSet.addTab(editTab);
 		topTabSet.addTab(errorTab);
 		topTabSet.setTabBarControls(TabBarControls.TAB_SCROLLER,
-				TabBarControls.TAB_PICKER, suggestCanvasItem, exportIDFButton,
+				TabBarControls.TAB_PICKER, suggestCanvasItem, confirmFactorValues, exportIDFButton,
 				exportSDRFButton,revalidateButton);
 //		topTabSet.moveBy(0, 140);
 		topTabSet.show();
@@ -72,6 +76,14 @@ public class Magecomet implements EntryPoint {
 		/*
 		 * Buttons
 		 */
+		confirmFactorValues.setWidth(150);
+		confirmFactorValues.addClickHandler(new ClickHandler() {
+			
+			public void onClick(ClickEvent event) {
+				guiMediator.showIDFFactorValue_ValidatorWindow();
+			}
+		});
+		
 		exportSDRFButton.setIcon("[SKIN]actions/download.png");
 		exportSDRFButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
@@ -86,7 +98,8 @@ public class Magecomet implements EntryPoint {
 		exportIDFButton.addClickHandler(new ClickHandler() {
 			
 			public void onClick(ClickEvent event) {
-				if(!guiMediator.getSDRFAsString().equals("")){
+				
+				if(!guiMediator.getIDFAsString().equals("")){
 					fileService.writeFile(guiMediator.getCurrentIDFTitle(), guiMediator.getIDFAsString(), new FileServiceCallback());	
 				}
 				
@@ -113,7 +126,7 @@ public class Magecomet implements EntryPoint {
 		
 		TagCloudWindow tagCloudWindow = new TagCloudWindow(guiMediator);
 		tagCloudWindow.show();
-		tagCloudWindow.moveTo(500,0);
+		tagCloudWindow.moveTo(400,0);
 //		tagCloudWindow.moveAbove(canvas)
 		
 //		mainLayout.setHtmlElement(DOM.getElementById("webapp"));

@@ -80,7 +80,7 @@ public class TagCloudWindow extends Window{
 			public void execute(){
 				for(AutofillPopup popup: listOfActiveAutofillPopups){
 					if(popup.getTitle().equals(word)){
-							popup.updateColumns();
+//							popup.updateColumns();
 							popup.centerInPage();
 							popup.show();
 							return;

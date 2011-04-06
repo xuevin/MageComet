@@ -87,21 +87,13 @@ public class SDRF_Section extends SectionStackSection{
 		sdrfTable.setDataSource(data);
 		sdrfTable.setFields(listOfFields);
 		sdrfTable.fetchData();
-
-		
-		
-		//Pass data to FilterTab
-		guiMediator.passDataSourceToFilterTab(data);
 		//Pass all fields to Extract Tab
-		guiMediator.passAllRecordsToExtractTab(listOfAllRecords,sdrfTable);
+		guiMediator.passSDRFTableToExtractTab(sdrfTable);
 	}
 	public void refreshTable(DataSource data, ListGridField[] listOfFields) {
-		
 		sdrfTable.setDataSource(data);
 		sdrfTable.setFields(listOfFields);
 		sdrfTable.fetchData();
-		guiMediator.updateColumnsInComboBoxes(listOfFields);
-		guiMediator.passDataSourceToFilterTab(data);
 	}
 	public void filterTable(AdvancedCriteria filterCritria){
 		sdrfTable.filterData(filterCritria);
