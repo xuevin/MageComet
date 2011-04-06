@@ -14,12 +14,9 @@ import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.FormItemIfFunction;
 import com.smartgwt.client.widgets.form.fields.CheckboxItem;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
-import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
-import com.smartgwt.client.widgets.form.validator.IsOneOfValidator;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
 
@@ -29,19 +26,11 @@ public class AutofillPopup extends Window{
 	private final HTMLFlow efo_description = new HTMLFlow();
     private final StaticTextItem termSourceNum = new StaticTextItem();
     private final StaticTextItem termSourceRef = new StaticTextItem();
-    private final StaticTextItem sourceColumnInstructions = new StaticTextItem();
     private final CheckboxItem newCharacteristicCheckbox = new CheckboxItem();  
-    private final CheckboxItem newFactorValueCheckbox = new CheckboxItem();  
     private final CheckboxItem termSourceRefCheckbox = new CheckboxItem();  
     private final CheckboxItem termSourceNumberCheckbox = new CheckboxItem();
     private final CheckboxItem addToAllRecordsCheckBox = new CheckboxItem();
-	private final CheckboxItem existingFactorValueCheckbox = new CheckboxItem();
-	private final CheckboxItem existingCharacteristicCheckbox = new CheckboxItem();
-	private final ComboBoxItem existingFactorValueInput = new ComboBoxItem();
 	private final ComboBoxItem characteristicInput = new ComboBoxItem();
-	private final ComboBoxItem sourceColumnCombobox = new ComboBoxItem();
-	private final ComboBoxItem factorValueInput = new ComboBoxItem();
-    private final ComboBoxItem existingCharacteristicInput = new ComboBoxItem();
 	private final DynamicForm form = new DynamicForm();
 	private final VStack vStack = new VStack();
 
@@ -96,23 +85,6 @@ public class AutofillPopup extends Window{
         characteristicInput.setTitle("Column Title");
         characteristicInput.setValueMap(GlobalConfigs.getCommonCharacteristics());
         
-        newFactorValueCheckbox.setTitle("New Factor Value");
-        factorValueInput.setTitle("Column Title");
-        factorValueInput.setWrapTitle(false);
-        factorValueInput.setValueMap(GlobalConfigs.getCommonFactors());
-        
-
-        existingCharacteristicCheckbox.setTitle("Existing Characteristic Column");
-        existingCharacteristicInput.setTitle("Existing Column");
-        existingCharacteristicInput.setValueMap(guiMediator.getCharacteristicMap());
-        existingCharacteristicInput.setValidators(new IsOneOfValidator());
-
-        
-        existingFactorValueCheckbox.setTitle("Existing Factor Value Column");
-        existingFactorValueInput.setTitle("Existing Column");
-        existingFactorValueInput.setValueMap(guiMediator.getFactorValuesMap());
-        existingFactorValueInput.setValidators(new IsOneOfValidator());
-        
         termSourceRefCheckbox.setTitle("Term Source REF");
        
         termSourceRef.setTitle("Ontology");
@@ -129,53 +101,17 @@ public class AutofillPopup extends Window{
         addToAllRecordsCheckBox.setTitle("Add Term as Value to All Records");
         addToAllRecordsCheckBox.setColSpan(4);
         addToAllRecordsCheckBox.setName("addToAllRecordsCheckBox");
-        addToAllRecordsCheckBox.setRedrawOnChange(true);  
-        addToAllRecordsCheckBox.setValue(false);
+        addToAllRecordsCheckBox.setValue(true);
+      
        
-        sourceColumnInstructions.setShowTitle(false);
-		sourceColumnInstructions.setColSpan(2);
-		sourceColumnInstructions.setDefaultValue("Source column");
-		
-
-		sourceColumnCombobox.setTitle("Column");
-		sourceColumnCombobox.setWrapTitle(false);
-		sourceColumnCombobox.setValueMap(guiMediator.getColumnValueMap());
-		sourceColumnCombobox.setValidators(new IsOneOfValidator());
-		sourceColumnCombobox.setRequired(true);
-        
-        
-        FormItemIfFunction ifNotChecked = new FormItemIfFunction() {
-        	//If addAll is not checked, then this item is visible
-            public boolean execute(FormItem item, Object value, DynamicForm form) {  
-                return !(Boolean)form.getValue("addToAllRecordsCheckBox");  
-            }  
-        };
-        
-        newFactorValueCheckbox.setShowIfCondition(ifNotChecked);
-        factorValueInput.setShowIfCondition(ifNotChecked);
-        sourceColumnCombobox.setShowIfCondition(ifNotChecked);
-        sourceColumnInstructions.setShowIfCondition(ifNotChecked);
-        existingCharacteristicCheckbox.setShowIfCondition(ifNotChecked);
-        existingCharacteristicInput.setShowIfCondition(ifNotChecked);
-        existingFactorValueCheckbox.setShowIfCondition(ifNotChecked);
-        existingFactorValueInput.setShowIfCondition(ifNotChecked);
-        
-       
-		form.setFields(	addToAllRecordsCheckBox,	
+		form.setFields(	addToAllRecordsCheckBox,
 						newCharacteristicCheckbox,
 						characteristicInput,
-						newFactorValueCheckbox,
-						factorValueInput,
-						existingCharacteristicCheckbox,
-						existingCharacteristicInput,
-						existingFactorValueCheckbox,
-						existingFactorValueInput,
 						termSourceRefCheckbox,
 						termSourceRef,
 						termSourceNumberCheckbox,
-						termSourceNum,
-						sourceColumnInstructions,
-						sourceColumnCombobox);
+						termSourceNum
+						);
 		
 		HStack buttonsStack = new HStack();
 		buttonsStack.setAlign(Alignment.RIGHT);
@@ -232,96 +168,27 @@ public class AutofillPopup extends Window{
 		//Convenience Booleans
 		boolean termSourceRefChecked = termSourceRefCheckbox.getValueAsBoolean();
 		boolean termSourceNumberChecked = termSourceNumberCheckbox.getValueAsBoolean();
-		
 		boolean newCharacteristicChecked = newCharacteristicCheckbox.getValueAsBoolean(); 
-		boolean newFactorValueChecked = newFactorValueCheckbox.getValueAsBoolean();
-		
-		boolean existingCharacteristicChecked = existingCharacteristicCheckbox.getValueAsBoolean();
-		boolean existingFactorValueChecked = existingFactorValueCheckbox.getValueAsBoolean();
 		
 		//Convenience Values
-		String characteristicString = characteristicInput.getValueAsString();
-		String factorValueString = factorValueInput.getValueAsString();
-		String existingCharacteristicInputColumnName = existingCharacteristicInput.getValueAsString();
-		String existingFactorValueInputColumnName = existingFactorValueInput.getValueAsString();
-		String sourceColumn = sourceColumnCombobox.getValueAsString();
-	
+		String characteristicString = characteristicInput.getValueAsString();	
 		/*
 		 * If you are adding a value to all records, it must be a characteristic
 		 */
 		if(addToAllRecordsCheckBox.getValueAsBoolean()==true){
-			if(newCharacteristicChecked){
-				if(termSourceNumberChecked){
-					guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Accession Number", termSourceNum.getDisplayValue());
-				}
-				if(termSourceRefChecked){
-					guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Source REF", "EFO");
-				}
-				guiMediator.addColumnToCharacteristicAndAddValueToAllRecords(characteristicString, efoTerm);
+			if(termSourceNumberChecked){
+				guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Accession Number", termSourceNum.getDisplayValue());
 			}
-		/*
-		 * If your using the feature to add values to specific rows, then there 
-		 * is much more to check
-		 */
-		}else{
-			if(hasConflictingValuesChecked()){
-				//Conflicting values are checked! Must warn user
-				return;
-			}
-			if(existingCharacteristicChecked){
-				guiMediator.addValueToSelectedRecords(sourceColumn, existingCharacteristicInputColumnName, efoTerm);
-			}
-			if(existingFactorValueChecked){
-				guiMediator.addValueToSelectedRecords(sourceColumn, existingFactorValueInputColumnName, efoTerm);
+			if(termSourceRefChecked){
+				guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Source REF", "EFO");
 			}
 			if(newCharacteristicChecked){
-				if(termSourceNumberChecked){
-					guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Accession Number", termSourceNum.getDisplayValue());
-				}
-				if(termSourceRefChecked){
-					guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Source REF", "EFO");
-				}
-				String newColumnName = guiMediator.addCharacteristicColumnAndGetKey(characteristicString);
-				guiMediator.addValueToSelectedRecords(sourceColumn, newColumnName, efoTerm);
-			}
-			if(newFactorValueChecked){
-				String newColumnName = guiMediator.addFactorValueColumnAndGetKey(factorValueString);
-				guiMediator.addValueToSelectedRecords(sourceColumn, newColumnName, efoTerm);
-				if(termSourceRefChecked){
-					guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Source REF", "EFO");
-				}
-				if(termSourceNumberChecked){
-					guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Term Accession Number", termSourceNum.getDisplayValue());
-				}
+				guiMediator.addColumnToCharacteristicAndAddValueToAllRecords("Characteristics["+characteristicString+"]", efoTerm);
 			}
 		}
 		guiMediator.refreshTable();
 		hide();
 		
 	}
-
-	private boolean hasConflictingValuesChecked() {
-		boolean newCharacteristicChecked = newCharacteristicCheckbox.getValueAsBoolean(); 
-		boolean newFactorValueChecked = newFactorValueCheckbox.getValueAsBoolean();
-		boolean existingCharacteristicChecked = existingCharacteristicCheckbox.getValueAsBoolean();
-		boolean existingFactorValueChecked = existingFactorValueCheckbox.getValueAsBoolean();
-		
-		if(existingCharacteristicChecked && newCharacteristicChecked){
-			System.out.println("TWO CHECKED");
-			return true;
-		}
-		if(existingFactorValueChecked && newFactorValueChecked){
-			System.out.println("TWO CHECKED");
-			return true;
-		}
-		return false;
-	}
-
-	public void updateColumns() {
-		sourceColumnCombobox.setValueMap(guiMediator.getColumnValueMap());
-		existingCharacteristicInput.setValueMap(guiMediator.getCharacteristicMap());
-		existingFactorValueInput.setValueMap(guiMediator.getFactorValuesMap());
-	}
-	
 	
 }
