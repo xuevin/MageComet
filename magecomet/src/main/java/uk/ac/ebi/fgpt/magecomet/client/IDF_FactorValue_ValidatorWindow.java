@@ -17,10 +17,12 @@ import com.smartgwt.client.widgets.layout.VStack;
 
 public class IDF_FactorValue_ValidatorWindow extends Window{
 	private final DynamicForm form = new DynamicForm();
-	HashMap<String, String> savedMappings = new HashMap<String, String>();
+	private LinkedHashMap<String, String> savedMappings = new LinkedHashMap<String, String>();
+	private GuiMediator guiMediator;
 
-	public IDF_FactorValue_ValidatorWindow(LinkedHashMap<String, String> factorValues){
+	public IDF_FactorValue_ValidatorWindow(GuiMediator guiMediator){
 		super();
+		this.guiMediator = guiMediator;
 		form.setColWidths(3);
 		setTitle("Confirm Factor Values");
 		setWidth("600");
@@ -77,6 +79,8 @@ public class IDF_FactorValue_ValidatorWindow extends Window{
 		for(FormItem item:form.getFields()){
 			savedMappings.put(item.getTitle(), item.getValue().toString());
 		}
+		guiMediator.setFactorValuesInIDF(savedMappings);
+		hide();
 	}
 
 	public void updateFactorValues(LinkedHashMap<String, String> factorValues) {
@@ -88,7 +92,7 @@ public class IDF_FactorValue_ValidatorWindow extends Window{
 			ComboBoxItem newcomboBox = new ComboBoxItem();
 			newcomboBox.setWrapTitle(false);
 			newcomboBox.setTitle(factorValues.get(key));
-			newcomboBox.setValueMap(factorValues);
+			newcomboBox.setValueMap(GlobalConfigs.getCommonFactorValueTypes());
 			if(savedMappings.containsKey(factorValues.get(key))){
 				newcomboBox.setDefaultValue(savedMappings.get(factorValues.get(key)));
 			}

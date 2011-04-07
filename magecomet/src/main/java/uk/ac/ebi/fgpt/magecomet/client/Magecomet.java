@@ -1,7 +1,5 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
-import java.util.LinkedHashMap;
-
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileService;
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileServiceAsync;
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileServiceCallback;
@@ -19,6 +17,12 @@ import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.tab.TabSet;
+
+// Set - Replace Existing or add if it does not exist 
+// Get - 
+// Add - add 
+// 
+
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.

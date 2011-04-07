@@ -88,4 +88,12 @@ public class GlobalConfigs {
 		valueMap.put("survival", "survival");
 		return valueMap;
 	}
+	public static LinkedHashMap<String, String> getCommonFactorValueTypes(){
+		LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
+		valueMap.put("AGE", "AGE");
+		valueMap.put("AGE_AT_DIAGNOSIS", "AGE_AT_DIAGNOSIS");
+		
+		return valueMap;
+	}
+	
 }

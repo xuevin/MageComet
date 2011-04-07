@@ -14,7 +14,6 @@ import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.layout.VStack;
 import com.smartgwt.client.widgets.tab.Tab;
 
 public class ErrorsTab extends Tab{
@@ -76,10 +75,10 @@ public class ErrorsTab extends Tab{
 		
 	}
 	public void handelJSONObject(JSONObject object){
-		JSONArray errors = object.get("error").isArray();
-		if(errors==null){
+		if(object.get("error")==null){
 			return;
 		}
+		JSONArray errors = object.get("error").isArray();
 		handleJSONArrayOfErrors(errors);
 		errorsListGrid.filterData(new Criteria("type", "validation error"));
 	}

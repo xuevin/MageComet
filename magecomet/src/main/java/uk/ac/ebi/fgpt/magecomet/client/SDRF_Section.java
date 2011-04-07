@@ -50,7 +50,7 @@ public class SDRF_Section extends SectionStackSection{
         sdrfTable.setMargin(0);
         sdrfTable.setSelectionType(SelectionStyle.MULTIPLE);
         sdrfTable.setShowBackgroundComponent(false);
-        sdrfTable.setCanReorderFields(true);
+        sdrfTable.setCanReorderFields(false);
         sdrfTable.setDrawAheadRatio((float)2);
         
         

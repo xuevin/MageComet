@@ -250,7 +250,7 @@ public class SDRF_Section_ColumnEditor extends Window {
 		RecordList recordList = new RecordList();
 		// ListGridRecord[] columnsArray= new
 		// ListGridRecord[guiMediator.getAllFields().length-1];
-		ListGridField[] fields = guiMediator.getAllFields();
+		ListGridField[] fields = guiMediator.getAllSDRFFields();
 		for (int i = 0; i < fields.length; i++) {
 			if (i != 0) {
 				ListGridRecord record = new ListGridRecord();

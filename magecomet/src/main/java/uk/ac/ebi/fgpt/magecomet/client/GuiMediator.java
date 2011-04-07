@@ -3,6 +3,8 @@ package uk.ac.ebi.fgpt.magecomet.client;
 
 import java.util.LinkedHashMap;
 
+import uk.ac.ebi.arrayexpress2.magetab.datamodel.SDRF;
+
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.smartgwt.client.data.AdvancedCriteria;
@@ -20,10 +22,10 @@ public class GuiMediator{
 	private LoadTab loadTab;
 	private ErrorsTab errorsTab;
 	private EditTab editTab;
-//	private LinkedHashMap<String, String> columnValueMap; 
 	private String currentIDF;
 	private String currentSDRF;
 	private SDRF_Data sdrfData;
+	private IDF_Data idfData;
 	
 
 	public GuiMediator(){
@@ -60,6 +62,7 @@ public class GuiMediator{
 	// End Registration
 	//*****************************************
 	
+	@Deprecated
 	public void addColumnToClipboardAndAddValueToAllRecords(String fieldTitle,String value){
 		String uniqueKey = sdrfSectionColumnEditor.addNewColumnToClipboardAndGetKey(fieldTitle);
 		sdrfData.addAttributeToAllRecords(uniqueKey,value);
@@ -96,15 +99,20 @@ public class GuiMediator{
 		extractTab.setRecords(sdrfData.getAllRecords(),sdrfTable);
 	}
 	public void loadSDRFData(JSONObject object){
+		System.out.println("Load SDRF");
 		sdrfData= new SDRF_Data(object);
 		sdrfSection.setData(sdrfData.getDataSource(),sdrfData.getAllFields(),sdrfData.getAllRecords());
 		filterTab.setData(sdrfData.getDataSource());
 		updateColumnsInComboBoxes();
-		idfFactorValueWindow = new IDF_FactorValue_ValidatorWindow(getFactorValuesMap());
+		idfFactorValueWindow = new IDF_FactorValue_ValidatorWindow(this);
+		idfFactorValueWindow.updateFactorValues(getFactorValuesMap());
 
 	}
-	public void passDataToIDFSection(JSONObject object){
-		idfSection.handleJSONObject(object);
+	public void loadIDFData(JSONObject object){
+		System.out.println("Load IDF");
+		idfData = new IDF_Data(object);
+		idfSection.setData(idfData.getAllFields(),idfData.getAllRecords());
+		idfSection.setDescription(idfData.getFilterData());
 	}
 	public void passDataToErrorsTab(JSONObject object){
 		System.out.println("JSONObject was passed to Errors Tab");
@@ -114,26 +122,28 @@ public class GuiMediator{
 		sdrfData.updateColumnNames(newArrayOfListGridFields);
 		sdrfData.updateDataSource(newArrayOfListGridFields);
 	}
-	public ListGridField[] getAllFields(){
+	public ListGridField[] getAllSDRFFields(){
 		return sdrfData.getAllFields();
 	}
 	public void passDataToTagCloud(JSONObject jsonObject) {
-			if(jsonObject.get("whatizitIDF")!=null){
-				JSONArray tagWords = jsonObject.get("whatizitIDF").isArray() ;
-				for (int i = 0; i < tagWords.size(); i++) {
-					final String word = tagWords.get(i).isString().stringValue();
-					tagCloudWindow.addWord(word,1);
-				}
+		System.out.println("Data passed to cloud");
+
+		if (jsonObject.get("whatizitIDF") != null) {
+			JSONArray tagWords = jsonObject.get("whatizitIDF").isArray();
+			for (int i = 0; i < tagWords.size(); i++) {
+				final String word = tagWords.get(i).isString().stringValue();
+				tagCloudWindow.addWord(word, 1);
 			}
-			if((jsonObject.get("whatizitSDRF")!=null)){
-				JSONArray tagWords=jsonObject.get("whatizitSDRF").isArray();
-				for (int i = 0; i < tagWords.size(); i++) {
-					final String word = tagWords.get(i).isString().stringValue();
-					tagCloudWindow.addWord(word,2);
-				}
-			}
-			tagCloudWindow.refreshTagClouds();
 		}
+		if ((jsonObject.get("whatizitSDRF") != null)) {
+			JSONArray tagWords = jsonObject.get("whatizitSDRF").isArray();
+			for (int i = 0; i < tagWords.size(); i++) {
+				final String word = tagWords.get(i).isString().stringValue();
+				tagCloudWindow.addWord(word, 2);
+			}
+		}
+		tagCloudWindow.refreshTagClouds();
+	}
 	public void setCurrentIDFTitle(String currentIDF) {
 		this.currentIDF = currentIDF;
 	}
@@ -150,7 +160,7 @@ public class GuiMediator{
 		return sdrfData.getString();
 	}
 	public String getIDFAsString() {
-		return idfSection.getString();
+		return idfData.getString();
 	}
 	public LinkedHashMap<String,String> getColumnValueMap(){
 		LinkedHashMap<String, String> columnValueMap = new LinkedHashMap<String, String>();
@@ -203,6 +213,10 @@ public class GuiMediator{
 	public void showIDFFactorValue_ValidatorWindow() {
 		idfFactorValueWindow.updateFactorValues(getFactorValuesMap());
 		idfFactorValueWindow.show();
+	}
+	public void setFactorValuesInIDF(LinkedHashMap<String,String> factorNameToType){
+		idfData.setFactorValues(factorNameToType);
+		idfSection.setData(idfData.getAllFields(),idfData.getAllRecords());
 	}
 	/**
 	 * Updates the columns. Should be called every time the table changes

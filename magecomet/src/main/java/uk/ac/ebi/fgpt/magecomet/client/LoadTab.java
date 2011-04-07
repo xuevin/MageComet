@@ -120,7 +120,7 @@ public class LoadTab extends Tab{
 			public void onSuccess(String arg0) {
 				JSONObject jsonObject = JSONParser.parseStrict(arg0).isObject();
 				guiMediator.loadSDRFData(jsonObject);
-				guiMediator.passDataToIDFSection(jsonObject);
+				guiMediator.loadIDFData(jsonObject);
 				guiMediator.passDataToErrorsTab(jsonObject);
 				guiMediator.passDataToTagCloud(jsonObject);
 				guiMediator.setCurrentIDFTitle((accessionInput.getDisplayValue()).toUpperCase()+".idf.txt");
@@ -163,7 +163,7 @@ public class LoadTab extends Tab{
 					guiMediator.passDataToTagCloud(jsonObject);
 					guiMediator.setCurrentSDRFTitle(info.name);
 				} else if (info.name.contains("idf")) {
-					guiMediator.passDataToIDFSection(jsonObject);
+					guiMediator.loadIDFData(jsonObject);
 					guiMediator.passDataToTagCloud(jsonObject);
 					guiMediator.setCurrentIDFTitle(info.name);
 				} else {

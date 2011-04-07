@@ -85,7 +85,8 @@ public class JSONUtils {
 		}		
 	}
 	public static JSONArray getErrorArray(File idf, File sdrf) throws UploadActionException {
-		
+		JSONArray errorArray= new JSONArray();
+
 		try {
 			System.out.println("Started Validation");
 			// Create validataor 
@@ -115,7 +116,6 @@ public class JSONUtils {
 
 			
 			int i =0;
-			JSONArray errorArray= new JSONArray();
 
 			for(ErrorItem error:errorList){
 				JSONObject errorItem = new JSONObject();
@@ -132,7 +132,7 @@ public class JSONUtils {
 			return errorArray;
 		} catch (JSONException e) {
 			e.printStackTrace();
-			throw new UploadActionException("Validation Failed");
+			throw new UploadActionException("JSON Exception");
 		} catch (Exception e){
 			e.printStackTrace();
 			throw new UploadActionException("Something else failed");

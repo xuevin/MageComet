@@ -1,7 +1,5 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
-import java.util.ArrayList;
-
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.smartgwt.client.core.DataClass;
@@ -305,16 +303,16 @@ public class SDRF_Data {
 		uniqueKeyCount++;
 		return uniqueKeyCount;
 	}
-	@Deprecated
 	public DataSource getDataSource() {
 		return data;
 	}
-	@Deprecated
 	public ListGridRecord[] getAllRecords() {
 		return listOfAllRecords;
 	}
+	
 	public void setValueForSelectedRecords(ListGridRecord[] listOfRecords,
 			String uniqueKey, String value) {
+		//FIXE ME!!!!
 		//This updates based on what is filtered
 		for(ListGridRecord record:listOfRecords){
 			record.setAttribute(uniqueKey, value);
