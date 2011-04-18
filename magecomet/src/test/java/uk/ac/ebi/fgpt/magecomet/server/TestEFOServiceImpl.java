@@ -26,7 +26,6 @@ public class TestEFOServiceImpl {
 	/**
 	 * Only works when server is running
 	 */
-	@Test
 	public void testGetEfoAccessionIdByName(){
 		EFOServiceImpl impl = new EFOServiceImpl();
 		assertEquals("EFO_0000860",impl.getEfoAccessionIdByName("thymus"));
@@ -34,7 +33,6 @@ public class TestEFOServiceImpl {
 	/**
 	 * Only works when server is running
 	 */
-	@Test
 	public void testgetEfoDescriptionByName() {
 		EFOServiceImpl impl = new EFOServiceImpl();
 		String match ="An experimental factor in Array Express which are essentially the variable aspects of an experiment design which can be used to describe an experiment, or set of experiments, in an increasingly detailed manner.";

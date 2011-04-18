@@ -77,7 +77,7 @@
 		<dependency>
 			<groupId>uk.ac.ebi.arrayexpress2</groupId>
 			<artifactId>limpopo</artifactId>
-			<version>1.1-rc1</version>
+			<version>1.1-rc2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.smartgwt</groupId>
@@ -89,17 +89,17 @@
 			<artifactId>monq</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-<!--		<dependency>   -->
-<!--   <groupId>net.sf.json-lib</groupId>   -->
-<!--   <artifactId>json-lib</artifactId>   -->
-<!--   <version>1.0</version>   -->
-<!--   <classifier>jdk15</classifier>   -->
-<!--</dependency>-->
 		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20090211</version>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>2.2.2</version>
+			<classifier>jdk15</classifier>
 		</dependency>
+		<!--		<dependency>-->
+		<!--			<groupId>org.json</groupId>-->
+		<!--			<artifactId>json</artifactId>-->
+		<!--			<version>20090211</version>-->
+		<!--		</dependency>-->
 		<!--		<dependency>-->
 		<!--			<groupId>com.googlecode.gwtupload</groupId>-->
 		<!--			<artifactId>gwtupload</artifactId>-->
@@ -110,11 +110,11 @@
 			<artifactId>gwtupload</artifactId>
 			<version>0.6.4-SNAPSHOT</version>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>annotare</groupId>-->
-<!--			<artifactId>annotare-validator</artifactId>-->
-<!--			<version>1.1</version>-->
-<!--		</dependency>-->
+		<!--		<dependency>-->
+		<!--			<groupId>annotare</groupId>-->
+		<!--			<artifactId>annotare-validator</artifactId>-->
+		<!--			<version>1.1</version>-->
+		<!--		</dependency>-->
 		<dependency>
 			<groupId>uk.ac.ebi</groupId>
 			<artifactId>ontoCAT</artifactId>

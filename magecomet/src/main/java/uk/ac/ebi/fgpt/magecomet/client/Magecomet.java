@@ -1,5 +1,7 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
+import java.util.logging.Logger;
+
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileService;
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileServiceAsync;
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileServiceCallback;
@@ -24,6 +26,8 @@ import com.smartgwt.client.widgets.tab.TabSet;
 // 
 
 
+
+
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
@@ -32,12 +36,8 @@ public class Magecomet implements EntryPoint {
 	/**
 	 * This is the entry point method.
 	 */
-
-	/**
-	 * Declare the panels that will be used
-	 */
+    
 	private final GuiMediator guiMediator = new GuiMediator();
-
 	private final Button exportSDRFButton = new Button("Export SDRF");
 	private final Button exportIDFButton = new Button("Export IDF");
 	private final TabSet topTabSet = new TabSet();

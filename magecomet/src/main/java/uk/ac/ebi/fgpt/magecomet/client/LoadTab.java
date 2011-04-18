@@ -1,6 +1,9 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import uk.ac.ebi.fgpt.magecomet.client.ftpservice.FTPException;
 import uk.ac.ebi.fgpt.magecomet.client.ftpservice.FTPService;
 import uk.ac.ebi.fgpt.magecomet.client.ftpservice.FTPServiceAsync;
@@ -37,7 +40,8 @@ public class LoadTab extends Tab{
 	private FTPServiceAsync ftpServiceAsync = GWT.create(FTPService.class);
 	private final Img loadImage = new Img("[SKIN]loadingSmall.gif");
 	private final VStack vstack = new VStack();
-	
+	private Logger logger = Logger.getLogger("LoadTab");
+
 	public LoadTab(GuiMediator guiMediator){
 		super("Load");
 		this.guiMediator=guiMediator;
@@ -118,6 +122,7 @@ public class LoadTab extends Tab{
 		ftpServiceAsync.getExperimentJSON(accessionInput.getDisplayValue().toUpperCase(), new AsyncCallback<String>() {
 			
 			public void onSuccess(String arg0) {
+				logger.log(Level.INFO,"JSON Received");
 				JSONObject jsonObject = JSONParser.parseStrict(arg0).isObject();
 				guiMediator.loadSDRFData(jsonObject);
 				guiMediator.loadIDFData(jsonObject);
@@ -156,7 +161,7 @@ public class LoadTab extends Tab{
 			
 				JSONObject jsonObject = JSONParser.parseStrict(info.message)
 						.isObject();
-				
+				logger.log(Level.INFO,"JSON Received");
 				// Parse the response according to the name of the file
 				if (info.name.contains("sdrf")) {
 					guiMediator.loadSDRFData(jsonObject);

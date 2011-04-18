@@ -1,7 +1,14 @@
  package uk.ac.ebi.fgpt.magecomet.client;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.smartgwt.client.data.AdvancedCriteria;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.RecordList;
+import com.smartgwt.client.types.FetchMode;
 import com.smartgwt.client.types.ListGridEditEvent;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.SelectionStyle;
@@ -28,8 +35,10 @@ public class SDRF_Section extends SectionStackSection{
 	
 	private SDRF_Section_ColumnEditor columnEditorWindow;
 	
-	
 	private GuiMediator guiMediator;
+	
+	private Logger logger = Logger.getLogger("SDRF_Section");
+
 	
 	public SDRF_Section(final GuiMediator guiMediator){
 		super("SDRF");
@@ -51,7 +60,10 @@ public class SDRF_Section extends SectionStackSection{
         sdrfTable.setSelectionType(SelectionStyle.MULTIPLE);
         sdrfTable.setShowBackgroundComponent(false);
         sdrfTable.setCanReorderFields(false);
-        sdrfTable.setDrawAheadRatio((float)2);
+//        sdrfTable.setShowAllRecords(true);
+//        sdrfTable.setShowAllColumns(true);
+        sdrfTable.setAutoFetchData(false);
+        sdrfTable.setDataFetchMode(FetchMode.BASIC);
         
         
         editColumnsButton.setWidth(120);
@@ -83,7 +95,7 @@ public class SDRF_Section extends SectionStackSection{
         addItem(automaticFunctionEditor);
         addItem(sdrfTable);
 	}
-	public void setData(DataSource data, ListGridField[] listOfFields, ListGridRecord[] listOfAllRecords){
+	public void setData(DataSource data, ListGridField[] listOfFields){
 		sdrfTable.setDataSource(data);
 		sdrfTable.setFields(listOfFields);
 		sdrfTable.fetchData();
@@ -95,10 +107,15 @@ public class SDRF_Section extends SectionStackSection{
 		sdrfTable.setFields(listOfFields);
 		sdrfTable.fetchData();
 	}
-	public void filterTable(AdvancedCriteria filterCritria){
-		sdrfTable.filterData(filterCritria);
+	public void setFilterCritera(AdvancedCriteria filterCritria){
+		sdrfTable.setCriteria(filterCritria);
 	}
-	public ListGridRecord[] getListOfRecords(){
-		return sdrfTable.getRecords();
+	public void filterTable(AdvancedCriteria advancedCriteria) {
+		sdrfTable.filterData(advancedCriteria);
 	}
+	public RecordList getListOfRecords(){
+		return sdrfTable.getResultSet();
+//		return sdrfTable.getDataAsRecordList();
+//		return sdrfTable.getRecords();
+	}	
 }

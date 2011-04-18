@@ -68,6 +68,11 @@ public class FilterTab extends Tab{
                 replaceButton.setPrompt(prompt);
             }  
 		});
+    	replaceButton.addClickHandler(new ClickHandler() {  
+    		public void onClick(ClickEvent event) {
+    			submit();
+    		}
+    	});
     	
     	setPane(filterStack);
 
@@ -79,7 +84,7 @@ public class FilterTab extends Tab{
 		filterStack.removeMembers(filterStack.getMembers());
 		
 		//Make a new filter builder
-		filterBuilder  = new FilterBuilder();
+		filterBuilder = new FilterBuilder();
 		filterBuilder.setSaveOnEnter(true);
 		filterBuilder.setDataSource(datasource);
 		filterBuilder.addSearchHandler(new SearchHandler(){
@@ -95,13 +100,6 @@ public class FilterTab extends Tab{
 				guiMediator.filterTable(filterBuilder.getCriteria());
 			}
 		});
-	
-		
-		replaceButton.addClickHandler(new ClickHandler() {  
-    		public void onClick(ClickEvent event) {
-    			submit();
-    		}
-    	});
 		
 		//Layout
 		filterStack.addMember(filterBuilder);
@@ -114,8 +112,7 @@ public class FilterTab extends Tab{
 	private void submit() {
 		String uniqueKey = columnChooserCombobox.getValue().toString();
 		String value = cellValueTextItem.getValue().toString();
-		guiMediator.filterAndReplace(filterBuilder.getCriteria(),uniqueKey, value);
-		guiMediator.refreshTable();
+		guiMediator.filterReplaceRefresh(filterBuilder.getCriteria(),uniqueKey, value);
 		
 	}
 	/**

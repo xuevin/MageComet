@@ -40,6 +40,9 @@ public class IDF_Section extends SectionStackSection{
 		idfGrid.setCanSort(false);
 		idfGrid.setWidth("60%");
 		idfGrid.setShowAllRecords(true);
+		idfGrid.setShowBackgroundComponent(false);
+		idfGrid.setShowRollOver(false);
+
 		
 		textBox.setWidth("40%");
 		textBox.setOverflow(Overflow.AUTO);

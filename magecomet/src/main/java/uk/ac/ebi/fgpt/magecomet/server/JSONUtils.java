@@ -21,12 +21,12 @@ import monq.jfa.CompileDfaException;
 import monq.jfa.DfaRun;
 import monq.jfa.ReSyntaxException;
 import monq.programs.DictFilter;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.mged.annotare.validator.SemanticValidator;
 import org.mged.magetab.error.ErrorItem;
+
 
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.IDF;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.MAGETABInvestigation;
@@ -74,7 +74,11 @@ public class JSONUtils {
 				String match = matcher.group();
 				uniqueTerms.add(match.substring(7,match.length()-1));
 			}
-			return new JSONArray(uniqueTerms);
+			JSONArray returnArray = new JSONArray();
+			for(String term:uniqueTerms){
+				returnArray.add(term);
+			}
+			return returnArray;
 		}catch(IOException e){
 			System.out.println("ERROR Loading EFO");
 			throw e;
@@ -122,17 +126,15 @@ public class JSONUtils {
 				errorItem.put("code",error.getErrorCode()+"");
 				errorItem.put("type",error.getErrorType());
 				errorItem.put("message",error.getMesg());
+				errorItem.put("comment",error.getComment());
 				errorItem.put("line",error.getLine()+"");
 				errorItem.put("column",error.getCol()+"");
-				errorArray.put(i,errorItem);
+				errorArray.add(i,errorItem);
 				i++;
 			}
 			System.out.println("Finished Validation " + idf.getAbsolutePath() + "...");
 
 			return errorArray;
-		} catch (JSONException e) {
-			e.printStackTrace();
-			throw new UploadActionException("JSON Exception");
 		} catch (Exception e){
 			e.printStackTrace();
 			throw new UploadActionException("Something else failed");
@@ -168,14 +170,15 @@ public class JSONUtils {
 		
 		//02_Create Array of rows that you will return
 		JSONArray jsonRows = new JSONArray(); 
-		try {
-			//03_For each row, split on the tab and put the column into the row array
-			for(int i = 0; i<rows.length; i++){
-				String[] column = rows[i].split("\\t");
-				jsonRows.put(i,column);
+		
+		//03_For each row, split on the tab and put the column into the row array
+		for(int i = 0; i<rows.length; i++){
+			JSONArray jsonColumnArray = new JSONArray();
+			String[] columns = rows[i].split("\\t");
+			for(String value:columns){
+				jsonColumnArray.add(value);
 			}
-		} catch (JSONException e) {
-			e.printStackTrace();
+			jsonRows.add(i,jsonColumnArray);
 		}
 		return jsonRows;
 	}

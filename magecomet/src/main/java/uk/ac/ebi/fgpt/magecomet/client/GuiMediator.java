@@ -2,12 +2,16 @@ package uk.ac.ebi.fgpt.magecomet.client;
 
 
 import java.util.LinkedHashMap;
-
-import uk.ac.ebi.arrayexpress2.magetab.datamodel.SDRF;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.smartgwt.client.data.AdvancedCriteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 
@@ -27,11 +31,12 @@ public class GuiMediator{
 	private SDRF_Data sdrfData;
 	private IDF_Data idfData;
 	
+	private Logger logger = Logger.getLogger("GuiMediator");
 
 	public GuiMediator(){
 	}
 	public void registerTagCloud(TagCloudWindow tagCloud){
-		this.tagCloudWindow=tagCloud;	
+		this.tagCloudWindow=tagCloud;
 	}
 	public void registerSDRFSection(SDRF_Section sdrfSection){
 		this.sdrfSection=sdrfSection;
@@ -86,12 +91,18 @@ public class GuiMediator{
 	public String getNewColumnKey(){
 		return sdrfData.getNewColumnKey();
 	}
-	public void filterAndReplace(AdvancedCriteria advancedCriteria, String uniqueKey, String value){
-		sdrfSection.filterTable(advancedCriteria);
+	public void filterReplaceRefresh(AdvancedCriteria advancedCriteria, final String uniqueKey, final String value){
+		logger.log(Level.INFO,"Filter And Replace Was Called");
+		// filter
+		sdrfSection.setFilterCritera(advancedCriteria);
+		// replace
 		sdrfData.setValueForSelectedRecords(sdrfSection.getListOfRecords(),uniqueKey,value);
-		
+		// refresh
+		refreshTable();	
 	}
 	public void filterTable(AdvancedCriteria advancedCriteria){
+		logger.log(Level.INFO,"Filter Was Called");
+		
 		sdrfSection.filterTable(advancedCriteria);
 	}
 	@Deprecated
@@ -99,24 +110,30 @@ public class GuiMediator{
 		extractTab.setRecords(sdrfData.getAllRecords(),sdrfTable);
 	}
 	public void loadSDRFData(JSONObject object){
-		System.out.println("Load SDRF");
+		logger.log(Level.INFO,"Loading SDRF");
+		
 		sdrfData= new SDRF_Data(object);
-		sdrfSection.setData(sdrfData.getDataSource(),sdrfData.getAllFields(),sdrfData.getAllRecords());
+		sdrfSection.setData(sdrfData.getDataSource(),sdrfData.getAllFields());
 		filterTab.setData(sdrfData.getDataSource());
 		updateColumnsInComboBoxes();
 		idfFactorValueWindow = new IDF_FactorValue_ValidatorWindow(this);
 		idfFactorValueWindow.updateFactorValues(getFactorValuesMap());
-
+		
+		logger.log(Level.INFO,"Loaded SDRF");
 	}
 	public void loadIDFData(JSONObject object){
-		System.out.println("Load IDF");
+		logger.log(Level.INFO,"Loading IDF");
+		
 		idfData = new IDF_Data(object);
 		idfSection.setData(idfData.getAllFields(),idfData.getAllRecords());
 		idfSection.setDescription(idfData.getFilterData());
+		
+		logger.log(Level.INFO,"Loaded IDF");
 	}
 	public void passDataToErrorsTab(JSONObject object){
-		System.out.println("JSONObject was passed to Errors Tab");
+		logger.log(Level.INFO,"Loading Errors");
 		errorsTab.handelJSONObject(object);
+		logger.log(Level.INFO,"Loaded Errors");
 	}
 	public void updateSDRFColumnNames(ListGridField[] newArrayOfListGridFields){
 		sdrfData.updateColumnNames(newArrayOfListGridFields);
@@ -126,7 +143,7 @@ public class GuiMediator{
 		return sdrfData.getAllFields();
 	}
 	public void passDataToTagCloud(JSONObject jsonObject) {
-		System.out.println("Data passed to cloud");
+		logger.log(Level.INFO,"Load textmining results to the cloud");
 
 		if (jsonObject.get("whatizitIDF") != null) {
 			JSONArray tagWords = jsonObject.get("whatizitIDF").isArray();
@@ -143,6 +160,8 @@ public class GuiMediator{
 			}
 		}
 		tagCloudWindow.refreshTagClouds();
+		
+		logger.log(Level.INFO,"Textmining results passed to the cloud");
 	}
 	public void setCurrentIDFTitle(String currentIDF) {
 		this.currentIDF = currentIDF;
@@ -193,9 +212,11 @@ public class GuiMediator{
 		return characteristicValuesMap;
 	}
 	public void refreshTable(){
+		logger.log(Level.INFO,"A Call has been made to refresh the table");
 		sdrfSection.refreshTable(sdrfData.getDataSource(),sdrfData.getAllFields());
 		filterTab.setData(sdrfData.getDataSource());
 		updateColumnsInComboBoxes();
+		logger.log(Level.INFO,"Table has been refreshed");
 	}
 	public String addColumnToClipboardAndGetKey(String title) {
 		return sdrfSectionColumnEditor.addNewColumnToClipboardAndGetKey(title);

@@ -33,6 +33,7 @@ public class GlobalConfigs {
 		valueMap.put("compound", "compound");
 		valueMap.put("developmental stage", "developmental stage");
 		valueMap.put("disease stage", "disease stage");
+		valueMap.put("disease state", "disease state");
 		valueMap.put("dose", "dose");
 		valueMap.put("environmental history", "environmental history");
 		valueMap.put("ethnicity", "ethnicity");
@@ -71,6 +72,7 @@ public class GlobalConfigs {
 		valueMap.put("clinical information", "clinical information");
 		valueMap.put("developmental stage", "developmental stage");
 		valueMap.put("disease stage", "disease stage");
+		valueMap.put("disease state", "disease state");
 		valueMap.put("environmental history", "environmental history");
 		valueMap.put("ethnicity", "ethnicity");
 		valueMap.put("family history", "familiy history");
@@ -91,7 +93,31 @@ public class GlobalConfigs {
 	public static LinkedHashMap<String, String> getCommonFactorValueTypes(){
 		LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
 		valueMap.put("AGE", "AGE");
-		valueMap.put("AGE_AT_DIAGNOSIS", "AGE_AT_DIAGNOSIS");
+		valueMap.put("AGE AT DIAGNOSIS", "AGEATDIAGNOSIS");
+		valueMap.put("BEHAVIOR", "BEHAVIOR");
+		valueMap.put("BIOSOURCEPROVIDER", "BIOSOURCEPROVIDER");
+		valueMap.put("BMI", "BMI");
+		valueMap.put("CELLLINE", "CELLLINE");
+		valueMap.put("CELLTYPE", "CELLTYPE");
+		valueMap.put("CLINICALHISTORY", "CLINICALHISTORY");
+		valueMap.put("CLINICALINFORMATION", "CLINICALINFORMATION");
+		valueMap.put("DEVELOPMENTALSTAGE", "DEVELOPMENTALSTAGE");
+		valueMap.put("DISEASESTAGE", "DISEASESTAGE");
+		valueMap.put("ENVIRONMENTALHISTORY", "ENVIRONMENTALHISTORY");
+		valueMap.put("ETHNICITY", "ETHNICITY");
+		valueMap.put("FAMILYHISTORY", "FAMILIYHISTORY");
+		valueMap.put("GENETICMODIFICATION", "GENETICMODIFICATION");
+		valueMap.put("GENOTYPE", "GENOTYPE");
+		valueMap.put("HISTOLOGY", "HISTOLOGY");
+		valueMap.put("HOST", "HOST");
+		valueMap.put("INFECTION", "INFECTOIN");
+		valueMap.put("ORGANISMPART", "ORGANISMPART");
+		valueMap.put("PASSAGE", "PASSAGE");
+		valueMap.put("PHENOTYPE", "PHENOTYPE");
+		valueMap.put("POPULATION", "POPULATION");
+		valueMap.put("SEX", "SEX");
+		valueMap.put("STRAINORLINE", "STRAINORLINE");
+		valueMap.put("SURVIVAL", "SURVIVAL");
 		
 		return valueMap;
 	}

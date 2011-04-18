@@ -1,10 +1,18 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.smartgwt.client.core.DataClass;
+import com.smartgwt.client.data.AdvancedCriteria;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.data.RecordList;
 import com.smartgwt.client.types.AutoFitWidthApproach;
 import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.widgets.grid.ListGridField;
@@ -20,12 +28,14 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
  */
 public class SDRF_Data {
 	//These arrays must always be constantly updated.
-	private ListGridRecord[] listOfAllRecords;
+//	private ListGridRecord[] listOfAllRecords;
+	private HashMap<String, ListGridRecord> listOfAllRecords;
 	private ListGridField[] listOfAllFields;
 	private DataSource data;
 	private int numColumnsBeforeModification;
 	private int uniqueKeyCount;
 
+	private Logger logger = Logger.getLogger("SDRF_Data");
 	
 	public SDRF_Data(JSONObject jsonObject){
 		JSONArray jsonArray = jsonObject.get("sdrfArray").isArray();
@@ -35,11 +45,11 @@ public class SDRF_Data {
 		
 		data = new DataSource("sdrf_ds");		
 		data.setFields(JSONToDataSourceField(jsonArray)); // Need this to do filtering
-		data.setTestData(listOfAllRecords);
+		data.setTestData((map2Array(listOfAllRecords.values())));
 		data.setClientOnly(true);
 	}
 	public void addAttributeToAllRecords(final String uniqueKey, final String value){
-		for(ListGridRecord record:listOfAllRecords){
+		for(ListGridRecord record:listOfAllRecords.values()){
 			record.setAttribute(uniqueKey, value);
 		}
 		updateDataSource();
@@ -198,8 +208,8 @@ public class SDRF_Data {
 		
 		data = new DataSource();
 		data.setFields(fields); // Need this to do filtering (Limited to filtering of input data)
-		data.setTestData(listOfAllRecords);
-		data.setClientOnly(true);		
+		data.setTestData(map2Array(listOfAllRecords.values()));
+		data.setClientOnly(true);
 	}
 	/**
 	 * Converts a JSON array into an array of ListGridRecords.
@@ -211,11 +221,12 @@ public class SDRF_Data {
 	 * @return an array of ListGridRecords are returned. This is used to populate the data
 	 * source but it does not determine the order of the columns
 	 */
-	private ListGridRecord[] JSONToListGridRecord(JSONArray jsonArrayOfRows){
+	private HashMap<String,ListGridRecord> JSONToListGridRecord(JSONArray jsonArrayOfRows){
 		//Number of rows is one less because row zero contains data about the field name.
 		int numberOfRows=jsonArrayOfRows.size();
 		
-		ListGridRecord[] arrayOfRecords = new ListGridRecord[numberOfRows-1];
+		HashMap<String,ListGridRecord> mapOfRecords = new HashMap<String, ListGridRecord>();
+//		ListGridRecord[] arrayOfRecords = new ListGridRecord[numberOfRows-1];
 		
 		//------------------------------
 		//	key	1	2	3	...
@@ -232,9 +243,10 @@ public class SDRF_Data {
 				newRecord.setAttribute((j+1)+"", row.get(j).isString().stringValue());
 			}
 			newRecord.setAttribute("key", i);
-			arrayOfRecords[i-1]=newRecord;
+			mapOfRecords.put(i+"", newRecord);
+//			arrayOfRecords[i-1]=newRecord;
 		}
-		return arrayOfRecords;
+		return mapOfRecords;
 	}
 	/**
 	 * @param jsonArray
@@ -307,17 +319,32 @@ public class SDRF_Data {
 		return data;
 	}
 	public ListGridRecord[] getAllRecords() {
-		return listOfAllRecords;
+		return map2Array(listOfAllRecords.values());
 	}
 	
-	public void setValueForSelectedRecords(ListGridRecord[] listOfRecords,
-			String uniqueKey, String value) {
-		//FIXE ME!!!!
-		//This updates based on what is filtered
-		for(ListGridRecord record:listOfRecords){
-			record.setAttribute(uniqueKey, value);
+	private ListGridRecord[] map2Array(Collection<ListGridRecord> values) {
+		ListGridRecord[] returnArray = new ListGridRecord[values.size()];
+		Iterator<ListGridRecord> iterator = values.iterator();
+		int i =0;
+		while(iterator.hasNext()){
+			returnArray[i]=iterator.next();
+			i++;
 		}
-		updateDataSource();
+		return returnArray;
 	}
-	
+	public void setValueForSelectedRecords(RecordList listOfRecords,
+			String uniqueKey, String value) {
+		String intermediate = value+""; //Strange bug where the compiled version does identify this the actual text
+		logger.log(Level.INFO,listOfRecords.getLength() + " records Will be set to " + value );
+		
+			for(int i = 0;i<listOfRecords.getLength();i++){
+				try{
+					listOfAllRecords.get(listOfRecords.get(i).getAttribute("key")).setAttribute(uniqueKey, intermediate);
+				}catch(NullPointerException e){
+					System.err.println("Fetching Did Not Finish");
+					e.printStackTrace();
+				}
+			}
+			updateDataSource();
+	}
 }

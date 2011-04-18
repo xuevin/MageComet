@@ -11,10 +11,9 @@ import java.util.HashMap;
 
 import monq.jfa.CompileDfaException;
 import monq.jfa.ReSyntaxException;
+import net.sf.json.JSONObject;
 
 import org.apache.commons.net.ftp.FTPClient;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.IDF;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.SDRF;
@@ -48,35 +47,34 @@ public class FTPServiceImpl extends RemoteServiceServlet implements FTPService {
 			File sdrfFile =hashOfAccessionFilesForSDRF.get(experimentAccession); 
 			
 			if(sdrfFile==null){
-				System.out.println("DULL");
+				System.out.println("NULL");
 			}
 						
 			//SDRF Parser			
 			SDRFParser sdrfParser = new SDRFParser();
 			SDRF sdrf = sdrfParser.parse(sdrfFile.toURI().toURL().openStream());
-//			SDRF sdrf = sdrfParser.parse(sdrfFile.toURI().toURL());
 
 			responseJSONObject.put("sdrfArray", JSONUtils.getJSONArrayFromSDRF(sdrf));
+			System.out.println("SDRF parsed and stored in JSON Array");
 			
 			//IDF Parser
 			IDFParser idfParser = new IDFParser();
 			IDF idf = idfParser.parse(idfFile.toURI().toURL().openStream());
-//			System.out.println((idf.experimentDescription));
-//			IDF idf = idfParser.parse(idfFile.toURI().toURL());
 
 			responseJSONObject.put("idfArray",JSONUtils.getJSONArrayFromIDF(idf));
-			
-			//Error Items
-			responseJSONObject.put("error",JSONUtils.getErrorArray(hashOfAccessionFilesForIDF.get(experimentAccession),
-					hashOfAccessionFilesForSDRF.get(experimentAccession)));
+			System.out.println("IDF parsed and stored in JSON Array");
 			
 			//WhatIzIt Items
 			String monqInput = (String) getServletContext().getAttribute("monqInput");
 			responseJSONObject.put("whatizitIDF",JSONUtils.getJSONArrayFromWhatIzIt(idfFile, monqInput));
 			responseJSONObject.put("whatizitSDRF",JSONUtils.getJSONArrayFromWhatIzIt(sdrfFile, monqInput));
+			System.out.println("WhatIzIt stored in JSON Array");
+			
+			//Error Items
+			responseJSONObject.put("error",JSONUtils.getErrorArray(hashOfAccessionFilesForIDF.get(experimentAccession),
+					hashOfAccessionFilesForSDRF.get(experimentAccession)));
+			System.out.println("ERROR Items  stored in JSON Array");
 
-		} catch (JSONException e) {
-			e.printStackTrace();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {

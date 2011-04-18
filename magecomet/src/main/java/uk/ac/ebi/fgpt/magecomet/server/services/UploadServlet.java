@@ -14,8 +14,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.fileupload.FileItem;
-import org.json.JSONObject;
 
 
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.IDF;
@@ -75,6 +76,8 @@ public class UploadServlet extends UploadAction{
 					receivedContentTypes.put(item.getFieldName(), item.getContentType());
 					
 					JSONObject responseJSONObject = new JSONObject();
+					
+					System.out.println("JSON Object created via Upload Servlet");
 					String monqInput = (String) getServletContext().getAttribute("monqInput");
 					try{
 						// 03_Parse files. 

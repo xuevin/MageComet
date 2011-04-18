@@ -37,10 +37,11 @@ public class ErrorsTab extends Tab{
 		ListGridField codeField = new ListGridField("code","Code");
 		ListGridField typeField = new ListGridField("type","Type");
 		ListGridField messageField = new ListGridField("message","Message");
+		ListGridField commentField = new ListGridField("comment","Comment");
 		ListGridField lineField = new ListGridField("line","Line");
 		ListGridField columnField = new ListGridField("column","Column");
 		
-		errorsListGrid.setFields(codeField,typeField,messageField,lineField,columnField);
+		errorsListGrid.setFields(codeField,typeField,messageField,commentField,lineField,columnField);
 		
 		warnings.setIcon("[SKIN]Dialog/warn.png");
 		warnings.addClickHandler(new ClickHandler() {  
@@ -93,6 +94,7 @@ public class ErrorsTab extends Tab{
 			newRecord.setAttribute("code",errorItem.get("code").isString().stringValue());
 			newRecord.setAttribute("type",errorItem.get("type").isString().stringValue());
 			newRecord.setAttribute("message",errorItem.get("message").isString().stringValue());
+			newRecord.setAttribute("comment",errorItem.get("comment").isString().stringValue());
 			newRecord.setAttribute("line",errorItem.get("line").isString().stringValue());
 			newRecord.setAttribute("column",errorItem.get("column").isString().stringValue());
 			records[i]=newRecord;
@@ -103,9 +105,10 @@ public class ErrorsTab extends Tab{
 		DataSourceField codeField = new DataSourceField("code",FieldType.TEXT,"Code");
 		DataSourceField typeField = new DataSourceField("type",FieldType.TEXT,"Type");
 		DataSourceField messageField = new DataSourceField("message",FieldType.TEXT,"Message");
+		DataSourceField commentField = new DataSourceField("comment",FieldType.TEXT,"Comment");
 		DataSourceField lineField = new DataSourceField("line",FieldType.TEXT,"Line");
 		DataSourceField columnField = new DataSourceField("column",FieldType.TEXT,"Column");
-		data.setFields(codeField,typeField,messageField,lineField,columnField);
+		data.setFields(codeField,typeField,messageField,commentField,lineField,columnField);
 		
 		
 		data.setTestData(records);
@@ -113,6 +116,5 @@ public class ErrorsTab extends Tab{
 		
 		
 		errorsListGrid.setDataSource(data);
-		errorsListGrid.fetchData();
 	}
 }

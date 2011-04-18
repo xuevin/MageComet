@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 public class TagCloud extends FlowPanel{
-
+	//TODO - Make this use a KEYVALUE collection 
 	private ArrayList<WordTag> listOfWordTags;
 	public TagCloud(){
 		super();
