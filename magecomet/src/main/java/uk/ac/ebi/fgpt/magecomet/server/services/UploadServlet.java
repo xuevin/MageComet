@@ -35,8 +35,6 @@ public class UploadServlet extends UploadAction{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-
 	
 	private Hashtable<String, String> receivedContentTypes = new Hashtable<String, String>();
 	
@@ -45,7 +43,6 @@ public class UploadServlet extends UploadAction{
 	 */
 	private Hashtable<String, File> receivedFiles = new Hashtable<String, File>();
 	 
-	
 	/**
 	   * Override executeAction to save the received files in a custom place
 	   * and delete this items from session.  
@@ -58,16 +55,19 @@ public class UploadServlet extends UploadAction{
 			if (false == item.isFormField()) {
 				cont++;
 				try {
+					
+					
 					// 01_Create a temporary folder placed in the default system
 					// temp folder based on the session ID
-					File tempDir = new File("/tmp/" + request.getSession().getId());
+					String tmpPath = System.getProperty("java.io.tmpdir");
+					File tempDir = new File(tmpPath,request.getSession().getId());
 					if(!tempDir.exists()){
 						tempDir.delete();
 						tempDir.mkdir();	
 					}
 					
 					
-					File file = new File ((tempDir.getAbsoluteFile()+"/")+item.getName());
+					File file = new File (tempDir,item.getName());
 					item.write(file);				
 					
 					

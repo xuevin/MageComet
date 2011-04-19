@@ -117,14 +117,14 @@ public class FTPServiceImpl extends RemoteServiceServlet implements FTPService {
 				}
 				
 				try {
-					File tempDir = File.createTempFile("kama_", "tmp");
+					File tempDir = File.createTempFile("magecometftp_", "tmp");
 					tempDir.delete();
 					tempDir.mkdir();	
 					
-					temp_sdrf = new File ((tempDir.getAbsoluteFile()+"/")+accession+".sdrf.txt");
+					temp_sdrf = new File (tempDir,(accession+".sdrf.txt"));
 					temp_sdrf.deleteOnExit();
 					
-					temp_idf=new File ((tempDir.getAbsoluteFile()+"/")+accession+".idf.txt");
+					temp_idf=new File (tempDir,(accession+".idf.txt"));
 					temp_idf.deleteOnExit();
 					
 					fos_sdrf = new FileOutputStream(temp_sdrf);
