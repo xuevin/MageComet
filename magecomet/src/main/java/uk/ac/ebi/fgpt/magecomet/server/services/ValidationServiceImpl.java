@@ -20,7 +20,9 @@ public class ValidationServiceImpl extends RemoteServiceServlet implements Valid
 			
 			// Create file
 			BufferedWriter idfBufferedWriter;
-			File idfFile = new File("/tmp/"+idfFileName);
+			String tmpPath = System.getProperty("java.io.tmpdir");
+
+			File idfFile = new File(tmpPath,idfFileName);
 			idfBufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(idfFile),"iso-8859-1"));
 			idfBufferedWriter.write(idfAsString);
 			idfBufferedWriter.close();
@@ -28,7 +30,7 @@ public class ValidationServiceImpl extends RemoteServiceServlet implements Valid
 		
 			// Create file
 			BufferedWriter sdrfBufferedWriter;
-			File sdrfFile = new File("/tmp/"+sdrfFileName);
+			File sdrfFile = new File(tmpPath,sdrfFileName);
 			sdrfBufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(sdrfFile),"iso-8859-1"));
 			sdrfBufferedWriter.write(sdrfAsString);
 			sdrfBufferedWriter.close();

@@ -23,7 +23,9 @@ import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
 import uk.ac.ebi.arrayexpress2.magetab.parser.SDRFParser;
 import uk.ac.ebi.fgpt.magecomet.client.ftpservice.FTPException;
 import uk.ac.ebi.fgpt.magecomet.client.ftpservice.FTPService;
+import uk.ac.ebi.fgpt.magecomet.server.AnnotareValidationException;
 import uk.ac.ebi.fgpt.magecomet.server.JSONUtils;
+import uk.ac.ebi.fgpt.magecomet.server.WhatIzItException;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -79,18 +81,16 @@ public class FTPServiceImpl extends RemoteServiceServlet implements FTPService {
 			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();
-		} catch (UploadActionException e) {
+			throw new FTPException("Problem Parsing: Please Report");
+		} catch (AnnotareValidationException e) {
 			e.printStackTrace();
+			System.err.println("There was a problem with validating");
+		} catch (WhatIzItException e) {
+			e.printStackTrace();
+			System.err.println("There was a problem with the WhatIzIt mining");
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (ReSyntaxException e) {
-			e.printStackTrace();
-		} catch (CompileDfaException e) {
-			e.printStackTrace();
-		}catch (FTPException e){
-			throw e;
-		}catch(Exception e){
-			e.printStackTrace();
+			throw new FTPException("Problem with local machine IO");
 		}
 		
 		return responseJSONObject.toString();

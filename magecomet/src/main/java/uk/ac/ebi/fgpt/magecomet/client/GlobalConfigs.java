@@ -43,7 +43,8 @@ public class GlobalConfigs {
 		valueMap.put("growth condition", "growth condition");
 		valueMap.put("histology", "histology");
 		valueMap.put("host", "host");
-		valueMap.put("infection", "infectoin");
+		valueMap.put("individual", "individual");
+		valueMap.put("infection", "infection");
 		valueMap.put("injury", "injury");
 		valueMap.put("irradiate", "irradiate");
 		valueMap.put("organism part", "organism part");
@@ -56,6 +57,7 @@ public class GlobalConfigs {
 		valueMap.put("survival", "survival");
 		valueMap.put("temperature", "temperature");
 		valueMap.put("time", "time");
+		valueMap.put("unit", "unit");
 		
 		return valueMap;
 	}
@@ -80,7 +82,8 @@ public class GlobalConfigs {
 		valueMap.put("genotype", "genotype");
 		valueMap.put("histology", "histology");
 		valueMap.put("host", "host");
-		valueMap.put("infection", "infectoin");
+		valueMap.put("individual", "individual");
+		valueMap.put("infection", "infection");
 		valueMap.put("organism part", "organism part");
 		valueMap.put("passage", "passage");
 		valueMap.put("phenotype", "phenotype");
@@ -88,6 +91,7 @@ public class GlobalConfigs {
 		valueMap.put("sex", "sex");
 		valueMap.put("strain or line", "strain or line");
 		valueMap.put("survival", "survival");
+		valueMap.put("unit", "unit");
 		return valueMap;
 	}
 	public static LinkedHashMap<String, String> getCommonFactorValueTypes(){
@@ -110,7 +114,7 @@ public class GlobalConfigs {
 		valueMap.put("GENOTYPE", "GENOTYPE");
 		valueMap.put("HISTOLOGY", "HISTOLOGY");
 		valueMap.put("HOST", "HOST");
-		valueMap.put("INFECTION", "INFECTOIN");
+		valueMap.put("INFECTION", "INFECTION");
 		valueMap.put("ORGANISMPART", "ORGANISMPART");
 		valueMap.put("PASSAGE", "PASSAGE");
 		valueMap.put("PHENOTYPE", "PHENOTYPE");

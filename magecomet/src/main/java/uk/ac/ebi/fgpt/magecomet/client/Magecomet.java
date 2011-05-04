@@ -92,7 +92,7 @@ public class Magecomet implements EntryPoint {
 		exportSDRFButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if(!guiMediator.getSDRFAsString().equals("")){
-					fileService.writeFile(guiMediator.getCurrentSDRFTitle(), guiMediator.getSDRFAsString(), new FileServiceCallback());	
+					fileService.writeFile(guiMediator.getCurrentSDRFTitle(), guiMediator.getSDRFAsString(), new FileServiceCallback(guiMediator.getCurrentSDRFTitle()));	
 				}
 				
 			}
@@ -104,7 +104,7 @@ public class Magecomet implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				
 				if(!guiMediator.getIDFAsString().equals("")){
-					fileService.writeFile(guiMediator.getCurrentIDFTitle(), guiMediator.getIDFAsString(), new FileServiceCallback());	
+					fileService.writeFile(guiMediator.getCurrentIDFTitle(), guiMediator.getIDFAsString(), new FileServiceCallback(guiMediator.getCurrentIDFTitle()));	
 				}
 				
 			}

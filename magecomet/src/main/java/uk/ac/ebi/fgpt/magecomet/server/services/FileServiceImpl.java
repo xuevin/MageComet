@@ -17,7 +17,9 @@ public class FileServiceImpl extends RemoteServiceServlet implements FileService
 		try {
 			// Create file
 			BufferedWriter bufferedWriter;
-			File file = new File("/tmp/"+fileName);
+			String tmpPath = System.getProperty("java.io.tmpdir");
+
+			File file = new File(tmpPath,fileName);
 			bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),"iso-8859-1"));
 			bufferedWriter.write(tableAsAString);
 			bufferedWriter.close();

@@ -16,15 +16,17 @@ public class DownloadServlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-		response.setContentType("application/download");
-		response.setHeader("Content-Disposition", "attachment;filename="
-				+ request.getParameter("fileURL"));
-
+		
 		// Get file
 		String fileurl = request.getParameter("fileURL");
 		File file = new File(fileurl);
 		FileInputStream fis = new FileInputStream(file);
+
+		
+		response.setContentType("application/download");
+		response.setHeader("Content-Disposition", "attachment;filename=\""
+				+ request.getParameter("fileName")  +"\"");
+
 
 		// Configure output
 		long length = file.length();

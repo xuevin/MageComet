@@ -1,6 +1,5 @@
 package uk.ac.ebi.fgpt.magecomet.server;
 
-import gwtupload.server.exceptions.UploadActionException;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -24,22 +23,18 @@ import monq.programs.DictFilter;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.mged.annotare.validator.SemanticValidator;
 import org.mged.magetab.error.ErrorItem;
 
-
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.IDF;
-import uk.ac.ebi.arrayexpress2.magetab.datamodel.MAGETABInvestigation;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.SDRF;
 import uk.ac.ebi.arrayexpress2.magetab.listener.ErrorItemListener;
 import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
 import uk.ac.ebi.arrayexpress2.magetab.renderer.IDFWriter;
 import uk.ac.ebi.arrayexpress2.magetab.renderer.SDRFWriter;
 import uk.ac.ebi.arrayexpress2.magetab.validator.MAGETABValidator;
-import uk.ac.ebi.arrayexpress2.magetab.validator.Validator;
 
 public class JSONUtils {
-	public static JSONArray getJSONArrayFromWhatIzIt(File file,String monqInput) throws IOException, ReSyntaxException, CompileDfaException{
+	public static JSONArray getJSONArrayFromWhatIzIt(File file,String monqInput) throws WhatIzItException{
 		try{
 			InputStream inputStream =null;
 			try {
@@ -80,23 +75,22 @@ public class JSONUtils {
 			}
 			return returnArray;
 		}catch(IOException e){
-			System.out.println("ERROR Loading EFO");
-			throw e;
+			throw new WhatIzItException("Error Loading EFO");
 		}catch(ReSyntaxException e){
-			throw e;
+			throw new WhatIzItException(e);
 		}catch(CompileDfaException e){
-			throw e;
+			throw new WhatIzItException(e);
 		}		
 	}
-	public static JSONArray getErrorArray(File idf, File sdrf) throws UploadActionException {
+	public static JSONArray getErrorArray(File idf, File sdrf) throws AnnotareValidationException {
 		JSONArray errorArray= new JSONArray();
 
 		try {
 			System.out.println("Started Validation");
 			// Create validataor 
-			Validator<MAGETABInvestigation> validator = new SemanticValidator(idf.getAbsolutePath());
+//			Validator<MAGETABInvestigation> validator = new SemanticValidator(idf.getAbsolutePath());
 			
-			MAGETABValidator v = new MAGETABValidator();
+			MAGETABValidator validator = new MAGETABValidator();
 			
 			MAGETABParser parser = new MAGETABParser(validator);
 			
@@ -107,8 +101,7 @@ public class JSONUtils {
 				public void errorOccurred(ErrorItem item) {
 					if(item.getErrorCode()!=1031){
 						errorList.add(item);	
-					}
-					
+					}					
 				}
 			});
 			
@@ -137,7 +130,7 @@ public class JSONUtils {
 			return errorArray;
 		} catch (Exception e){
 			e.printStackTrace();
-			throw new UploadActionException("Something else failed");
+			throw new AnnotareValidationException("Annotare Validation Failed");
 		}
 	}
 	public static JSONArray getJSONArrayFromIDF(IDF object){

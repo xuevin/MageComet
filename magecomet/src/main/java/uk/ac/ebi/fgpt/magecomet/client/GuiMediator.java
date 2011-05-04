@@ -31,7 +31,7 @@ public class GuiMediator{
 	private SDRF_Data sdrfData;
 	private IDF_Data idfData;
 	
-	private Logger logger = Logger.getLogger("GuiMediator");
+	private Logger logger = Logger.getLogger(getClass().toString());
 
 	public GuiMediator(){
 	}

@@ -36,11 +36,12 @@ import com.smartgwt.client.widgets.tab.Tab;
 public class LoadTab extends Tab{
 	private GuiMediator guiMediator;
 	
+	private final HTMLFlow erroReport = new HTMLFlow();
 	private final TextItem accessionInput = new TextItem("accession","Experiment Accession");
 	private FTPServiceAsync ftpServiceAsync = GWT.create(FTPService.class);
 	private final Img loadImage = new Img("[SKIN]loadingSmall.gif");
 	private final VStack vstack = new VStack();
-	private Logger logger = Logger.getLogger("LoadTab");
+	private Logger logger = Logger.getLogger(getClass().toString());
 
 	public LoadTab(GuiMediator guiMediator){
 		super("Load");
@@ -78,6 +79,7 @@ public class LoadTab extends Tab{
 		hStack.addMember(form);
 		hStack.addMember(submit);
 		hStack.addMember(loadImage);
+		hStack.addMember(erroReport);
 		hStack.setDefaultLayoutAlign(VerticalAlignment.CENTER);
 		loadImage.setVisibility(Visibility.HIDDEN);
 		
@@ -131,12 +133,13 @@ public class LoadTab extends Tab{
 				guiMediator.setCurrentIDFTitle((accessionInput.getDisplayValue()).toUpperCase()+".idf.txt");
 				guiMediator.setCurrentSDRFTitle((accessionInput.getDisplayValue()).toUpperCase()+".sdrf.txt");
 				loadImage.setVisibility(Visibility.HIDDEN);
+				erroReport.setContents("Success!");
 			}
 			
 			public void onFailure(Throwable arg0) {
 				loadImage.setVisibility(Visibility.HIDDEN);
 				if(arg0 instanceof FTPException){
-					System.out.println(((FTPException) arg0).getAccession());
+					erroReport.setContents("Fail! " + arg0);
 				}
 			}
 		});

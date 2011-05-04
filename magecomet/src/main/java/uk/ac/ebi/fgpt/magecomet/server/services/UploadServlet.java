@@ -5,9 +5,14 @@ package uk.ac.ebi.fgpt.magecomet.server.services;
  */
 
 
+import static gwtupload.shared.UConsts.PARAM_SHOW;
+import gwtupload.server.UploadAction;
+import gwtupload.server.exceptions.UploadActionException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -18,16 +23,14 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.fileupload.FileItem;
 
-
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.IDF;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.SDRF;
 import uk.ac.ebi.arrayexpress2.magetab.exception.ParseException;
 import uk.ac.ebi.arrayexpress2.magetab.parser.IDFParser;
 import uk.ac.ebi.arrayexpress2.magetab.parser.SDRFParser;
+import uk.ac.ebi.fgpt.magecomet.server.AnnotareValidationException;
 import uk.ac.ebi.fgpt.magecomet.server.JSONUtils;
-
-import gwtupload.server.UploadAction;
-import gwtupload.server.exceptions.UploadActionException;
+import uk.ac.ebi.fgpt.magecomet.server.WhatIzItException;
 
 public class UploadServlet extends UploadAction{
 	
@@ -54,8 +57,10 @@ public class UploadServlet extends UploadAction{
 		for (FileItem item : sessionFiles) {
 			if (false == item.isFormField()) {
 				cont++;
+				
+				
+				JSONObject responseJSONObject = new JSONObject();
 				try {
-					
 					
 					// 01_Create a temporary folder placed in the default system
 					// temp folder based on the session ID
@@ -75,7 +80,7 @@ public class UploadServlet extends UploadAction{
 					receivedFiles.put(item.getFieldName(), file);
 					receivedContentTypes.put(item.getFieldName(), item.getContentType());
 					
-					JSONObject responseJSONObject = new JSONObject();
+					
 					
 					System.out.println("JSON Object created via Upload Servlet");
 					String monqInput = (String) getServletContext().getAttribute("monqInput");
@@ -84,14 +89,12 @@ public class UploadServlet extends UploadAction{
 						if(file.getName().contains("sdrf")){		
 							SDRFParser sdrfParser = new SDRFParser();
 							SDRF sdrf = sdrfParser.parse(file.toURI().toURL().openStream());
-//							SDRF sdrf = sdrfParser.parse(file.toURI().toURL());
 							responseJSONObject.put("sdrfArray", JSONUtils.getJSONArrayFromSDRF(sdrf));
 							//Add tagcloud array of terms to JSON Object
 							responseJSONObject.put("whatizitSDRF",JSONUtils.getJSONArrayFromWhatIzIt(file, monqInput));
 						}else if(file.getName().contains("idf")){
 							IDFParser idfParser = new IDFParser();
 							IDF idf = idfParser.parse(file.toURI().toURL().openStream());
-//							IDF idf = idfParser.parse(file.toURI().toURL());
 							responseJSONObject.put("idfArray",JSONUtils.getJSONArrayFromIDF(idf)); 
 							//Add tagcloud array of terms to JSON Object
 							responseJSONObject.put("whatizitIDF",JSONUtils.getJSONArrayFromWhatIzIt(file, monqInput));
@@ -101,31 +104,36 @@ public class UploadServlet extends UploadAction{
 						}	
 					}catch(ParseException e){
 						throw new UploadActionException("Parse Error!");
+					} catch (MalformedURLException e) {
+						throw new UploadActionException("URL Error!");
+					} catch (IOException e) {
+						throw new UploadActionException("IO error");
+					} catch (WhatIzItException e){
+						System.err.println("WhatIzIt Failed! Experiment Accession: " + item.getName());
 					}
-					
-					
-					
+							
 					//	After each upload, check if the other file exists
 					
 					//If SDRF was updated then look for IDF 
 					if(item.getName().contains("sdrf")){
 						String idfFileString = item.getName().substring(0, item.getName().length()-9)+".idf.txt";
-						File idf = new File("/tmp/"+request.getSession().getId()+"/"+idfFileString);
+						File idf = new File(tempDir,idfFileString);
 						if(idf.exists()){
 							System.out.println(idf.getAbsolutePath());
 							responseJSONObject.put("error",JSONUtils.getErrorArray(idf,file));
 						}
 					}else if(item.getName().contains("idf")){ //else look for SDRF
 						String sdrfFileString = item.getName().substring(0, item.getName().length()-8)+".sdrf.txt";
-						File sdrf = new File("/tmp/"+request.getSession().getId()+"/"+sdrfFileString);
+						File sdrf = new File(tempDir,sdrfFileString);
 						if(sdrf.exists()){
 							System.out.println(sdrf.getAbsolutePath());
 							responseJSONObject.put("error",JSONUtils.getErrorArray(file,sdrf));
 						}
 					}
-					
 					response=responseJSONObject.toString();
-					
+				}catch (AnnotareValidationException e){
+					response=responseJSONObject.toString();
+					System.err.println("Annotare Validator failed on the following accession: " + item.getName());
 				} catch (Exception e) {
 					throw new UploadActionException(e);
 				}
@@ -150,7 +158,7 @@ public class UploadServlet extends UploadAction{
 			FileInputStream is = new FileInputStream(f);
 			copyFromInputStreamToOutputStream(is, response.getOutputStream());	
 		} else {
-			renderXmlResponse(request, response, ERROR_ITEM_NOT_FOUND);
+			renderXmlResponse(request, response, XML_ERROR_ITEM_NOT_FOUND);
 		}
 	}
 

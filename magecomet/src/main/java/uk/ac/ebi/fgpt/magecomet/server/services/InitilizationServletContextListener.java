@@ -32,8 +32,9 @@ public class InitilizationServletContextListener implements ServletContextListen
 			System.out.println("Downloading EFO Service");
 			//During Testing
 			OntologyService ontoService;
-            ontoService = new FileOntologyService(new URI("http://www.ebi.ac.uk/efo/efo.owl"));
-//			ontoService = new FileOntologyService(getClass().getClassLoader().getResource("EFO_inferred_v142.owl").toURI());
+//            ontoService = new FileOntologyService(new URI("http://www.ebi.ac.uk/efo/efo.owl"));
+			//For local install
+			ontoService = new FileOntologyService(getClass().getClassLoader().getResource("efo.owl").toURI());
 			
 			System.out.println("Finished Downloading EFO");
 
