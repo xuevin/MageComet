@@ -2,7 +2,6 @@ package uk.ac.ebi.fgpt.magecomet.client.tagcloud;
 
 import java.util.ArrayList;
 
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;

@@ -1,4 +1,4 @@
-package uk.ac.ebi.fgpt.magecomet.client;
+package uk.ac.ebi.fgpt.magecomet.client.gui.canvas;
 
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;

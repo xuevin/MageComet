@@ -1,10 +1,13 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
-import java.util.logging.Logger;
-
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileService;
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileServiceAsync;
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileServiceCallback;
+import uk.ac.ebi.fgpt.magecomet.client.gui.canvas.SuggestCanvas;
+import uk.ac.ebi.fgpt.magecomet.client.gui.tab.EditTab;
+import uk.ac.ebi.fgpt.magecomet.client.gui.tab.ErrorsTab;
+import uk.ac.ebi.fgpt.magecomet.client.gui.tab.LoadTab;
+import uk.ac.ebi.fgpt.magecomet.client.gui.window.TagCloudWindow;
 import uk.ac.ebi.fgpt.magecomet.client.searchservice.SearchOracle;
 import uk.ac.ebi.fgpt.magecomet.client.validationservice.ValidationService;
 import uk.ac.ebi.fgpt.magecomet.client.validationservice.ValidationServiceAsync;
@@ -25,9 +28,6 @@ import com.smartgwt.client.widgets.tab.TabSet;
 // Add - add 
 // 
 
-
-
-
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
@@ -36,7 +36,7 @@ public class Magecomet implements EntryPoint {
 	/**
 	 * This is the entry point method.
 	 */
-    
+
 	private final GuiMediator guiMediator = new GuiMediator();
 	private final Button exportSDRFButton = new Button("Export SDRF");
 	private final Button exportIDFButton = new Button("Export IDF");
@@ -45,19 +45,21 @@ public class Magecomet implements EntryPoint {
 	private final ErrorsTab errorTab = new ErrorsTab(guiMediator);
 	private final LoadTab loadTab = new LoadTab(guiMediator);
 	private final SearchOracle searchOracle = new SearchOracle();
-	private final SuggestCanvas suggestCanvasItem= new SuggestCanvas("suggestBox", "suggestBox", searchOracle);
+	private final SuggestCanvas suggestCanvasItem = new SuggestCanvas(
+			"suggestBox", "suggestBox", searchOracle);
 	private final Button revalidateButton = new Button("Revalidate");
-	private final Button confirmFactorValues = new Button("Confirm Factor Values");
-	
-	/**
-	 * Declares the Variables that will be instantiated on module load / file load
-	 */
-	
-	private FileServiceAsync fileService = GWT.create(FileService.class);
-	private ValidationServiceAsync validationService = GWT.create(ValidationService.class);
+	private final Button confirmFactorValues = new Button(
+			"Confirm Factor Values");
 
-	
-	
+	/**
+	 * Declares the Variables that will be instantiated on module load / file
+	 * load
+	 */
+
+	private FileServiceAsync fileService = GWT.create(FileService.class);
+	private ValidationServiceAsync validationService = GWT
+			.create(ValidationService.class);
+
 	public void onModuleLoad() {
 		/*
 		 * SmartGWT components
@@ -70,75 +72,80 @@ public class Magecomet implements EntryPoint {
 		topTabSet.addTab(editTab);
 		topTabSet.addTab(errorTab);
 		topTabSet.setTabBarControls(TabBarControls.TAB_SCROLLER,
-				TabBarControls.TAB_PICKER, suggestCanvasItem, confirmFactorValues, exportIDFButton,
-				exportSDRFButton,revalidateButton);
-//		topTabSet.moveBy(0, 140);
+				TabBarControls.TAB_PICKER, suggestCanvasItem,
+				confirmFactorValues, exportIDFButton, exportSDRFButton,
+				revalidateButton);
+		// topTabSet.moveBy(0, 140);
 		topTabSet.show();
-
-		
 
 		/*
 		 * Buttons
 		 */
 		confirmFactorValues.setWidth(150);
 		confirmFactorValues.addClickHandler(new ClickHandler() {
-			
+
 			public void onClick(ClickEvent event) {
 				guiMediator.showIDFFactorValue_ValidatorWindow();
 			}
 		});
-		
+
 		exportSDRFButton.setIcon("[SKIN]actions/download.png");
 		exportSDRFButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				if(!guiMediator.getSDRFAsString().equals("")){
-					fileService.writeFile(guiMediator.getCurrentSDRFTitle(), guiMediator.getSDRFAsString(), new FileServiceCallback(guiMediator.getCurrentSDRFTitle()));	
+				if (!guiMediator.getSDRFAsString().equals("")) {
+					fileService.writeFile(guiMediator.getCurrentSDRFTitle(),
+							guiMediator.getSDRFAsString(),
+							new FileServiceCallback(guiMediator
+									.getCurrentSDRFTitle()));
 				}
-				
+
 			}
 		});
-		
+
 		exportIDFButton.setIcon("[SKIN]actions/download.png");
 		exportIDFButton.addClickHandler(new ClickHandler() {
-			
+
 			public void onClick(ClickEvent event) {
-				
-				if(!guiMediator.getIDFAsString().equals("")){
-					fileService.writeFile(guiMediator.getCurrentIDFTitle(), guiMediator.getIDFAsString(), new FileServiceCallback(guiMediator.getCurrentIDFTitle()));	
+
+				if (!guiMediator.getIDFAsString().equals("")) {
+					fileService.writeFile(guiMediator.getCurrentIDFTitle(),
+							guiMediator.getIDFAsString(),
+							new FileServiceCallback(guiMediator
+									.getCurrentIDFTitle()));
 				}
-				
+
 			}
 		});
-		
-		
+
 		revalidateButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				if(!guiMediator.getSDRFAsString().equals("")){
-					validationService.validate(	guiMediator.getCurrentIDFTitle(), 
-												guiMediator.getIDFAsString(), 
-												guiMediator.getCurrentSDRFTitle(),
-												guiMediator.getSDRFAsString(),
-												new ValidationServiceCallback(guiMediator));
+				if (!guiMediator.getSDRFAsString().equals("")) {
+					validationService.validate(
+							guiMediator.getCurrentIDFTitle(), guiMediator
+									.getIDFAsString(), guiMediator
+									.getCurrentSDRFTitle(), guiMediator
+									.getSDRFAsString(),
+							new ValidationServiceCallback(guiMediator));
 				}
-				
+
 			}
 		});
-		
-		//*****************************
-        // Layout
-        //*****************************		
-		
+
+		// *****************************
+		// Layout
+		// *****************************
+
 		TagCloudWindow tagCloudWindow = new TagCloudWindow(guiMediator);
 		tagCloudWindow.show();
-		tagCloudWindow.moveTo(400,0);
-//		tagCloudWindow.moveAbove(canvas)
-		
-//		mainLayout.setHtmlElement(DOM.getElementById("webapp"));
-//		mainLayout.show();
+		tagCloudWindow.moveTo(400, 0);
+		// tagCloudWindow.moveAbove(canvas)
 
-//		RootPanel.get("search").add(uploadPanel);
-//		topTabSet.setHtmlElement(DOM.getElementById("webapp"));
-		
+		// mainLayout.setHtmlElement(DOM.getElementById("webapp"));
+		// mainLayout.show();
+
+		// RootPanel.get("search").add(uploadPanel);
+		// topTabSet.setHtmlElement(DOM.getElementById("webapp"));
+
 		Window.addWindowClosingHandler(new Window.ClosingHandler() {
 			public void onWindowClosing(Window.ClosingEvent closingEvent) {
 				closingEvent

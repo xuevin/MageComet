@@ -1,35 +1,39 @@
-package uk.ac.ebi.fgpt.magecomet.client;
+package uk.ac.ebi.fgpt.magecomet.client.gui.tab;
+
+import uk.ac.ebi.fgpt.magecomet.client.GuiMediator;
+import uk.ac.ebi.fgpt.magecomet.client.gui.section.IDF_Section;
+import uk.ac.ebi.fgpt.magecomet.client.gui.section.SDRF_Section;
 
 import com.smartgwt.client.types.VisibilityMode;
 import com.smartgwt.client.widgets.layout.SectionStack;
 import com.smartgwt.client.widgets.tab.Tab;
 
-public class EditTab extends Tab{
+public class EditTab extends Tab {
 	private GuiMediator guiMediator;
-	//Section for Stacks
+	// Section for Stacks
 	private final SectionStack sectionStack = new SectionStack();
 	private IDF_Section idfSection;
 	private SDRF_Section sdrfSection;
-	public EditTab(GuiMediator guiMediator){
+
+	public EditTab(GuiMediator guiMediator) {
 		super("Edit");
-		this.guiMediator=guiMediator;
+		this.guiMediator = guiMediator;
 		this.guiMediator.registerEditTab(this);
 		setPane(sectionStack);
 		setIcon("[SKIN]actions/edit.png");
-		
+
 		idfSection = new IDF_Section(guiMediator);
 		sdrfSection = new SDRF_Section(guiMediator);
-		
-		
+
 		sectionStack.setVisibilityMode(VisibilityMode.MULTIPLE);
-		sectionStack.setSections(idfSection,sdrfSection);
+		sectionStack.setSections(idfSection, sdrfSection);
 		sectionStack.setHeight100();
 		sectionStack.setWidth100();
 		sectionStack.setMargin(0);
 		sectionStack.setPadding(0);
 		sectionStack.expandSection(0);
 		sectionStack.expandSection(1);
-		
+
 	}
 
 }

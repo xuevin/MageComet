@@ -3,14 +3,13 @@ package uk.ac.ebi.fgpt.magecomet.server.services;
 
 import java.util.List;
 
-
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
 import uk.ac.ebi.fgpt.magecomet.client.tagcloud.EFOService;
 import uk.ac.ebi.ontocat.OntologyService;
 import uk.ac.ebi.ontocat.OntologyServiceException;
 import uk.ac.ebi.ontocat.OntologyTerm;
 import uk.ac.ebi.ontocat.OntologyService.SearchOptions;
+
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
 public class EFOServiceImpl extends RemoteServiceServlet implements EFOService{

@@ -1,4 +1,7 @@
-package uk.ac.ebi.fgpt.magecomet.client;
+package uk.ac.ebi.fgpt.magecomet.client.gui.window;
+
+import uk.ac.ebi.fgpt.magecomet.client.GlobalConfigs;
+import uk.ac.ebi.fgpt.magecomet.client.GuiMediator;
 
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.RecordList;

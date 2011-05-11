@@ -6,11 +6,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 
-
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
 import uk.ac.ebi.fgpt.magecomet.client.validationservice.ValidationService;
 import uk.ac.ebi.fgpt.magecomet.server.JSONUtils;
+
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
 public class ValidationServiceImpl extends RemoteServiceServlet implements ValidationService{

@@ -154,6 +154,9 @@
 		<!-- Generate compiled stuff in the folder used for developing mode -->
 		<outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
 
+
+
+
 		<plugins>
 
 			<!-- GWT Maven Plugin -->
@@ -183,6 +186,16 @@
 				</configuration>
 			</plugin>
 
+
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<excludes>
+						<exclude>**/GwtTest*.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 			<!-- Copy static web files before executing gwt:run -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

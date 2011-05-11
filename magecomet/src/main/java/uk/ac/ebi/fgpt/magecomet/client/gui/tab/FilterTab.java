@@ -1,6 +1,8 @@
-package uk.ac.ebi.fgpt.magecomet.client;
+package uk.ac.ebi.fgpt.magecomet.client.gui.tab;
 
 import java.util.LinkedHashMap;
+
+import uk.ac.ebi.fgpt.magecomet.client.GuiMediator;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Overflow;

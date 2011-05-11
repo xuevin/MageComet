@@ -1,8 +1,6 @@
 package uk.ac.ebi.fgpt.magecomet.client.fileservice;
 
 
-import uk.ac.ebi.fgpt.magecomet.client.GuiMediator;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;

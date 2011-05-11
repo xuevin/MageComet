@@ -1,4 +1,6 @@
-package uk.ac.ebi.fgpt.magecomet.client;
+package uk.ac.ebi.fgpt.magecomet.client.gui.tab;
+
+import uk.ac.ebi.fgpt.magecomet.client.GuiMediator;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;

@@ -1,6 +1,5 @@
 package uk.ac.ebi.fgpt.magecomet.server.services;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Set;

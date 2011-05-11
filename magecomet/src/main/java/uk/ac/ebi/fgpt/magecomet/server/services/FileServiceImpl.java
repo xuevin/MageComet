@@ -4,12 +4,11 @@ package uk.ac.ebi.fgpt.magecomet.server.services;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
 import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileService;
+
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
 public class FileServiceImpl extends RemoteServiceServlet implements FileService{

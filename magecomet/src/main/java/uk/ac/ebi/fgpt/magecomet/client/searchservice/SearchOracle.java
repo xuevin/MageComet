@@ -1,7 +1,5 @@
 package uk.ac.ebi.fgpt.magecomet.client.searchservice;
 
-import uk.ac.ebi.fgpt.magecomet.client.Highlight;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.SuggestOracle;
 

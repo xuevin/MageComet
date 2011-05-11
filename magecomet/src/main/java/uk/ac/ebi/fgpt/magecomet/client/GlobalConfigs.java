@@ -18,7 +18,7 @@ public class GlobalConfigs {
 		}else
 		return false;
 	}
-	public static LinkedHashMap<String, String> getCommonFactors(){
+	public static LinkedHashMap<String, String> getCommonFactorsOrChars(){
 		LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
 		valueMap.put("age", "age");
 		valueMap.put("age at diagnosis", "age at diagnosis");
@@ -61,39 +61,6 @@ public class GlobalConfigs {
 		
 		return valueMap;
 	}
-	public static LinkedHashMap<String, String> getCommonCharacteristics(){
-		LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
-		valueMap.put("age", "age");
-		valueMap.put("age at diagnosis", "age at diagnosis");
-		valueMap.put("behavior", "behavior");
-		valueMap.put("biosource provider", "biosource provider");
-		valueMap.put("bmi", "bmi");
-		valueMap.put("cell line", "cell line");
-		valueMap.put("cell type", "cell type");
-		valueMap.put("clinical history", "clinical history");
-		valueMap.put("clinical information", "clinical information");
-		valueMap.put("developmental stage", "developmental stage");
-		valueMap.put("disease stage", "disease stage");
-		valueMap.put("disease state", "disease state");
-		valueMap.put("environmental history", "environmental history");
-		valueMap.put("ethnicity", "ethnicity");
-		valueMap.put("family history", "familiy history");
-		valueMap.put("genetic modification", "genetic modification");
-		valueMap.put("genotype", "genotype");
-		valueMap.put("histology", "histology");
-		valueMap.put("host", "host");
-		valueMap.put("individual", "individual");
-		valueMap.put("infection", "infection");
-		valueMap.put("organism part", "organism part");
-		valueMap.put("passage", "passage");
-		valueMap.put("phenotype", "phenotype");
-		valueMap.put("population", "population");
-		valueMap.put("sex", "sex");
-		valueMap.put("strain or line", "strain or line");
-		valueMap.put("survival", "survival");
-		valueMap.put("unit", "unit");
-		return valueMap;
-	}
 	public static LinkedHashMap<String, String> getCommonFactorValueTypes(){
 		LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
 		valueMap.put("AGE", "AGE");
@@ -123,6 +90,17 @@ public class GlobalConfigs {
 		valueMap.put("STRAINORLINE", "STRAINORLINE");
 		valueMap.put("SURVIVAL", "SURVIVAL");
 		
+		return valueMap;
+	}
+	public static LinkedHashMap<String, String> getUnits() {
+		LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
+		valueMap.put("time", "time");
+		valueMap.put("mass", "mass");
+		valueMap.put("area", "area");
+		valueMap.put("concentration", "concentration");
+		valueMap.put("temperature", "temperature");
+		valueMap.put("radiation", "radiation");
+		valueMap.put("volume", "volume");		
 		return valueMap;
 	}
 	
