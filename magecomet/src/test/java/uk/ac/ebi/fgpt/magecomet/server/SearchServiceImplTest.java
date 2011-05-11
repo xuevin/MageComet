@@ -11,9 +11,8 @@ import uk.ac.ebi.ontocat.OntologyServiceException;
 import uk.ac.ebi.ontocat.OntologyTerm;
 import uk.ac.ebi.ontocat.OntologyService.SearchOptions;
 import uk.ac.ebi.ontocat.file.FileOntologyService;
-import uk.ac.ebi.ontocat.virtual.CachedServiceDecorator;
 
-public class TestSearchServiceImpl {
+public class SearchServiceImplTest {
 	private FileOntologyService ontoService;
 	
 	@Test

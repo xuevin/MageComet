@@ -1,6 +1,7 @@
 package uk.ac.ebi.fgpt.magecomet.server;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.net.URISyntaxException;
 import java.util.List;
@@ -15,7 +16,7 @@ import uk.ac.ebi.ontocat.OntologyService.SearchOptions;
 import uk.ac.ebi.ontocat.file.FileOntologyService;
 
 
-public class TestEFOServiceImpl {
+public class EFOServiceImplTest {
 	private FileOntologyService ontoService;
 
 	@Test
