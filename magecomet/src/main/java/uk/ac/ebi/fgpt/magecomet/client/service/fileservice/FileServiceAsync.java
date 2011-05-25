@@ -1,4 +1,4 @@
-package uk.ac.ebi.fgpt.magecomet.client.fileservice;
+package uk.ac.ebi.fgpt.magecomet.client.service.fileservice;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

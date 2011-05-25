@@ -9,9 +9,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import uk.ac.ebi.fgpt.magecomet.client.GuiMediator;
-import uk.ac.ebi.fgpt.magecomet.client.ftpservice.FTPException;
-import uk.ac.ebi.fgpt.magecomet.client.ftpservice.FTPService;
-import uk.ac.ebi.fgpt.magecomet.client.ftpservice.FTPServiceAsync;
+import uk.ac.ebi.fgpt.magecomet.client.service.ftpservice.FTPException;
+import uk.ac.ebi.fgpt.magecomet.client.service.ftpservice.FTPService;
+import uk.ac.ebi.fgpt.magecomet.client.service.ftpservice.FTPServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;

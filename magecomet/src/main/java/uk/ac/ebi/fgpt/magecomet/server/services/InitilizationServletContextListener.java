@@ -8,7 +8,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import uk.ac.ebi.fgpt.magecomet.client.searchservice.SearchSuggestion;
+import uk.ac.ebi.fgpt.magecomet.client.service.searchservice.SearchSuggestion;
 import uk.ac.ebi.ontocat.OntologyService;
 import uk.ac.ebi.ontocat.OntologyServiceException;
 import uk.ac.ebi.ontocat.OntologyTerm;

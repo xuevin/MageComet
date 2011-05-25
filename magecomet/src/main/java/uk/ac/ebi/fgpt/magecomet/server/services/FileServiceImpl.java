@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 
-import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileService;
+import uk.ac.ebi.fgpt.magecomet.client.service.fileservice.FileService;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

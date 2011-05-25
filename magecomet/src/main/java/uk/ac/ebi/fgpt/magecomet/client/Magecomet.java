@@ -1,17 +1,17 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
-import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileService;
-import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileServiceAsync;
-import uk.ac.ebi.fgpt.magecomet.client.fileservice.FileServiceCallback;
 import uk.ac.ebi.fgpt.magecomet.client.gui.canvas.SuggestCanvas;
 import uk.ac.ebi.fgpt.magecomet.client.gui.tab.EditTab;
 import uk.ac.ebi.fgpt.magecomet.client.gui.tab.ErrorsTab;
 import uk.ac.ebi.fgpt.magecomet.client.gui.tab.LoadTab;
 import uk.ac.ebi.fgpt.magecomet.client.gui.window.TagCloudWindow;
-import uk.ac.ebi.fgpt.magecomet.client.searchservice.SearchOracle;
-import uk.ac.ebi.fgpt.magecomet.client.validationservice.ValidationService;
-import uk.ac.ebi.fgpt.magecomet.client.validationservice.ValidationServiceAsync;
-import uk.ac.ebi.fgpt.magecomet.client.validationservice.ValidationServiceCallback;
+import uk.ac.ebi.fgpt.magecomet.client.service.fileservice.FileService;
+import uk.ac.ebi.fgpt.magecomet.client.service.fileservice.FileServiceAsync;
+import uk.ac.ebi.fgpt.magecomet.client.service.fileservice.FileServiceCallback;
+import uk.ac.ebi.fgpt.magecomet.client.service.searchservice.SearchOracle;
+import uk.ac.ebi.fgpt.magecomet.client.service.validationservice.ValidationService;
+import uk.ac.ebi.fgpt.magecomet.client.service.validationservice.ValidationServiceAsync;
+import uk.ac.ebi.fgpt.magecomet.client.service.validationservice.ValidationServiceCallback;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;

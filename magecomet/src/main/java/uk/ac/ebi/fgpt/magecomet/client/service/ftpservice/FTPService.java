@@ -1,4 +1,4 @@
-package uk.ac.ebi.fgpt.magecomet.client.ftpservice;
+package uk.ac.ebi.fgpt.magecomet.client.service.ftpservice;
 
 
 import com.google.gwt.user.client.rpc.RemoteService;

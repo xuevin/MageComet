@@ -46,7 +46,7 @@
 
 	<servlet-mapping>
 		<servlet-name>FileServiceImpl</servlet-name>
-		<url-pattern>/magecomet/FileService</url-pattern>
+		<url-pattern>/Magecomet/FileService</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -55,7 +55,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>DownloadServlet</servlet-name>
-		<url-pattern>/magecomet/DownloadServlet</url-pattern>
+		<url-pattern>/Magecomet/DownloadServlet</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -64,7 +64,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>EFOServiceImpl</servlet-name>
-		<url-pattern>/magecomet/EFOService</url-pattern>
+		<url-pattern>/Magecomet/EFOService</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -73,7 +73,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SearchServiceImpl</servlet-name>
-		<url-pattern>/magecomet/SearchService</url-pattern>
+		<url-pattern>/Magecomet/SearchService</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
@@ -82,7 +82,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>FTPServiceImpl</servlet-name>
-		<url-pattern>/magecomet/FTPService</url-pattern>
+		<url-pattern>/Magecomet/FTPService</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
@@ -91,7 +91,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ValidationService</servlet-name>
-		<url-pattern>/magecomet/ValidationService</url-pattern>
+		<url-pattern>/Magecomet/ValidationService</url-pattern>
 	</servlet-mapping>
 	
 	

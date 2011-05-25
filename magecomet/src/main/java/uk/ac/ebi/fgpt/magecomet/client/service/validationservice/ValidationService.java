@@ -1,4 +1,4 @@
-package uk.ac.ebi.fgpt.magecomet.client.validationservice;
+package uk.ac.ebi.fgpt.magecomet.client.service.validationservice;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

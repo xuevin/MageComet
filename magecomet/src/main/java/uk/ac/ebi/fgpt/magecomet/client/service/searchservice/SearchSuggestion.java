@@ -1,4 +1,4 @@
-package uk.ac.ebi.fgpt.magecomet.client.searchservice;
+package uk.ac.ebi.fgpt.magecomet.client.service.searchservice;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
