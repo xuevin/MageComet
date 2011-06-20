@@ -1,5 +1,8 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import uk.ac.ebi.fgpt.magecomet.client.gui.canvas.SuggestCanvas;
 import uk.ac.ebi.fgpt.magecomet.client.gui.tab.EditTab;
 import uk.ac.ebi.fgpt.magecomet.client.gui.tab.ErrorsTab;
@@ -33,124 +36,113 @@ import com.smartgwt.client.widgets.tab.TabSet;
  */
 
 public class Magecomet implements EntryPoint {
-	/**
-	 * This is the entry point method.
-	 */
-
-	private final GuiMediator guiMediator = new GuiMediator();
-	private final Button exportSDRFButton = new Button("Export SDRF");
-	private final Button exportIDFButton = new Button("Export IDF");
-	private final TabSet topTabSet = new TabSet();
-	private final EditTab editTab = new EditTab(guiMediator);
-	private final ErrorsTab errorTab = new ErrorsTab(guiMediator);
-	private final LoadTab loadTab = new LoadTab(guiMediator);
-	private final SearchOracle searchOracle = new SearchOracle();
-	private final SuggestCanvas suggestCanvasItem = new SuggestCanvas(
-			"suggestBox", "suggestBox", searchOracle);
-	private final Button revalidateButton = new Button("Revalidate");
-	private final Button confirmFactorValues = new Button(
-			"Confirm Factor Values");
-
-	/**
-	 * Declares the Variables that will be instantiated on module load / file
-	 * load
-	 */
-
-	private FileServiceAsync fileService = GWT.create(FileService.class);
-	private ValidationServiceAsync validationService = GWT
-			.create(ValidationService.class);
-
-	public void onModuleLoad() {
-		/*
-		 * SmartGWT components
-		 */
-		topTabSet.setTabBarPosition(Side.TOP);
-		topTabSet.setTabBarAlign(Side.LEFT);
-		topTabSet.setHeight100();
-		topTabSet.setWidth100();
-		topTabSet.addTab(loadTab);
-		topTabSet.addTab(editTab);
-		topTabSet.addTab(errorTab);
-		topTabSet.setTabBarControls(TabBarControls.TAB_SCROLLER,
-				TabBarControls.TAB_PICKER, suggestCanvasItem,
-				confirmFactorValues, exportIDFButton, exportSDRFButton,
-				revalidateButton);
-		// topTabSet.moveBy(0, 140);
-		topTabSet.show();
-
-		/*
-		 * Buttons
-		 */
-		confirmFactorValues.setWidth(150);
-		confirmFactorValues.addClickHandler(new ClickHandler() {
-
-			public void onClick(ClickEvent event) {
-				guiMediator.showIDFFactorValue_ValidatorWindow();
-			}
-		});
-
-		exportSDRFButton.setIcon("[SKIN]actions/download.png");
-		exportSDRFButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (!guiMediator.getSDRFAsString().equals("")) {
-					fileService.writeFile(guiMediator.getCurrentSDRFTitle(),
-							guiMediator.getSDRFAsString(),
-							new FileServiceCallback(guiMediator
-									.getCurrentSDRFTitle()));
-				}
-
-			}
-		});
-
-		exportIDFButton.setIcon("[SKIN]actions/download.png");
-		exportIDFButton.addClickHandler(new ClickHandler() {
-
-			public void onClick(ClickEvent event) {
-
-				if (!guiMediator.getIDFAsString().equals("")) {
-					fileService.writeFile(guiMediator.getCurrentIDFTitle(),
-							guiMediator.getIDFAsString(),
-							new FileServiceCallback(guiMediator
-									.getCurrentIDFTitle()));
-				}
-
-			}
-		});
-
-		revalidateButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (!guiMediator.getSDRFAsString().equals("")) {
-					validationService.validate(
-							guiMediator.getCurrentIDFTitle(), guiMediator
-									.getIDFAsString(), guiMediator
-									.getCurrentSDRFTitle(), guiMediator
-									.getSDRFAsString(),
-							new ValidationServiceCallback(guiMediator));
-				}
-
-			}
-		});
-
-		// *****************************
-		// Layout
-		// *****************************
-
-		TagCloudWindow tagCloudWindow = new TagCloudWindow(guiMediator);
-		tagCloudWindow.show();
-		tagCloudWindow.moveTo(400, 0);
-		// tagCloudWindow.moveAbove(canvas)
-
-		// mainLayout.setHtmlElement(DOM.getElementById("webapp"));
-		// mainLayout.show();
-
-		// RootPanel.get("search").add(uploadPanel);
-		// topTabSet.setHtmlElement(DOM.getElementById("webapp"));
-
-		Window.addWindowClosingHandler(new Window.ClosingHandler() {
-			public void onWindowClosing(Window.ClosingEvent closingEvent) {
-				closingEvent
-						.setMessage("Do you really want to leave the page?");
-			}
-		});
-	}
+  /**
+   * This is the entry point method.
+   */
+  
+  private final GuiMediator guiMediator = new GuiMediator();
+  private final Button exportSDRFButton = new Button("Export SDRF");
+  private final Button exportIDFButton = new Button("Export IDF");
+  private final TabSet topTabSet = new TabSet();
+  private final EditTab editTab = new EditTab(guiMediator);
+  private final ErrorsTab errorTab = new ErrorsTab(guiMediator);
+  private final LoadTab loadTab = new LoadTab(guiMediator);
+  private final SearchOracle searchOracle = new SearchOracle();
+  private final SuggestCanvas suggestCanvasItem = new SuggestCanvas("suggestBox", "suggestBox", searchOracle);
+  private final Button revalidateButton = new Button("Revalidate");
+  private final Button confirmFactorValues = new Button("Confirm Factor Values");
+  private Logger logger = Logger.getLogger(getClass().toString());
+  
+  /**
+   * Declares the Variables that will be instantiated on module load / file load
+   */
+  
+  private FileServiceAsync fileService = GWT.create(FileService.class);
+  private ValidationServiceAsync validationService = GWT.create(ValidationService.class);
+  
+  public void onModuleLoad() {
+    /*
+     * SmartGWT components
+     */
+    topTabSet.setTabBarPosition(Side.TOP);
+    topTabSet.setTabBarAlign(Side.LEFT);
+    topTabSet.setHeight100();
+    topTabSet.setWidth100();
+    topTabSet.addTab(loadTab);
+    topTabSet.addTab(editTab);
+    topTabSet.addTab(errorTab);
+    topTabSet.setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER, suggestCanvasItem,
+      confirmFactorValues, exportIDFButton, exportSDRFButton, revalidateButton);
+    // topTabSet.moveBy(0, 140);
+    topTabSet.show();
+    
+    /*
+     * Buttons
+     */
+    confirmFactorValues.setWidth(150);
+    confirmFactorValues.addClickHandler(new ClickHandler() {
+      
+      public void onClick(ClickEvent event) {
+        guiMediator.showIDFFactorValue_ValidatorWindow();
+      }
+    });
+    
+    exportSDRFButton.setIcon("[SKIN]actions/download.png");
+    exportSDRFButton.addClickHandler(new ClickHandler() {
+      public void onClick(ClickEvent event) {
+        if (!guiMediator.getSDRFAsString().equals("")) {
+          logger.log(Level.INFO, "Export SDRF Button was pressed");
+          fileService.writeFile(guiMediator.getCurrentSDRFTitle(), guiMediator.getSDRFAsString(),
+            new FileServiceCallback(guiMediator.getCurrentSDRFTitle()));
+        }
+        
+      }
+    });
+    
+    exportIDFButton.setIcon("[SKIN]actions/download.png");
+    exportIDFButton.addClickHandler(new ClickHandler() {
+      
+      public void onClick(ClickEvent event) {
+        
+        if (!guiMediator.getIDFAsString().equals("")) {
+          logger.log(Level.INFO, "Export IDF Button was pressed");
+          fileService.writeFile(guiMediator.getCurrentIDFTitle(), guiMediator.getIDFAsString(),
+            new FileServiceCallback(guiMediator.getCurrentIDFTitle()));
+        }
+        
+      }
+    });
+    
+    revalidateButton.addClickHandler(new ClickHandler() {
+      public void onClick(ClickEvent event) {
+        if (!guiMediator.getSDRFAsString().equals("")) {
+          validationService.validate(guiMediator.getCurrentIDFTitle(), guiMediator.getIDFAsString(),
+            guiMediator.getCurrentSDRFTitle(), guiMediator.getSDRFAsString(), new ValidationServiceCallback(
+                guiMediator));
+        }
+        
+      }
+    });
+    
+    // *****************************
+    // Layout
+    // *****************************
+    
+    TagCloudWindow tagCloudWindow = new TagCloudWindow(guiMediator);
+    tagCloudWindow.show();
+    tagCloudWindow.moveTo(400, 0);
+    // tagCloudWindow.moveAbove(canvas)
+    
+    // mainLayout.setHtmlElement(DOM.getElementById("webapp"));
+    // mainLayout.show();
+    
+    // RootPanel.get("search").add(uploadPanel);
+    // topTabSet.setHtmlElement(DOM.getElementById("webapp"));
+    
+    Window.addWindowClosingHandler(new Window.ClosingHandler() {
+      public void onWindowClosing(Window.ClosingEvent closingEvent) {
+        closingEvent.setMessage("Do you really want to leave the page?");
+      }
+    });
+  }
 }

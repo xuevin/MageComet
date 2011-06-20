@@ -1,152 +1,299 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
 import com.smartgwt.client.core.DataClass;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.data.RecordList;
 import com.smartgwt.client.types.AutoFitWidthApproach;
 import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.widgets.grid.ListGridField;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 
-/**
- * This is a class used to modify a SDRF. All modifications to a SDRF should be called through this class.
- * 
- * @author vincent@ebi.ac.uk
- * 
- */
 public class SDRF_Data {
-  // These arrays must always be constantly updated.
-  // private ListGridRecord[] listOfAllRecords;
-  private HashMap<String,ListGridRecord> listOfAllRecords;
-  private ListGridField[] listOfAllFields;
-  private DataSource data;
-  private int numColumnsBeforeModification;
+  private Logger logger = Logger.getLogger(getClass().toString());
+  
+  private ColumnField[] allFields;
+  private HashMap<String,RowRecord> allRecords;
   private int uniqueKeyCount;
+  private ArrayList<HashMap<String,RowRecord>> recordhistory;
+  private ArrayList<ColumnField[]> fieldHistory;
   
-  private Logger logger = Logger.getLogger("SDRF_Data");
+  private int currentState;
   
-  public SDRF_Data(JSONObject jsonObject) {
-    JSONArray jsonArray = jsonObject.get("sdrfArray").isArray();
-    listOfAllRecords = JSONToListGridRecord(jsonArray);
-    listOfAllFields = JSONToListGridField(jsonArray);
+  public SDRF_Data(String[][] twoDimensionalArray) {
+    allFields = fieldArrayToColumnFieldArray(twoDimensionalArray[0]);
+    allRecords = twoDimArrayToRowRecordArray(twoDimensionalArray);
     
-    data = new DataSource("sdrf_ds");
-    data.setFields(JSONToDataSourceField(jsonArray)); // Need this to do
-    // filtering
-    data.setTestData((map2Array(listOfAllRecords.values())));
-    data.setClientOnly(true);
+    uniqueKeyCount = twoDimensionalArray[0].length;
+    
+    recordhistory = new ArrayList<HashMap<String,RowRecord>>();
+    fieldHistory = new ArrayList<ColumnField[]>();
+    currentState = 0;
+    saveState();
   }
   
-  public void addAttributeToAllRecords(final String uniqueKey, final String value) {
-    for (ListGridRecord record : listOfAllRecords.values()) {
-      record.setAttribute(uniqueKey, value);
+  public ColumnField[] getAllFields() {
+    return allFields;
+  }
+  
+  /*
+   * No tests because this is uses smartgwt components
+   */
+  public ListGridField[] getAllFieldsAsListGridField() {
+    ListGridField[] array = new ListGridField[allFields.length];
+    for (int i = 0; i < allFields.length; i++) {
+      ListGridField lgf = new ListGridField(allFields[i].getUniqueName(), allFields[i].getVisibleName());
+      lgf.setAutoFitWidthApproach(AutoFitWidthApproach.BOTH);
+      lgf.setAutoFitWidth(allFields[i].isAutofit());
+      lgf.setHidden(allFields[i].isHidden());
+      array[i] = lgf;
     }
-    updateDataSource();
+    return array;
   }
   
-  public String addNewColumn_Characteristic_AndGetKey(String fieldTitle) {
-    int uniqueKey = getNewUniqueKey();
-    ListGridField newColumn = new ListGridField();
-    newColumn.setName(uniqueKey + "");
-    newColumn.setTitle(fieldTitle);
-    newColumn.setAutoFitWidthApproach(AutoFitWidthApproach.BOTH);
-    newColumn.setAutoFitWidth(true);
+  public HashMap<String,RowRecord> getAllRecords() {
+    return allRecords;
+  }
+  
+  private ColumnField[] fieldArrayToColumnFieldArray(String[] fieldArray) {
     
-    ListGridField[] newFields = new ListGridField[listOfAllFields.length + 1];
+    // The field is one longer because I need to add a key field
+    ColumnField[] arrayOfFields = new ColumnField[fieldArray.length + 1];
     
-    // Find the right place to put this!
-    int offset = 0;
-    for (int i = 0; i < listOfAllFields.length; i++) {
-      newFields[i + offset] = listOfAllFields[i];
-      if (listOfAllFields[i].getTitle().contains("Source Name")) {
-        offset = 1;
-        newFields[i + 1] = newColumn;
+    for (int i = 0; i < fieldArray.length; i++) {
+      arrayOfFields[i + 1] = new ColumnField(i + 1 + "", fieldArray[i]);
+      if (GlobalConfigs.shouldExclude(arrayOfFields[i + 1].getVisibleName())) {
+        arrayOfFields[i + 1].setHidden(true);
+      } else {
+        arrayOfFields[i + 1].setAutofit(true);
       }
     }
-    listOfAllFields = newFields;
-    updateDataSource();
-    return uniqueKey + "";
+    
+    // Make a primary key
+    ColumnField key = new ColumnField("key", "Key");
+    arrayOfFields[0] = key;
+    return arrayOfFields;
+    
   }
   
-  public String addNewColumn_FactorValue_AndGetKey(String fieldAttribute) {
-    int uniqueKey = getNewUniqueKey();
-    ListGridField newColumn = new ListGridField();
-    newColumn.setName(uniqueKey + "");
-    newColumn.setTitle(fieldAttribute);
-    newColumn.setAutoFitWidthApproach(AutoFitWidthApproach.BOTH);
-    newColumn.setAutoFitWidth(true);
+  private HashMap<String,RowRecord> twoDimArrayToRowRecordArray(String[][] twoDimArray) {
+    // Number of rows is one less because row zero contains data about the
+    // field name.
+    int numberOfRows = twoDimArray.length;
     
-    ListGridField[] newFields = new ListGridField[listOfAllFields.length + 1];
+    HashMap<String,RowRecord> mapOfRecords = new HashMap<String,RowRecord>();
+    // ListGridRecord[] arrayOfRecords = new ListGridRecord[numberOfRows-1];
     
-    // Find the right place to put this!
-    for (int i = 0; i < listOfAllFields.length; i++) {
-      newFields[i] = listOfAllFields[i];
+    // ------------------------------
+    // key 1 2 3 ...
+    // 0 1 2 3 ...
+    // 1 1 2 3 ...
+    // ------------------------------
+    // For each row in the JSON array, parse it, create a new record, and
+    // add it to the array of records.
+    for (int i = 1; i < numberOfRows; i++) {
+      // The First Row is not a record, it is a field
+      String[] row = twoDimArray[i];
+      
+      RowRecord newRecord = new RowRecord();
+      for (int j = 0; j < row.length; j++) {
+        newRecord.put((j + 1) + "", row[j]);
+      }
+      newRecord.put("key", i + "");
+      mapOfRecords.put("" + i, newRecord);
+      // arrayOfRecords[i-1]=newRecord;
     }
-    newFields[listOfAllFields.length] = newColumn;
-    
-    listOfAllFields = newFields;
-    updateDataSource();
-    return uniqueKey + "";
+    return mapOfRecords;
   }
   
-  public void updateColumnNames(ListGridField[] newArrayOfListGridFields) {
-    listOfAllFields = newArrayOfListGridFields;
-    updateDataSource();
+  public void addAttributeToAllRecords(final String uniqueColumnKey, final String value) {
+    for (RowRecord record : allRecords.values()) {
+      record.put(uniqueColumnKey, value);
+    }
+  }
+  
+  public void setValueForSelectedRecords(String[] listOfRowKeys, String uniqueColumnKey, String value) {
+    String intermediate = value + ""; // Strange bug where the compiled
+    // version doesn't identify this as text
+    logger.log(Level.INFO, listOfRowKeys.length + " records Will be set to " + value);
+    
+    for (int i = 0; i < listOfRowKeys.length; i++) {
+      try {
+        allRecords.get(listOfRowKeys[i]).put(uniqueColumnKey, intermediate);
+      } catch (NullPointerException e) {
+        System.err.println("Fetching Did Not Finish");
+        e.printStackTrace();
+      }
+    }
+  }
+  
+  public String addNewColumn_Characteristic_AndGetKey(String visibleName) {
+    String uniqueKey = getNewUniqueKey();
+    ColumnField newColumnField = new ColumnField(uniqueKey, visibleName);
+    
+    ColumnField[] newFields = new ColumnField[allFields.length + 1];
+    // Find the right place to put this new field.
+    int offset = 0;
+    for (int i = 0; i < allFields.length; i++) {
+      newFields[i + offset] = allFields[i];
+      if (allFields[i].getVisibleName().contains("Source Name")) {
+        offset = 1;
+        newFields[i + 1] = newColumnField;
+      }
+    }
+    allFields = newFields;
+    return uniqueKey;
+  }
+  
+  public String addNewColumn_FactorValue_AndGetKey(String visibleName) {
+    String uniqueKey = getNewUniqueKey();
+    
+    ColumnField newColumnField = new ColumnField(uniqueKey, visibleName);
+    
+    ColumnField[] newFields = new ColumnField[allFields.length + 1];
+    
+    // Find the right place to put this new field
+    for (int i = 0; i < allFields.length; i++) {
+      newFields[i] = allFields[i];
+    }
+    newFields[allFields.length] = newColumnField;
+    
+    allFields = newFields;
+    return uniqueKey;
   }
   
   /**
-   * Updates the DataSource to reflect the new columns added Because the data is edited via the
-   * listOfAllRecords, there is no worries about making a new data source.
+   * This gets a unique column key but does not add it to the list. Used for clipboard.
    * 
-   * @param newListGridFields
-   *          A new array of ListGridFields
+   * @return
    */
-  public void updateDataSource(ListGridField[] newListGridFields) {
-    listOfAllFields = newListGridFields;
-    updateDataSource();
+  public String getNewUniqueKey() {
+    uniqueKeyCount++;
+    return uniqueKeyCount + "";
   }
   
-  public ListGridField[] getAllFields() {
-    return listOfAllFields;
+  public void updateColumnNames(ColumnField[] newArrayOfFields) {
+    allFields = newArrayOfFields;
   }
   
-  public String getNewColumnKey() {
-    int uniqueKey = getNewUniqueKey();
-    return uniqueKey + "";
+  public void saveState() {
+    logger.log(Level.INFO, "A call was made to save the state");
+    
+    // For recordHistory
+    if (recordhistory.size() - 1 > currentState) {
+      Iterator<HashMap<String,RowRecord>> historyIterator = recordhistory.iterator();
+      
+      while (historyIterator.hasNext()) {
+        int i = recordhistory.indexOf(historyIterator.next());
+        if (i <= currentState) {
+          // do nothing
+        } else {
+          historyIterator.remove();
+          logger.log(Level.INFO, "Deleting State: " + i);
+        }
+        i++;
+      }
+    }
+    recordhistory.add(deepCopyData(allRecords));
+    
+    // For fieldHistory
+    if (fieldHistory.size() - 1 > currentState) {
+      Iterator<ColumnField[]> historyIterator = fieldHistory.iterator();
+      
+      while (historyIterator.hasNext()) {
+        int i = fieldHistory.indexOf(historyIterator.next());
+        if (i <= currentState) {
+          // do nothing
+        } else {
+          historyIterator.remove();
+          logger.log(Level.INFO, "Deleting State: " + i);
+        }
+        i++;
+      }
+    }
+    fieldHistory.add(deepCopyData(allFields));
+    
+    currentState = (recordhistory.size() - 1);
+    logger.log(Level.INFO, "Saved at: " + currentState);
+  }
+  
+  public void undo() {
+    logger.log(Level.INFO, "A call was made to undo the state");
+    if (currentState > 0) {
+      currentState--;
+      allRecords = deepCopyData(recordhistory.get(currentState));
+      allFields = deepCopyData(fieldHistory.get(currentState));
+      logger.log(Level.INFO, "Restore back to " + currentState);
+    }
+    
+  }
+  
+  public void redo() {
+    logger.log(Level.INFO, "A call was made to redo the state");
+    if ((currentState + 1) < recordhistory.size()) {
+      currentState++;
+      allRecords = deepCopyData(recordhistory.get(currentState));
+      allFields = deepCopyData(fieldHistory.get(currentState));
+      logger.log(Level.INFO, "Restore back to " + currentState);
+    }
+  }
+  
+  private static DataClass[] clone(DataClass[] dataToClone, ListGridField[] listOfAllFields) {
+    DataClass[] cloneRecord = new DataClass[dataToClone.length];
+    int i = 0;
+    for (DataClass record : dataToClone) {
+      cloneRecord[i] = new DataClass();
+      for (ListGridField column : listOfAllFields) {
+        cloneRecord[i].setAttribute(column.getName(), record.getAttribute(column.getName()));
+      }
+      i++;
+    }
+    return cloneRecord;
+  }
+  
+  public static HashMap<String,RowRecord> deepCopyData(HashMap<String,RowRecord> recordsToCopy) {
+    HashMap<String,RowRecord> newCopy = new HashMap<String,RowRecord>();
+    for (String key : recordsToCopy.keySet()) {
+      newCopy.put(key, recordsToCopy.get(key).deepClone());
+    }
+    return newCopy;
+  }
+  
+  public static ColumnField[] deepCopyData(ColumnField[] recordsToCopy) {
+    ColumnField[] newCopy = new ColumnField[recordsToCopy.length];
+    for (int i = 0; i < recordsToCopy.length; i++) {
+      newCopy[i] = recordsToCopy[i].deepClone();
+    }
+    return newCopy;
   }
   
   public String getString() {
     
     String sdrfAsString = "";
-    if (listOfAllFields.length != 0) {
+    if (allFields.length != 0) {
       
       // Print out all fields
-      for (ListGridField column : listOfAllFields) {
-        if (!column.getTitle().equals("Key")) {
-          sdrfAsString += (column.getTitle() + "\t");
+      for (ColumnField column : allFields) {
+        if (!column.getVisibleName().equals("Key")) {
+          sdrfAsString += (column.getVisibleName() + "\t");
         }
       }
       // Remove last tab and make it a new line
       sdrfAsString = sdrfAsString.substring(0, sdrfAsString.length() - 1);
       sdrfAsString += "\n";
       
-      for (DataClass record : data.getTestData()) {
-        for (ListGridField column : listOfAllFields) {
-          if (!column.getTitle().equals("Key")) {
+      for (RowRecord record : allRecords.values()) {
+        for (ColumnField column : allFields) {
+          if (!column.getVisibleName().equals("Key")) {
             
-            if (record.getAttribute(column.getName()) == null) {
+            if (record.get(column.getUniqueName()) == null) {
               sdrfAsString += "\t";
             } else {
-              sdrfAsString += record.getAttribute(column.getName()) + "\t";
+              sdrfAsString += record.get(column.getUniqueName()) + "\t";
             }
           }
         }
@@ -162,174 +309,50 @@ public class SDRF_Data {
     return "";
   }
   
-  private void updateDataSource() {
-    // First Save the current data source
-    
-    // Create a new datasource based on the list of records and the fields
-    // specified.
-    DataSourceField[] fields = new DataSourceField[listOfAllFields.length];
-    for (int i = 1; i < listOfAllFields.length; i++) {
-      fields[i] = new DataSourceField(listOfAllFields[i].getName(), FieldType.TEXT, listOfAllFields[i]
-          .getTitle());
-    }
-    // Make a primary key
-    DataSourceField key = new DataSourceField("key", FieldType.INTEGER, "Key");
-    key.setPrimaryKey(true);
-    fields[0] = key;
-    
-    data = new DataSource();
-    data.setFields(fields); // Need this to do filtering (Limited to
-    // filtering of input data)
-    data.setTestData(map2Array(listOfAllRecords.values()));
+  public int getState() {
+    return currentState;
+  }
+  
+  // FIXME
+  // Can't test this
+  public DataSource getNewDataSource() {
+    DataSource data = new DataSource();
+    data.setTestData(convertToDataClassArray(allRecords));
+    data.setFields(convertToFieldArray(allFields));
     data.setClientOnly(true);
-  }
-  
-  /**
-   * Converts a JSON array into an array of ListGridRecords.
-   * 
-   * Each attribute is retrieved through it's unique key assigned. Fields also have the unique key and that is
-   * how the relationship is preserved
-   * 
-   * @param jsonArrayOfRows
-   * @return an array of ListGridRecords are returned. This is used to populate the data source but it does
-   *         not determine the order of the columns
-   */
-  private HashMap<String,ListGridRecord> JSONToListGridRecord(JSONArray jsonArrayOfRows) {
-    // Number of rows is one less because row zero contains data about the
-    // field name.
-    int numberOfRows = jsonArrayOfRows.size();
-    
-    HashMap<String,ListGridRecord> mapOfRecords = new HashMap<String,ListGridRecord>();
-    // ListGridRecord[] arrayOfRecords = new ListGridRecord[numberOfRows-1];
-    
-    // ------------------------------
-    // key 1 2 3 ...
-    // 0 1 2 3 ...
-    // 1 1 2 3 ...
-    // ------------------------------
-    // For each row in the JSON array, parse it, create a new record, and
-    // add it to the array of records.
-    for (int i = 1; i < numberOfRows; i++) {
-      // The First Row is not a record, it is a field
-      JSONArray row = jsonArrayOfRows.get(i).isArray();
-      
-      ListGridRecord newRecord = new ListGridRecord();
-      for (int j = 0; j < row.size(); j++) {
-        newRecord.setAttribute((j + 1) + "", row.get(j).isString().stringValue());
-      }
-      newRecord.setAttribute("key", i);
-      mapOfRecords.put(i + "", newRecord);
-      // arrayOfRecords[i-1]=newRecord;
-    }
-    return mapOfRecords;
-  }
-  
-  /**
-   * @param jsonArray
-   * @return an array of DataSourceFields are returned. This is used to populate the data source and is not
-   *         used to determine the order of the columns
-   */
-  private DataSourceField[] JSONToDataSourceField(JSONArray jsonArray) {
-    JSONArray firstRow = jsonArray.get(0).isArray();
-    // Plus one is to put the key in the front
-    DataSourceField[] arrayOfFields = new DataSourceField[firstRow.size() + 1];
-    
-    for (int i = 0; i < firstRow.size(); i++) {
-      arrayOfFields[i + 1] = new DataSourceField(i + 1 + "", FieldType.TEXT, firstRow.get(i).isString()
-          .stringValue());
-    }
-    
-    // Make a primary key
-    DataSourceField key = new DataSourceField("key", FieldType.INTEGER, "Key");
-    key.setPrimaryKey(true);
-    arrayOfFields[0] = key;
-    return arrayOfFields;
-  }
-  
-  /**
-   * @param array
-   * @return an array of ListGridField's are returned. This array is used to determine the order of the
-   *         columns.
-   * 
-   * <br>
-   *         [ArrayIndex]uniquekey...(name) <br>
-   *         [0]key...( Key) <br>
-   *         [1]1...(Term Source) <br>
-   *         [2]26...(Comment) <br>
-   *         [3]2...(Sample Name) <br>
-   *         etc.
-   */
-  private ListGridField[] JSONToListGridField(JSONArray array) {
-    JSONArray firstRow = array.get(0).isArray();
-    // Plus one is to put the key in the front
-    ListGridField[] arrayOfFields = new ListGridField[firstRow.size() + 1];
-    
-    for (int i = 0; i < firstRow.size(); i++) {
-      arrayOfFields[i + 1] = new ListGridField(i + 1 + "", firstRow.get(i).isString().stringValue());
-      // Should the column be hidden? If true hide, else set it to auto
-      // width
-      if (GlobalConfigs.shouldExclude(arrayOfFields[i + 1].getAttribute("title"))) {
-        arrayOfFields[i + 1].setHidden(true);
-      } else {
-        arrayOfFields[i + 1].setAutoFitWidthApproach(AutoFitWidthApproach.BOTH);
-        arrayOfFields[i + 1].setAutoFitWidth(true);
-      }
-    }
-    // At first, the unique key count is instantiated to the number of
-    // fields present
-    numColumnsBeforeModification = firstRow.size();
-    uniqueKeyCount = numColumnsBeforeModification;
-    
-    // Make a primary key
-    ListGridField key = new ListGridField("key", "Key");
-    key.setAutoFitWidthApproach(AutoFitWidthApproach.BOTH);
-    key.setAutoFitWidth(true);
-    arrayOfFields[0] = key;
-    return arrayOfFields;
-  }
-  
-  /**
-   * Gets a unique key that represents a column
-   * 
-   * @return a new unique key that represents a column
-   */
-  private int getNewUniqueKey() {
-    uniqueKeyCount++;
-    return uniqueKeyCount;
-  }
-  
-  public DataSource getDataSource() {
     return data;
+    
   }
   
-  public ListGridRecord[] getAllRecords() {
-    return map2Array(listOfAllRecords.values());
+  private static DataSourceField[] convertToFieldArray(ColumnField[] allFields) {
+    DataSourceField[] array = new DataSourceField[allFields.length];
+    for (int i = 1; i < allFields.length; i++) {
+      DataSourceField field = new DataSourceField(allFields[i].getUniqueName(), FieldType.TEXT, allFields[i]
+          .getVisibleName());
+      array[i] = field;
+    }
+    array[0] = new DataSourceField(allFields[0].getUniqueName(), FieldType.INTEGER, allFields[0]
+        .getVisibleName());
+    array[0].setPrimaryKey(true);
+    
+    return array;
   }
   
-  private ListGridRecord[] map2Array(Collection<ListGridRecord> values) {
-    ListGridRecord[] returnArray = new ListGridRecord[values.size()];
-    Iterator<ListGridRecord> iterator = values.iterator();
+  private static DataClass[] convertToDataClassArray(HashMap<String,RowRecord> allRecords) {
+    DataClass[] array = new DataClass[allRecords.size()];
     int i = 0;
-    while (iterator.hasNext()) {
-      returnArray[i] = iterator.next();
+    for (RowRecord record : allRecords.values()) {
+      DataClass newDataClass = new DataClass();
+      for (String key : record.keySet()) {
+        newDataClass.setAttribute(key, record.get(key));
+      }
+      array[i] = newDataClass;
       i++;
     }
-    return returnArray;
+    return array;
   }
   
-  public void setValueForSelectedRecords(RecordList listOfRecords, String uniqueKey, String value) {
-    String intermediate = value + ""; // Strange bug where the compiled
-    // version doesn't identify this as text
-    logger.log(Level.INFO, listOfRecords.getLength() + " records Will be set to " + value);
-    
-    for (int i = 0; i < listOfRecords.getLength(); i++) {
-      try {
-        listOfAllRecords.get(listOfRecords.get(i).getAttribute("key")).setAttribute(uniqueKey, intermediate);
-      } catch (NullPointerException e) {
-        System.err.println("Fetching Did Not Finish");
-        e.printStackTrace();
-      }
-    }
-    updateDataSource();
+  public void setCell(String recordKey, String fieldKey, String newValue) {
+    allRecords.get(recordKey).put(fieldKey, newValue);
   }
 }

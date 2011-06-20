@@ -1,7 +1,6 @@
 package uk.ac.ebi.fgpt.magecomet.client;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,8 +18,11 @@ import uk.ac.ebi.fgpt.magecomet.client.gui.window.TagCloudWindow;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.smartgwt.client.data.AdvancedCriteria;
-import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.widgets.HTMLFlow;
 
 public class GuiMediator {
   private IDF_FactorValue_ValidatorWindow idfFactorValueWindow;
@@ -37,21 +39,31 @@ public class GuiMediator {
   private String currentSDRF;
   private SDRF_Data sdrfData;
   private IDF_Data idfData;
-  private LinkedHashSet<MageTabState> history = new LinkedHashSet<MageTabState>();
+  private final HTMLFlow stateCounter = new HTMLFlow();
   
   private Logger logger = Logger.getLogger(getClass().toString());
   
   public GuiMediator() {}
   
+  /**
+   * Mthod that adds an empty column to the SDRF table right after 'Source Name'
+   * 
+   * @param fieldAttribute
+   *          the name of the attribute that will be surrounded by the Characteristic brackets, ie
+   *          'organism_part'
+   * @return the unique column key is returned
+   */
   public String addCharacteristicColumnAndGetKey(String fieldAttribute) {
     return sdrfData.addNewColumn_Characteristic_AndGetKey("Characteristics[" + fieldAttribute + "]");
   }
   
   /**
-   * Adds a characteristic column, directly after sourceName and adds the specified value to all records
+   * Method to add a column, directly after 'Source Name' and adds the specified value to all records in the
+   * column
    * 
    * @param fieldTitle
-   *          the name of the field. WILL NOT BE SURROUNDED
+   *          the name of the field which should already be surrounded by tags (ie
+   *          'Characteristic[organism_part]')
    * @param value
    *          the value to be filled in for all records
    */
@@ -60,50 +72,77 @@ public class GuiMediator {
     sdrfData.addAttributeToAllRecords(uniqueKey, value);
   }
   
-  @Deprecated
-  public void addColumnToClipboardAndAddValueToAllRecords(String fieldTitle, String value) {
-    String uniqueKey = sdrfSectionColumnEditor.addNewColumnToClipboardAndGetKey(fieldTitle);
-    sdrfData.addAttributeToAllRecords(uniqueKey, value);
-    sdrfSectionColumnEditor.show();
+  /**
+   * Method used to add column to clipboard and get key
+   * 
+   * @param visibleName
+   *          this is the string that will show up in the field
+   * @return the unique column key will be returned
+   */
+  public String addColumnToClipboardAndGetKey(String visibleName) {
+    return sdrfSectionColumnEditor.addNewColumnToClipboardAndGetKey(visibleName);
   }
   
-  public String addColumnToClipboardAndGetKey(String title) {
-    return sdrfSectionColumnEditor.addNewColumnToClipboardAndGetKey(title);
-  }
-  
+  /**
+   * Method to add a column, to the end of the table
+   * 
+   * @param fieldAttribute
+   *          the name of the field that will be surrounded by the Factor Value brackets ie 'organism_part'
+   */
   public String addFactorValueColumnAndGetKey(String fieldAttribute) {
     return sdrfData.addNewColumn_FactorValue_AndGetKey("Factor Value[" + fieldAttribute + "]");
   }
   
+  /**
+   * @return true if the sdrfData is not null
+   */
   public boolean dataHasBeenLoaded() {
     return (sdrfData != null);
   }
   
+  /**
+   * This method is used to filter and replace values in the SDRF
+   * 
+   * @param advancedCriteria
+   *          the criteria to filter on
+   * @param uniqueKey
+   *          the target column key that the values will fill in
+   * @param value
+   *          the value that will be filled all the records that match the critera
+   */
   public void filterReplaceRefresh(AdvancedCriteria advancedCriteria,
                                    final String uniqueKey,
                                    final String value) {
     logger.log(Level.INFO, "Filter And Replace Was Called");
     // filter
-    sdrfSection.setFilterCritera(advancedCriteria);
-    // replace
-    sdrfData.setValueForSelectedRecords(sdrfSection.getListOfRecords(), uniqueKey, value);
-    // refresh
-    refreshTable();
+    sdrfSection.filterTable(advancedCriteria, new DSCallback() {
+      @Override
+      public void execute(DSResponse response, Object rawData, DSRequest request) {
+        // replace
+        sdrfData.setValueForSelectedRecords(sdrfSection.getRecordKeys(), uniqueKey, value);
+        // refresh
+        sdrfData.saveState();
+        updateStateCounter();
+        refreshTable();
+      }
+    });
+    
   }
   
+  /**
+   * This method updates the view to show all records that match the criteria.
+   * 
+   * @param advancedCriteria
+   *          the criteria that will be filtered on
+   */
   public void filterTable(AdvancedCriteria advancedCriteria) {
     logger.log(Level.INFO, "Filter Was Called");
-    
     sdrfSection.filterTable(advancedCriteria);
   }
   
-  public ListGridField[] getAllSDRFFields() {
+  public ColumnField[] getAllSDRFFields() {
     return sdrfData.getAllFields();
   }
-  
-  // *****************************************
-  // End Registration
-  // *****************************************
   
   public LinkedHashMap<String,String> getCharacteristicMap() {
     LinkedHashMap<String,String> characteristicValuesMap = new LinkedHashMap<String,String>();
@@ -119,8 +158,8 @@ public class GuiMediator {
   
   public LinkedHashMap<String,String> getColumnValueMap() {
     LinkedHashMap<String,String> columnValueMap = new LinkedHashMap<String,String>();
-    for (ListGridField field : sdrfData.getAllFields()) {
-      columnValueMap.put(field.getName(), field.getTitle());
+    for (ColumnField field : sdrfData.getAllFields()) {
+      columnValueMap.put(field.getUniqueName(), field.getVisibleName());
     }
     return columnValueMap;
   }
@@ -151,7 +190,7 @@ public class GuiMediator {
   }
   
   public String getNewColumnKey() {
-    return sdrfData.getNewColumnKey();
+    return sdrfData.getNewUniqueKey();
   }
   
   public String getSDRFAsString() {
@@ -171,9 +210,14 @@ public class GuiMediator {
   public void loadSDRFData(JSONObject object) {
     logger.log(Level.INFO, "Loading SDRF");
     
-    sdrfData = new SDRF_Data(object);
-    sdrfSection.setData(sdrfData.getDataSource(), sdrfData.getAllFields());
-    filterTab.setData(sdrfData.getDataSource());
+    sdrfData = new SDRF_Data(JSON_Tools.get2DArray("sdrfArray", object));
+    DataSource data = sdrfData.getNewDataSource();
+    
+    sdrfSection.refreshTable(data, sdrfData.getAllFieldsAsListGridField());
+    
+    extractTab.setRecords(sdrfData.getAllRecords());
+    
+    filterTab.setData(data);
     updateColumnsInComboBoxes();
     idfFactorValueWindow = new IDF_FactorValue_ValidatorWindow(this);
     idfFactorValueWindow.updateFactorValues(getFactorValuesMap());
@@ -211,19 +255,6 @@ public class GuiMediator {
     tagCloudWindow.refreshTagClouds();
     
     logger.log(Level.INFO, "Textmining results passed to the cloud");
-  }
-  
-  @Deprecated
-  public void passSDRFTableToExtractTab(ListGrid sdrfTable) {
-    extractTab.setRecords(sdrfData.getAllRecords(), sdrfTable);
-  }
-  
-  public void refreshTable() {
-    logger.log(Level.INFO, "A Call has been made to refresh the table");
-    sdrfSection.refreshTable(sdrfData.getDataSource(), sdrfData.getAllFields());
-    filterTab.setData(sdrfData.getDataSource());
-    updateColumnsInComboBoxes();
-    logger.log(Level.INFO, "Table has been refreshed");
   }
   
   public void registerEditTab(EditTab editTab) {
@@ -275,10 +306,6 @@ public class GuiMediator {
     idfSection.setData(idfData.getAllFields(), idfData.getAllRecords());
   }
   
-  // *****************************************
-  // End Registration
-  // *****************************************
-  
   public void showIDFFactorValue_ValidatorWindow() {
     idfFactorValueWindow.updateFactorValues(getFactorValuesMap());
     idfFactorValueWindow.show();
@@ -288,10 +315,9 @@ public class GuiMediator {
    * Updates the columns. Should be called every time the table changes
    */
   private void updateColumnsInComboBoxes() {
-    // Update Data source in table
     LinkedHashMap<String,String> columnValueMap = new LinkedHashMap<String,String>();
-    for (ListGridField field : sdrfData.getAllFields()) {
-      columnValueMap.put(field.getName(), field.getTitle());
+    for (ColumnField field : sdrfData.getAllFields()) {
+      columnValueMap.put(field.getUniqueName(), field.getVisibleName());
     }
     if (filterTab != null) {
       filterTab.updateColumnsInComboBox(columnValueMap);
@@ -301,9 +327,8 @@ public class GuiMediator {
     }
   }
   
-  public void updateSDRFColumnNames(ListGridField[] newArrayOfListGridFields) {
+  public void updateSDRFColumnNames(ColumnField[] newArrayOfListGridFields) {
     sdrfData.updateColumnNames(newArrayOfListGridFields);
-    sdrfData.updateDataSource(newArrayOfListGridFields);
   }
   
   public String addUnitColumnAndGetKey(String fieldAttribute) {
@@ -311,15 +336,49 @@ public class GuiMediator {
   }
   
   public void saveState() {
-    logger.log(Level.INFO, "A call was made to save the state");
+    sdrfData.saveState();
+    filterTab.setData(sdrfData.getNewDataSource());
+    extractTab.setRecords(sdrfData.getAllRecords());
+    updateStateCounter();
+    
+  }
+  
+  public void refreshTable() {
+    // The datasource is like a physical mirror(the one that reflects). In this case, it shows the
+    // user what is in the SDRF_Data object.
+    
+    DataSource data = sdrfData.getNewDataSource();
+    sdrfSection.refreshTable(data, sdrfData.getAllFieldsAsListGridField());
+    
+    filterTab.setData(data);
+    extractTab.setRecords(sdrfData.getAllRecords());
+    
+    updateColumnsInComboBoxes();
+    logger.log(Level.INFO, "Table Refreshed");
   }
   
   public void loadPreviousState() {
-    logger.log(Level.INFO, "A call was made to load the previous state");
+    sdrfData.undo();
+    refreshTable();
+    updateStateCounter();
+    
   }
   
   public void redo() {
-    logger.log(Level.INFO, "A call was made to redo a state");
+    sdrfData.redo();
+    refreshTable();
+    updateStateCounter();
+  }
   
+  public void updateStateCounter() {
+    stateCounter.setContents("State: " + sdrfData.getState());
+  }
+  
+  public HTMLFlow getStateCounter() {
+    return stateCounter;
+  }
+  
+  public void setCell(String recordKey, String fieldKey, String newValue) {
+    sdrfData.setCell(recordKey, fieldKey, newValue);
   }
 }
