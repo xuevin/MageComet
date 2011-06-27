@@ -121,8 +121,7 @@ public class GuiMediator {
         // replace
         sdrfData.setValueForSelectedRecords(sdrfSection.getRecordKeys(), uniqueKey, value);
         // refresh
-        sdrfData.saveState();
-        updateStateCounter();
+        saveState();
         refreshTable();
       }
     });
@@ -165,10 +164,16 @@ public class GuiMediator {
   }
   
   public String getCurrentIDFTitle() {
+    if (currentIDF == null) {
+      return "null";
+    }
     return currentIDF;
   }
   
   public String getCurrentSDRFTitle() {
+    if (currentSDRF == null) {
+      return "null";
+    }
     return currentSDRF;
   }
   
@@ -380,5 +385,10 @@ public class GuiMediator {
   
   public void setCell(String recordKey, String fieldKey, String newValue) {
     sdrfData.setCell(recordKey, fieldKey, newValue);
+  }
+  
+  public void resetTagCloud() {
+    tagCloudWindow.reset();
+    logger.info("TagCloud reset");
   }
 }

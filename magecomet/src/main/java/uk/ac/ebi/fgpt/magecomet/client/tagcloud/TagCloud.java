@@ -1,6 +1,7 @@
 package uk.ac.ebi.fgpt.magecomet.client.tagcloud;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.Button;
@@ -13,6 +14,9 @@ public class TagCloud extends FlowPanel{
 		super();
 		setHeight("100%");
 		listOfWordTags = new ArrayList<WordTag>();
+	}
+	public void removeAll(){
+ 	    listOfWordTags = new ArrayList<WordTag>();
 	}
 	public void addWord(String word,ClickAction action){
 		for(WordTag wtag: listOfWordTags){

@@ -69,6 +69,12 @@ public class JSONUtilsTest {
     jsonArray.get(0);
     assertEquals("Source Name", ((JSONArray) jsonArray.get(0)).get(0).toString());
   }
+  @Test
+  public void showThat_getJSONArrayInputStreamWorks() throws IOException {
+    JSONArray jsonArray = JSONUtils.getJSONArrayFromInputStream(getClass().getClassLoader().getResource("E-GEOD-18781.sdrf.txt").openStream());
+    jsonArray.get(0);
+    assertEquals("Source Name", ((JSONArray) jsonArray.get(0)).get(0).toString());
+  }
   
   @Test
   public void showThat_getJSONArrayFromWhatIzIt_Works() {

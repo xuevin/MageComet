@@ -87,15 +87,13 @@ public class UploadServlet extends UploadAction{
 					try{
 						// 03_Parse files. 
 						if(file.getName().contains("sdrf")){		
-							SDRFParser sdrfParser = new SDRFParser();
-							SDRF sdrf = sdrfParser.parse(file.toURI().toURL().openStream());
-							responseJSONObject.put("sdrfArray", JSONUtils.getJSONArrayFromSDRF(sdrf));
+							responseJSONObject.put("sdrfArray", JSONUtils.getJSONArrayFromInputStream(file.toURI().toURL().openStream()));
 							//Add tagcloud array of terms to JSON Object
 							responseJSONObject.put("whatizitSDRF",JSONUtils.getJSONArrayFromWhatIzIt(file, monqInput));
 						}else if(file.getName().contains("idf")){
 							IDFParser idfParser = new IDFParser();
 							IDF idf = idfParser.parse(file.toURI().toURL().openStream());
-							responseJSONObject.put("idfArray",JSONUtils.getJSONArrayFromIDF(idf)); 
+							responseJSONObject.put("idfArray",JSONUtils.getJSONArrayFromInputStream(file.toURI().toURL().openStream())); 
 							//Add tagcloud array of terms to JSON Object
 							responseJSONObject.put("whatizitIDF",JSONUtils.getJSONArrayFromWhatIzIt(file, monqInput));
 						}else{

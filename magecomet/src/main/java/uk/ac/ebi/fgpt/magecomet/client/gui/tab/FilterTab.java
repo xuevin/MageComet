@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 
 import uk.ac.ebi.fgpt.magecomet.client.GuiMediator;
 
+import com.smartgwt.client.data.AdvancedCriteria;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.IButton;
@@ -83,6 +84,12 @@ public class FilterTab extends Tab{
 		// Clear all previous filters because I can't change the data source after the filter 
 		// is made (slightly annoying)
 		// Workaround by removing all and then adding a new filter builder
+	  
+	  //Attempt to preserve previous filter 
+	  AdvancedCriteria criteria = null;
+	  if(filterBuilder!=null){
+	    criteria = filterBuilder.getCriteria();
+	  }
 		filterStack.removeMembers(filterStack.getMembers());
 		
 		//Make a new filter builder
@@ -94,6 +101,9 @@ public class FilterTab extends Tab{
 				guiMediator.filterTable(filterBuilder.getCriteria());
 			}
 		});
+		if(criteria!=null){
+		  filterBuilder.setCriteria(criteria);
+		}
 		
 		//Make a filter filter Button
 		filterButton = new IButton("Filter");

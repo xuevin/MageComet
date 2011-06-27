@@ -39,7 +39,7 @@ public class ExtractTab extends Tab {
   private final ComboBoxItem destinationComboBoxItem = new ComboBoxItem("type");
   private final HTMLFlow sampleOutput = new HTMLFlow();
   private final HTMLFlow directions = new HTMLFlow();
-  private final CheckboxItem caseSensitive = new CheckboxItem("case","Case Sensitive");
+  private final CheckboxItem caseSensitive = new CheckboxItem("case", "Case Sensitive");
   
   private GuiMediator guiMediator;
   
@@ -58,9 +58,9 @@ public class ExtractTab extends Tab {
     // Form
     // *****************************
     
-    
     form.setNumCols(10);
     caseSensitive.setColSpan(10);
+
     
     columnComboBoxItem.setTitle("From");
     columnComboBoxItem.setRequired(true);
@@ -78,7 +78,7 @@ public class ExtractTab extends Tab {
     newColumn.setTitle("New Column");
     newColumn.setWrapTitle(false);
     newColumn.setRequired(true);
-//    newColumn.setShowPickerIcon(false);
+    // newColumn.setShowPickerIcon(false);
     
     LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
     valueMap.put("clipboard", "Clipboard");
@@ -112,13 +112,14 @@ public class ExtractTab extends Tab {
     });
     
     submit.setTitle("Extract");
-    submit.setHeight(28);
+    submit.setHeight(27);
     submit.setMargin(2);
     
     // *****************************
     // Layout
     // *****************************
-    form.setItems(caseSensitive,columnComboBoxItem, leftInput, rightInput, destinationComboBoxItem, newColumn);
+    form.setItems(caseSensitive, columnComboBoxItem, leftInput, rightInput, destinationComboBoxItem,
+      newColumn);
     
     hstack.setHeight(16);
     hstack.setDefaultLayoutAlign(VerticalAlignment.BOTTOM);
@@ -157,6 +158,7 @@ public class ExtractTab extends Tab {
         }
       }
     });
+    caseSensitive.addChangedHandler(inputChanged);
     leftInput.addChangedHandler(inputChanged);
     rightInput.addChangedHandler(inputChanged);
     submit.addClickHandler(addToColumnEditor);
@@ -190,7 +192,6 @@ public class ExtractTab extends Tab {
       sampleOutput.setContents("Sample Extract:");
       
       guiMediator.saveState();
-      guiMediator.updateStateCounter();
       guiMediator.refreshTable();
     }
   }
@@ -204,7 +205,8 @@ public class ExtractTab extends Tab {
         return;
       }
       String textInColumn = record.get(columnComboBoxItem.getValueAsString());
-      guiMediator.setCell(record.get("key"), newColumnName, extract(textInColumn));
+      guiMediator.setCell(record.get("key"), newColumnName, extract(textInColumn, caseSensitive
+          .getValueAsBoolean()));
     }
   }
   
@@ -223,13 +225,13 @@ public class ExtractTab extends Tab {
       }
       String textInColumn = record.get(columnComboBoxItem.getValueAsString());
       
-      output += "[" + extract(textInColumn) + "] ";
+      output += "[" + extract(textInColumn, caseSensitive.getValueAsBoolean()) + "] ";
       i--;
     }
     sampleOutput.setContents("Sample Extract: " + output);
   }
   
-  private String extract(String input) {
+  private String extract(String input, boolean caseSensitive) {
     String left;
     String right;
     if (leftInput.getValueAsString() != null) {
@@ -245,7 +247,12 @@ public class ExtractTab extends Tab {
     
     // RegExp pattern =
     // RegExp.compile("(\\b"+left+"\\b)(.*?)(\\b"+right+"\\b)");
-    RegExp pattern = RegExp.compile("(" + left + ")(.*?)(" + right + ")");
+    RegExp pattern;
+    if (caseSensitive) {
+      pattern = RegExp.compile("(" + left + ")(.*?)(" + right + ")");
+    } else {
+      pattern = RegExp.compile("(" + left + ")(.*?)(" + right + ")", "i");
+    }
     
     String textInColumn = input;
     
@@ -259,7 +266,7 @@ public class ExtractTab extends Tab {
   private String translateEscapeCharacters(String input) {
     
     String output = input.replaceAll("\\.", "\\\\.").replaceAll("\\(", "\\\\(").replaceAll("\\)", "\\\\)")
-        .replaceAll("\\+", "\\\\+");
+        .replaceAll("\\+", "\\\\+").replaceAll("\\[", "\\\\[").replaceAll("\\]", "\\\\]");
     return output;
     
   }
