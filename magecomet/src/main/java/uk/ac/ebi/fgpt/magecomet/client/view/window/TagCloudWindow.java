@@ -1,12 +1,12 @@
-package uk.ac.ebi.fgpt.magecomet.client.gui.window;
+package uk.ac.ebi.fgpt.magecomet.client.view.window;
 
 import java.util.ArrayList;
 
 import uk.ac.ebi.fgpt.magecomet.client.GuiMediator;
-import uk.ac.ebi.fgpt.magecomet.client.Highlight;
 import uk.ac.ebi.fgpt.magecomet.client.tagcloud.ClickAction;
 import uk.ac.ebi.fgpt.magecomet.client.tagcloud.EFOService;
 import uk.ac.ebi.fgpt.magecomet.client.tagcloud.EFOServiceAsync;
+import uk.ac.ebi.fgpt.magecomet.client.tagcloud.Highlight;
 import uk.ac.ebi.fgpt.magecomet.client.tagcloud.TagCloud;
 
 import com.google.gwt.core.client.GWT;

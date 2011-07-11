@@ -1,7 +1,7 @@
-package uk.ac.ebi.fgpt.magecomet.client.gui.window;
+package uk.ac.ebi.fgpt.magecomet.client.view.window;
 
-import uk.ac.ebi.fgpt.magecomet.client.GlobalConfigs;
 import uk.ac.ebi.fgpt.magecomet.client.GuiMediator;
+import uk.ac.ebi.fgpt.magecomet.client.model.GlobalConfigs;
 import uk.ac.ebi.fgpt.magecomet.client.tagcloud.EFOServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;

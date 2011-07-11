@@ -1,4 +1,4 @@
-package uk.ac.ebi.fgpt.magecomet.client.gui.tab;
+package uk.ac.ebi.fgpt.magecomet.client.view.tab;
 
 import gwtupload.client.IUploader;
 import gwtupload.client.MultiUploader;
@@ -165,13 +165,12 @@ public class LoadTab extends Tab {
         System.out.println("File name " + info.name);
         
         if (info.name == null) {
-          System.out.println("Problem...");
-          // FIXME This is a known problem that occurs in development
+          System.out.println("Problem with uploader");
         }
         
         // Here is the string returned in your servlet
-        
         JSONObject jsonObject = JSONParser.parseStrict(info.message).isObject();
+        
         logger.log(Level.INFO, "JSON Received");
         // Parse the response according to the name of the file
         if (info.name.contains("sdrf")) {

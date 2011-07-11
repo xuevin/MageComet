@@ -1,11 +1,11 @@
-package uk.ac.ebi.fgpt.magecomet.client.gui.section;
+package uk.ac.ebi.fgpt.magecomet.client.view.section;
 
 import java.util.logging.Logger;
 
 import uk.ac.ebi.fgpt.magecomet.client.GuiMediator;
-import uk.ac.ebi.fgpt.magecomet.client.gui.tab.ExtractTab;
-import uk.ac.ebi.fgpt.magecomet.client.gui.tab.FilterTab;
-import uk.ac.ebi.fgpt.magecomet.client.gui.window.SDRF_Section_ColumnEditor;
+import uk.ac.ebi.fgpt.magecomet.client.view.tab.ExtractTab;
+import uk.ac.ebi.fgpt.magecomet.client.view.tab.FilterTab;
+import uk.ac.ebi.fgpt.magecomet.client.view.window.SDRF_Section_ColumnEditor;
 
 import com.smartgwt.client.data.AdvancedCriteria;
 import com.smartgwt.client.data.DSCallback;
@@ -134,7 +134,7 @@ public class SDRF_Section extends SectionStackSection {
     addItem(sdrfTable);
   }
   
-  public void refreshTable(DataSource data, ListGridField[] listOfFields) {
+  public void setData(DataSource data, ListGridField[] listOfFields) {
     sdrfTable.setDataSource(data);
     sdrfTable.setFields(listOfFields);
     sdrfTable.fetchData();
@@ -149,12 +149,6 @@ public class SDRF_Section extends SectionStackSection {
   public void filterTable(AdvancedCriteria advancedCriteria) {
     sdrfTable.filterData(advancedCriteria);
   }
-  
-  // public RecordList getListOfRecords() {
-  // return sdrfTable.getResultSet();// should use this one
-  // // return sdrfTable.getDataAsRecordList();
-  // // return sdrfTable.getRecords();
-  // }
   
   public String[] getRecordKeys() {
     RecordList recordlist = sdrfTable.getResultSet();

@@ -1,4 +1,4 @@
-package uk.ac.ebi.fgpt.magecomet.client.gui.tab;
+package uk.ac.ebi.fgpt.magecomet.client.view.tab;
 
 import java.util.LinkedHashMap;
 

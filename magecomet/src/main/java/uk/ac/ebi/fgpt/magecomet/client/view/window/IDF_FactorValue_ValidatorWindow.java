@@ -1,9 +1,9 @@
-package uk.ac.ebi.fgpt.magecomet.client.gui.window;
+package uk.ac.ebi.fgpt.magecomet.client.view.window;
 
 import java.util.LinkedHashMap;
 
-import uk.ac.ebi.fgpt.magecomet.client.GlobalConfigs;
 import uk.ac.ebi.fgpt.magecomet.client.GuiMediator;
+import uk.ac.ebi.fgpt.magecomet.client.model.GlobalConfigs;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.widgets.HTMLFlow;

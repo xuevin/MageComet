@@ -1,8 +1,8 @@
-package uk.ac.ebi.fgpt.magecomet.client.gui.tab;
+package uk.ac.ebi.fgpt.magecomet.client.view.tab;
 
 import uk.ac.ebi.fgpt.magecomet.client.GuiMediator;
-import uk.ac.ebi.fgpt.magecomet.client.gui.section.IDF_Section;
-import uk.ac.ebi.fgpt.magecomet.client.gui.section.SDRF_Section;
+import uk.ac.ebi.fgpt.magecomet.client.view.section.IDF_Section;
+import uk.ac.ebi.fgpt.magecomet.client.view.section.SDRF_Section;
 
 import com.smartgwt.client.types.VisibilityMode;
 import com.smartgwt.client.widgets.layout.SectionStack;

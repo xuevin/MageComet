@@ -3,6 +3,8 @@ package uk.ac.ebi.fgpt.magecomet.client;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.ac.ebi.fgpt.magecomet.client.model.RowRecord;
+
 import static org.junit.Assert.*;
 
 public class RowRecordTest {

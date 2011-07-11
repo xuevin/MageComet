@@ -5,6 +5,10 @@ import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.ac.ebi.fgpt.magecomet.client.model.ColumnField;
+import uk.ac.ebi.fgpt.magecomet.client.model.RowRecord;
+import uk.ac.ebi.fgpt.magecomet.client.model.SDRF_Data;
+
 import static org.junit.Assert.*;
 
 public class SDRF_DataTest {

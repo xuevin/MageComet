@@ -1,4 +1,4 @@
-package uk.ac.ebi.fgpt.magecomet.client.gui.canvas;
+package uk.ac.ebi.fgpt.magecomet.client.view.canvas;
 
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
@@ -14,7 +14,7 @@ public class SuggestCanvas extends Canvas{
 		suggestBoxField = new SuggestBox(suggestOracle);
 		suggestBoxField.setStyleName("gwt-SuggestBox");
 		suggestBoxField.setHeight(getHeight() + "px");
-		suggestBoxField.setLimit(3);   // Set the limit to 5 suggestions
+		suggestBoxField.setLimit(3);   // Set the limit to 3 suggestions
 		
 		setStyleName("gwt-SuggestBoxCanvas");
 		addChild(suggestBoxField);	

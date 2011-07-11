@@ -1,8 +1,8 @@
-package uk.ac.ebi.fgpt.magecomet.client.gui.window;
+package uk.ac.ebi.fgpt.magecomet.client.view.window;
 
-import uk.ac.ebi.fgpt.magecomet.client.ColumnField;
-import uk.ac.ebi.fgpt.magecomet.client.GlobalConfigs;
 import uk.ac.ebi.fgpt.magecomet.client.GuiMediator;
+import uk.ac.ebi.fgpt.magecomet.client.model.ColumnField;
+import uk.ac.ebi.fgpt.magecomet.client.model.GlobalConfigs;
 
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.RecordList;

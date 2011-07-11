@@ -3,11 +3,6 @@ package uk.ac.ebi.fgpt.magecomet.client;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import uk.ac.ebi.fgpt.magecomet.client.gui.canvas.SuggestCanvas;
-import uk.ac.ebi.fgpt.magecomet.client.gui.tab.EditTab;
-import uk.ac.ebi.fgpt.magecomet.client.gui.tab.ErrorsTab;
-import uk.ac.ebi.fgpt.magecomet.client.gui.tab.LoadTab;
-import uk.ac.ebi.fgpt.magecomet.client.gui.window.TagCloudWindow;
 import uk.ac.ebi.fgpt.magecomet.client.service.fileservice.FileService;
 import uk.ac.ebi.fgpt.magecomet.client.service.fileservice.FileServiceAsync;
 import uk.ac.ebi.fgpt.magecomet.client.service.fileservice.FileServiceCallback;
@@ -15,6 +10,11 @@ import uk.ac.ebi.fgpt.magecomet.client.service.searchservice.SearchOracle;
 import uk.ac.ebi.fgpt.magecomet.client.service.validationservice.ValidationService;
 import uk.ac.ebi.fgpt.magecomet.client.service.validationservice.ValidationServiceAsync;
 import uk.ac.ebi.fgpt.magecomet.client.service.validationservice.ValidationServiceCallback;
+import uk.ac.ebi.fgpt.magecomet.client.view.canvas.SuggestCanvas;
+import uk.ac.ebi.fgpt.magecomet.client.view.tab.EditTab;
+import uk.ac.ebi.fgpt.magecomet.client.view.tab.ErrorsTab;
+import uk.ac.ebi.fgpt.magecomet.client.view.tab.LoadTab;
+import uk.ac.ebi.fgpt.magecomet.client.view.window.TagCloudWindow;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -25,11 +25,6 @@ import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.tab.TabSet;
-
-// Set - Replace Existing or add if it does not exist 
-// Get - 
-// Add - add 
-// 
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -73,7 +68,7 @@ public class Magecomet implements EntryPoint {
     topTabSet.addTab(errorTab);
     topTabSet.setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER, suggestCanvasItem,
       confirmFactorValues, exportIDFButton, exportSDRFButton, revalidateButton);
-    // topTabSet.moveBy(0, 140);
+    topTabSet.moveBy(0, 100);
     topTabSet.show();
     
     /*
@@ -90,7 +85,7 @@ public class Magecomet implements EntryPoint {
     exportSDRFButton.setIcon("[SKIN]actions/download.png");
     exportSDRFButton.addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
-        if (!guiMediator.getSDRFAsString().equals("")) {
+        if (!guiMediator.getCurrentSDRFTitle().equals("null")) {
           logger.log(Level.INFO, "Export SDRF Button was pressed");
           fileService.writeFile(guiMediator.getCurrentSDRFTitle(), guiMediator.getSDRFAsString(),
             new FileServiceCallback(guiMediator.getCurrentSDRFTitle()));
@@ -104,7 +99,7 @@ public class Magecomet implements EntryPoint {
       
       public void onClick(ClickEvent event) {
         
-        if (!guiMediator.getIDFAsString().equals("")) {
+        if (!guiMediator.getCurrentIDFTitle().equals("null")) {
           logger.log(Level.INFO, "Export IDF Button was pressed");
           fileService.writeFile(guiMediator.getCurrentIDFTitle(), guiMediator.getIDFAsString(),
             new FileServiceCallback(guiMediator.getCurrentIDFTitle()));
@@ -115,7 +110,8 @@ public class Magecomet implements EntryPoint {
     
     revalidateButton.addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
-        if (!guiMediator.getSDRFAsString().equals("")) {
+        if (!guiMediator.getCurrentSDRFTitle().equals("null")
+            && !guiMediator.getCurrentIDFTitle().equals("null")) {
           validationService.validate(guiMediator.getCurrentIDFTitle(), guiMediator.getIDFAsString(),
             guiMediator.getCurrentSDRFTitle(), guiMediator.getSDRFAsString(), new ValidationServiceCallback(
                 guiMediator));
@@ -130,7 +126,7 @@ public class Magecomet implements EntryPoint {
     
     TagCloudWindow tagCloudWindow = new TagCloudWindow(guiMediator);
     tagCloudWindow.show();
-    tagCloudWindow.moveTo(400, 0);
+    tagCloudWindow.moveTo(300, 100);
     // tagCloudWindow.moveAbove(canvas)
     
     // mainLayout.setHtmlElement(DOM.getElementById("webapp"));

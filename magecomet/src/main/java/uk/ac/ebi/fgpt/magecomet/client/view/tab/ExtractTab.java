@@ -1,11 +1,11 @@
-package uk.ac.ebi.fgpt.magecomet.client.gui.tab;
+package uk.ac.ebi.fgpt.magecomet.client.view.tab;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import uk.ac.ebi.fgpt.magecomet.client.GlobalConfigs;
 import uk.ac.ebi.fgpt.magecomet.client.GuiMediator;
-import uk.ac.ebi.fgpt.magecomet.client.RowRecord;
+import uk.ac.ebi.fgpt.magecomet.client.model.GlobalConfigs;
+import uk.ac.ebi.fgpt.magecomet.client.model.RowRecord;
 
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -60,7 +60,6 @@ public class ExtractTab extends Tab {
     
     form.setNumCols(10);
     caseSensitive.setColSpan(10);
-
     
     columnComboBoxItem.setTitle("From");
     columnComboBoxItem.setRequired(true);

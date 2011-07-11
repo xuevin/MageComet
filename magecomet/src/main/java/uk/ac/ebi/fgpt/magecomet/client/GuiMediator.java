@@ -4,16 +4,20 @@ import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import uk.ac.ebi.fgpt.magecomet.client.gui.section.IDF_Section;
-import uk.ac.ebi.fgpt.magecomet.client.gui.section.SDRF_Section;
-import uk.ac.ebi.fgpt.magecomet.client.gui.tab.EditTab;
-import uk.ac.ebi.fgpt.magecomet.client.gui.tab.ErrorsTab;
-import uk.ac.ebi.fgpt.magecomet.client.gui.tab.ExtractTab;
-import uk.ac.ebi.fgpt.magecomet.client.gui.tab.FilterTab;
-import uk.ac.ebi.fgpt.magecomet.client.gui.tab.LoadTab;
-import uk.ac.ebi.fgpt.magecomet.client.gui.window.IDF_FactorValue_ValidatorWindow;
-import uk.ac.ebi.fgpt.magecomet.client.gui.window.SDRF_Section_ColumnEditor;
-import uk.ac.ebi.fgpt.magecomet.client.gui.window.TagCloudWindow;
+import uk.ac.ebi.fgpt.magecomet.client.model.ColumnField;
+import uk.ac.ebi.fgpt.magecomet.client.model.IDF_Data;
+import uk.ac.ebi.fgpt.magecomet.client.model.JSON_Tools;
+import uk.ac.ebi.fgpt.magecomet.client.model.SDRF_Data;
+import uk.ac.ebi.fgpt.magecomet.client.view.section.IDF_Section;
+import uk.ac.ebi.fgpt.magecomet.client.view.section.SDRF_Section;
+import uk.ac.ebi.fgpt.magecomet.client.view.tab.EditTab;
+import uk.ac.ebi.fgpt.magecomet.client.view.tab.ErrorsTab;
+import uk.ac.ebi.fgpt.magecomet.client.view.tab.ExtractTab;
+import uk.ac.ebi.fgpt.magecomet.client.view.tab.FilterTab;
+import uk.ac.ebi.fgpt.magecomet.client.view.tab.LoadTab;
+import uk.ac.ebi.fgpt.magecomet.client.view.window.IDF_FactorValue_ValidatorWindow;
+import uk.ac.ebi.fgpt.magecomet.client.view.window.SDRF_Section_ColumnEditor;
+import uk.ac.ebi.fgpt.magecomet.client.view.window.TagCloudWindow;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -218,7 +222,7 @@ public class GuiMediator {
     sdrfData = new SDRF_Data(JSON_Tools.get2DArray("sdrfArray", object));
     DataSource data = sdrfData.getNewDataSource();
     
-    sdrfSection.refreshTable(data, sdrfData.getAllFieldsAsListGridField());
+    sdrfSection.setData(data, sdrfData.getAllFieldsAsListGridField());
     
     extractTab.setRecords(sdrfData.getAllRecords());
     
@@ -312,8 +316,10 @@ public class GuiMediator {
   }
   
   public void showIDFFactorValue_ValidatorWindow() {
-    idfFactorValueWindow.updateFactorValues(getFactorValuesMap());
-    idfFactorValueWindow.show();
+    if(idfFactorValueWindow!=null){
+      idfFactorValueWindow.updateFactorValues(getFactorValuesMap());
+      idfFactorValueWindow.show();
+    }
   }
   
   /**
@@ -353,7 +359,7 @@ public class GuiMediator {
     // user what is in the SDRF_Data object.
     
     DataSource data = sdrfData.getNewDataSource();
-    sdrfSection.refreshTable(data, sdrfData.getAllFieldsAsListGridField());
+    sdrfSection.setData(data, sdrfData.getAllFieldsAsListGridField());
     
     filterTab.setData(data);
     extractTab.setRecords(sdrfData.getAllRecords());
