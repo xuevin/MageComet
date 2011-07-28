@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.util.HashMap;
 
+import monq.jfa.Dfa;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.net.ftp.FTPClient;
@@ -39,15 +40,17 @@ public class FTPServiceImpl extends RemoteServiceServlet implements FTPService {
       File sdrfFile = hashOfAccessionFilesForSDRF.get(experimentAccession);
       
       // Load SDRF
-      responseJSONObject.put("sdrfArray", JSONUtils.getJSONArrayFromInputStream(sdrfFile.toURI().toURL().openStream()));
+      responseJSONObject.put("sdrfArray", JSONUtils.getJSONArrayFromInputStream(sdrfFile.toURI().toURL()
+          .openStream()));
       System.out.println("SDRF parsed and stored in JSON Array");
       
       // LOAD IDF
-      responseJSONObject.put("idfArray", JSONUtils.getJSONArrayFromInputStream(idfFile.toURI().toURL().openStream()));
+      responseJSONObject.put("idfArray", JSONUtils.getJSONArrayFromInputStream(idfFile.toURI().toURL()
+          .openStream()));
       System.out.println("IDF parsed and stored in JSON Array");
       
       // WhatIzIt Items
-      String monqInput = (String) getServletContext().getAttribute("monqInput");
+      Dfa monqInput = (Dfa) getServletContext().getAttribute("monqInput");
       responseJSONObject.put("whatizitIDF", JSONUtils.getJSONArrayFromWhatIzIt(idfFile, monqInput));
       responseJSONObject.put("whatizitSDRF", JSONUtils.getJSONArrayFromWhatIzIt(sdrfFile, monqInput));
       System.out.println("WhatIzIt stored in JSON Array");

@@ -7,7 +7,7 @@
 	<groupId>uk.ac.ebi.fgpt</groupId>
 	<artifactId>magecomet</artifactId>
 	<packaging>war</packaging>
-	<version>1.0-rc</version>
+	<version>1.1-SNAPSHOT</version>
 	<name>GWT Maven Archetype</name>
 
 	<properties>
@@ -113,7 +113,7 @@
 		<dependency>
 			<groupId>uk.ac.ebi</groupId>
 			<artifactId>ontoCAT</artifactId>
-			<version>0.9.7</version>
+			<version>0.9.8</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>org.mortbay.jetty</artifactId>
@@ -131,15 +131,20 @@
 			<artifactId>commons-net</artifactId>
 			<version>2.2</version>
 		</dependency>
+		<dependency>
+			<groupId>annotare</groupId>
+			<artifactId>limpopo-validator-annotare</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 		<!--		<dependency>-->
-		<!--			<groupId>annotare</groupId>-->
-		<!--			<artifactId>limpopo-validator-annotare</artifactId>-->
+		<!--			<groupId>uk.ac.ebi.arrayexpress2</groupId>-->
+		<!--			<artifactId>limpopo-validator-ebi</artifactId>-->
 		<!--			<version>1.0-SNAPSHOT</version>-->
 		<!--		</dependency>-->
 		<dependency>
-			<groupId>uk.ac.ebi.arrayexpress2</groupId>
-			<artifactId>limpopo-validator-ebi</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>r09</version>
 		</dependency>
 	</dependencies>
 

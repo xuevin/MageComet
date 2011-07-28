@@ -209,7 +209,7 @@ public class GuiMediator {
   public void loadIDFData(JSONObject object) {
     logger.log(Level.INFO, "Loading IDF");
     
-    idfData = new IDF_Data(object);
+    idfData = new IDF_Data(JSON_Tools.get2DArray("idfArray", object));
     idfSection.setData(idfData.getAllFields(), idfData.getAllRecords());
     idfSection.setDescription(idfData.getFilterData());
     

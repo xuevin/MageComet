@@ -16,11 +16,10 @@ public class SearchServiceImplTest {
 	private FileOntologyService ontoService;
 	
 	@Test
-	public void testcachedService(){
+	public void testcachedService() throws OntologyServiceException, URISyntaxException{
 		  OntologyService osBP;
 		  OntologyService os;
 
-		try {
 			System.out.println("Downloading Ontology");
 			osBP = new FileOntologyService(new URI("http://www.ebi.ac.uk/efo/efo.owl"));
 			os=osBP;
@@ -28,14 +27,7 @@ public class SearchServiceImplTest {
 //			os = CachedServiceDecorator.getService(osBP);
 			List<OntologyTerm> ontoTerms = osBP.searchAll("cancer", SearchOptions.INCLUDE_PROPERTIES);
 			System.out.println(ontoTerms.get(0).getLabel());
-			
-		} catch (URISyntaxException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (OntologyServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 		  
 }
 

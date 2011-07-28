@@ -1,24 +1,16 @@
 package uk.ac.ebi.fgpt.magecomet.server;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
 
-import monq.jfa.CompileDfaException;
+import monq.jfa.Dfa;
 import monq.jfa.DfaRun;
-import monq.jfa.ReSyntaxException;
-import monq.programs.DictFilter;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -33,52 +25,34 @@ import uk.ac.ebi.arrayexpress2.magetab.renderer.SDRFWriter;
 import uk.ac.ebi.arrayexpress2.magetab.utils.MAGETABUtils;
 import uk.ac.ebi.arrayexpress2.magetab.validator.MAGETABValidator;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+
 public class JSONUtils {
-  public static JSONArray getJSONArrayFromWhatIzIt(File file, String monqInput) throws WhatIzItException {
+  public static JSONArray getJSONArrayFromWhatIzIt(File file, Dfa dfa) throws WhatIzItException {
+    
+    // Get Json Array from file
     try {
-      InputStream inputStream = null;
-      try {
-        inputStream = new ByteArrayInputStream(monqInput.toString().getBytes("UTF-8"));
-      } catch (UnsupportedEncodingException e) {
-        e.printStackTrace();
+      String passage = Files.toString(file, Charsets.ISO_8859_1);
+      
+      Map<String,Integer> map = new HashMap<String,Integer>();
+      
+      // get a machinery (DfaRun) to operate the Dfa
+      DfaRun r = new DfaRun(dfa);
+      r.clientData = map;
+      
+      // Get only the filtered text
+      
+      r.filter(passage);
+      
+      JSONArray jsonArray = new JSONArray();
+      for (String string : map.keySet()) {
+        System.out.println(string);
+        jsonArray.add(string);
       }
+      return jsonArray;
       
-      InputStreamReader mwt = new InputStreamReader(inputStream);
-      DictFilter dict = new DictFilter(mwt, "xml", "none", false);
-      DfaRun r = dict.createRun();
-      
-      byte[] buffer = new byte[(int) file.length()];
-      BufferedInputStream f = null;
-      try {
-        f = new BufferedInputStream(new FileInputStream(file.getAbsolutePath()));
-        f.read(buffer);
-        f.close();
-      } catch (IOException e) {
-        System.out.println("Error Reading Files");
-      }
-      
-      String filteredString = r.filter(new String(buffer));
-      
-      // Patter to search for
-      Pattern pattern = Pattern.compile("label=\".*\"");
-      
-      // Search IDF
-      Matcher matcher = pattern.matcher(filteredString);
-      HashSet<String> uniqueTerms = new HashSet<String>();
-      while (matcher.find()) {
-        String match = matcher.group();
-        uniqueTerms.add(match.substring(7, match.length() - 1));
-      }
-      JSONArray returnArray = new JSONArray();
-      for (String term : uniqueTerms) {
-        returnArray.add(term);
-      }
-      return returnArray;
     } catch (IOException e) {
-      throw new WhatIzItException("Error Loading EFO");
-    } catch (ReSyntaxException e) {
-      throw new WhatIzItException(e);
-    } catch (CompileDfaException e) {
       throw new WhatIzItException(e);
     }
   }
