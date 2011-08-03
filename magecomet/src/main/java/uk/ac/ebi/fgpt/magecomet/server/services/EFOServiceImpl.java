@@ -17,9 +17,10 @@ public class EFOServiceImpl extends RemoteServiceServlet implements EFOService{
 	public EFOServiceImpl(){
 		super();
 	}
+
 	public String getEfoAccessionIdByName(String efoName) {
 		if(ontoService==null){
-			intialize();
+			initialize();
 		}
 		try {
 			List<OntologyTerm> ontoTerm = ontoService.searchAll(efoName,SearchOptions.EXACT);
@@ -28,13 +29,13 @@ public class EFOServiceImpl extends RemoteServiceServlet implements EFOService{
 			}else{
 				return(ontoTerm.get(0).getAccession());
 			}
-			
+
 		} catch (OntologyServiceException e) {
 			e.printStackTrace();
 		}
 		return "ERROR";
 	}
-	private void intialize() {
+	private void initialize() {
 //		try {
 //            OntologyService liveEFO = new FileOntologyService(new URI("http://www.ebi.ac.uk/efo/efo.owl"));
 ////			ontoService = new FileOntologyService(getClass().getClassLoader().getResource("EFO_inferred_v142.owl").toURI());
@@ -48,7 +49,7 @@ public class EFOServiceImpl extends RemoteServiceServlet implements EFOService{
 	}
 	public String getEfoDescriptionByName(String efoName) {
 		if(ontoService==null){
-			intialize();
+			initialize();
 		}
 		try {
 			List<OntologyTerm> ontoTerm = ontoService.searchAll(efoName,SearchOptions.EXACT);
@@ -57,16 +58,16 @@ public class EFOServiceImpl extends RemoteServiceServlet implements EFOService{
 			}else{
 				String out="";
 				for(String def:ontoService.getDefinitions(ontoTerm.get(0))){
-					out+=def+"\n";	
+					out+=def+"\n";
 				}
 				return out.trim();
 			}
-			
+
 		} catch (OntologyServiceException e) {
 			e.printStackTrace();
 		}
 		return "ERROR";
 	}
-	
-	
+
+
 }

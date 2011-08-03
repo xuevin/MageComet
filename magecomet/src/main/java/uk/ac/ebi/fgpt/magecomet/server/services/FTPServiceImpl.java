@@ -150,10 +150,10 @@ public class FTPServiceImpl extends RemoteServiceServlet implements FTPService {
         }
       }
       client.disconnect();
-    } catch (SocketException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
+//    } catch (SocketException e) {
+//      e.printStackTrace();
+//    } catch (IOException e) {
+//      e.printStackTrace();
     }
   }
 }
