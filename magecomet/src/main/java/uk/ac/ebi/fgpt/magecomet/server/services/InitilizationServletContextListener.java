@@ -21,6 +21,14 @@ import uk.ac.ebi.ontocat.OntologyServiceException;
 import uk.ac.ebi.ontocat.OntologyTerm;
 import uk.ac.ebi.ontocat.file.FileOntologyService;
 
+/**
+ * This class describes what the server should do when it starts up.
+ * 
+ * It should make/index the dictionary.
+ * 
+ * @author Vincent Xue
+ * 
+ */
 public class InitilizationServletContextListener implements ServletContextListener {
   
   private ServletContext context = null;

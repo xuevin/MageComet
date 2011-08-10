@@ -28,6 +28,12 @@ import com.smartgwt.client.widgets.grid.events.CellSavedHandler;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
 import com.smartgwt.client.widgets.tab.TabSet;
 
+/**
+ * The view that handles displaying the SDRF components
+ * 
+ * @author Vincent Xue
+ * 
+ */
 public class SDRF_Section extends SectionStackSection {
   private final ListGrid sdrfTable = new ListGrid();
   private final TabSet automaticFunctionEditor = new TabSet();

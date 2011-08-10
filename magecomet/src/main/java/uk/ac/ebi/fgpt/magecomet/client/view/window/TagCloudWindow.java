@@ -18,6 +18,12 @@ import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 
+/**
+ * The tag cloud window
+ * 
+ * @author Vincent Xue
+ * 
+ */
 public class TagCloudWindow extends Window {
   
   private final Tab autofillCloud = new Tab("Weight By Location");
@@ -39,8 +45,8 @@ public class TagCloudWindow extends Window {
     
     setHeaderControls(HeaderControls.HEADER_LABEL, HeaderControls.MINIMIZE_BUTTON);
     setTitle("EFO Tag Cloud");
-    setWidth("600");
-    setHeight("300");
+    setWidth("30%");
+    setHeight("30%");
     setOverflow(Overflow.VISIBLE);
     setCanDragResize(true);
     

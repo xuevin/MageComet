@@ -4,17 +4,18 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.google.gwt.user.client.ui.SuggestOracle;
 
+/**
+ * Given SuggestOracle.Request, return back SuggestOracle.Response
+ * 
+ * @author Vincent Xue
+ * 
+ */
 @RemoteServiceRelativePath("SearchService")
-public interface SearchService extends RemoteService{
-	SuggestOracle.Response getEFO(SuggestOracle.Request req);
-//	public static class Util {
-//		public static SearchServiceAsync getInstance(){
-//			SearchServiceAsync searchService= (SearchServiceAsync)GWT.create(SearchService.class);
-//		((ServiceDefTarget)searchService).setServiceEntryPoint(GWT.getModuleBaseURL()+"SearchService");
-//		return searchService;
-//		}
-//	}
+public interface SearchService extends RemoteService {
+  /**
+   * @param req
+   *          The original SuggestOracle.Request
+   * @return The new SuggestOracle.Response
+   */
+  SuggestOracle.Response getEFO(SuggestOracle.Request req);
 }
-
-
-

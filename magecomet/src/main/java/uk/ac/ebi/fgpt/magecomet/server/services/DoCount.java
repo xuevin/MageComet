@@ -5,6 +5,12 @@ import java.util.Map;
 import monq.jfa.AbstractFaAction;
 import monq.jfa.DfaRun;
 
+/**
+ * A callback method used by monq
+ * 
+ * @author Vincent Xue
+ * 
+ */
 public class DoCount extends AbstractFaAction {
   private String word;
   

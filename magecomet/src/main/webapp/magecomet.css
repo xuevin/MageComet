@@ -107,16 +107,12 @@ td.contentsarea2 {
 table td.contentsarea2 {
 	margin: 0;
 	/*border-left: 1px solid #dedede;*/
-	border-left: 1px solid #ffffff;
-	border-right: 1px solid #dedede;
 	border-top: 1px solid #ffffff;
 	border-bottom: 1px solid #ffffff;
 	vertical-align: top;
 	text-align: left;
 	padding-bottom: 0;
 	padding-top: 5px;
-	padding-left: 10px;
-	padding-right: 10px;
 }
 
 h1.webapp {

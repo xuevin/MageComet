@@ -20,6 +20,11 @@ import uk.ac.ebi.fgpt.magecomet.server.WhatIzItException;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+/**
+ * This is the implementation of FTPService. It downloads files from ArrayExress
+ * @author Vincent Xue
+ *
+ */
 public class FTPServiceImpl extends RemoteServiceServlet implements FTPService {
   private String arrayExpressFtp = "ftp.ebi.ac.uk";
   private String arrayExpressFtpPath = "/pub/databases/microarray/data/experiment/";
@@ -150,10 +155,10 @@ public class FTPServiceImpl extends RemoteServiceServlet implements FTPService {
         }
       }
       client.disconnect();
-//    } catch (SocketException e) {
-//      e.printStackTrace();
-//    } catch (IOException e) {
-//      e.printStackTrace();
+    } catch (SocketException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
     }
   }
 }

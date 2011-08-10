@@ -27,6 +27,12 @@ import uk.ac.ebi.fgpt.magecomet.server.AnnotareValidationException;
 import uk.ac.ebi.fgpt.magecomet.server.JSONUtils;
 import uk.ac.ebi.fgpt.magecomet.server.WhatIzItException;
 
+/**
+ * User uploads the IDF and SDRF files here
+ * 
+ * @author Vincent Xue
+ * 
+ */
 public class UploadServlet extends UploadAction {
   
   /**

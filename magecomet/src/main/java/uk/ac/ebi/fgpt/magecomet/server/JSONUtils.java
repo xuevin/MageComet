@@ -28,6 +28,12 @@ import uk.ac.ebi.arrayexpress2.magetab.validator.MAGETABValidator;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
+/**
+ * 
+ * Server side JSON tools
+ * @author Vincent Xue
+ *
+ */
 public class JSONUtils {
   public static JSONArray getJSONArrayFromWhatIzIt(File file, Dfa dfa) throws WhatIzItException {
     

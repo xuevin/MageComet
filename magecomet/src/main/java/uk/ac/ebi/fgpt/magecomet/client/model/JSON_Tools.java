@@ -3,6 +3,12 @@ package uk.ac.ebi.fgpt.magecomet.client.model;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 
+/**
+ * This class describes some static tools used for parsing JSON objects.
+ * 
+ * @author Vincent Xue
+ * 
+ */
 public class JSON_Tools {
   public static String[][] get2DArray(String name, JSONObject object) {
     JSONArray rows = object.get(name).isArray();
@@ -14,7 +20,7 @@ public class JSON_Tools {
         maxSize = rows.get(i).isArray().size();
       }
     }
-    //Fill in the columns
+    // Fill in the columns
     String[][] returnArray = new String[rows.size()][maxSize];
     for (int i = 0; i < rows.size(); i++) {
       JSONArray columns = rows.get(i).isArray();

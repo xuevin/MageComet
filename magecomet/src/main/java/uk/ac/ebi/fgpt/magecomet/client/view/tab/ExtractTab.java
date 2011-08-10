@@ -27,6 +27,12 @@ import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
 import com.smartgwt.client.widgets.tab.Tab;
 
+/**
+ * The view that describes the layout of the extract tool
+ * 
+ * @author Vincent Xue
+ * 
+ */
 public class ExtractTab extends Tab {
   private final DynamicForm form = new DynamicForm();
   private final HStack hstack = new HStack();

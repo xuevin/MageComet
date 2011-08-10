@@ -28,6 +28,12 @@ import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.HTMLFlow;
 
+/**
+ * One of the most important clases. It describes methods that all windows should have access to.
+ * 
+ * @author Vincent Xue
+ * 
+ */
 public class GuiMediator {
   private IDF_FactorValue_ValidatorWindow idfFactorValueWindow;
   private TagCloudWindow tagCloudWindow;
@@ -316,7 +322,7 @@ public class GuiMediator {
   }
   
   public void showIDFFactorValue_ValidatorWindow() {
-    if(idfFactorValueWindow!=null){
+    if (idfFactorValueWindow != null) {
       idfFactorValueWindow.updateFactorValues(getFactorValuesMap());
       idfFactorValueWindow.show();
     }

@@ -20,7 +20,9 @@ import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
 
 /**
- * @author vincent@ebi.ac.uk
+ * The popup window that allows users to rearrange the order of the columns
+ * 
+ * @author Vincent Xue
  * 
  */
 public class SDRF_Section_ColumnEditor extends Window {

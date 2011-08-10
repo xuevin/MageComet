@@ -20,6 +20,11 @@ import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
 
+/**
+ * A popup window that shows when users click on a term in the tag cloud
+ * @author Vincent Xue
+ *
+ */
 public class AutofillPopup extends Window {
   
   private final HTMLFlow efo_description = new HTMLFlow();

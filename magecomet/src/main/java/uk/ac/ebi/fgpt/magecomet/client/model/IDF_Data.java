@@ -8,6 +8,12 @@ import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
+/**
+ * This class describes the IDF data.
+ * 
+ * @author Vincent Xue
+ *
+ */
 public class IDF_Data {
   private String filteredOutData;
   private ListGridRecord[] listOfAllRecords;

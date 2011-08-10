@@ -17,7 +17,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.InlineHTML;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.types.Visibility;
 import com.smartgwt.client.widgets.Canvas;
@@ -34,6 +36,12 @@ import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
 import com.smartgwt.client.widgets.tab.Tab;
 
+/**
+ * The tab that describes how to load files
+ * 
+ * @author Vincent Xue
+ * 
+ */
 public class LoadTab extends Tab {
   private GuiMediator guiMediator;
   
@@ -95,7 +103,9 @@ public class LoadTab extends Tab {
     MultiUploader dataUploader = new MultiUploader();
     dataUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
     
-    HorizontalPanel uploadPanel = new HorizontalPanel();
+    InlineHTML instructions = new InlineHTML("To being, please load the IDF and SDRF OR Load by accession");
+    VerticalPanel uploadPanel = new VerticalPanel();
+    uploadPanel.add(instructions);
     uploadPanel.add(dataUploader);
     uploadPanel.setHeight("70px");
     
@@ -103,10 +113,13 @@ public class LoadTab extends Tab {
     gwtUploadCanvas.setStyleName("gwt-SuggestBoxCanvas");
     gwtUploadCanvas.addChild(uploadPanel);
     
-    HTMLFlow header = new HTMLFlow();
-    header.setContents("MageComet");
-    header.setHeight("30");
-    header.setStyleName("header");
+    // HTMLFlow header = new HTMLFlow();
+    // header.setContents("MageComet");
+    // header.setHeight("30");
+    // header.setStyleName("header");
+    
+    Image header = new Image("images/magecomet.svg");
+    header.setPixelSize(200, 75);
     
     vstack.addMember(header);
     vstack.addMember(gwtUploadCanvas);
@@ -124,7 +137,7 @@ public class LoadTab extends Tab {
   private native void reload() /*-{ 
                                $wnd.location.reload(); 
                                }-*/;
-
+  
   private void submitAction() {
     loadImage.setVisibility(Visibility.VISIBLE);
     ftpServiceAsync.getExperimentJSON(accessionInput.getDisplayValue().toUpperCase(),

@@ -19,6 +19,7 @@ import uk.ac.ebi.fgpt.magecomet.client.view.window.TagCloudWindow;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.smartgwt.client.types.Side;
 import com.smartgwt.client.types.TabBarControls;
 import com.smartgwt.client.widgets.Button;
@@ -68,20 +69,19 @@ public class Magecomet implements EntryPoint {
     topTabSet.addTab(errorTab);
     topTabSet.setTabBarControls(TabBarControls.TAB_SCROLLER, TabBarControls.TAB_PICKER, suggestCanvasItem,
       confirmFactorValues, exportIDFButton, exportSDRFButton, revalidateButton);
-    topTabSet.moveBy(0, 100);
-    topTabSet.show();
+    RootPanel.get("contentsarea").add(topTabSet);
     
     /*
      * Buttons
      */
+    // Confirm Factor Values
     confirmFactorValues.setWidth(150);
     confirmFactorValues.addClickHandler(new ClickHandler() {
-      
       public void onClick(ClickEvent event) {
         guiMediator.showIDFFactorValue_ValidatorWindow();
       }
     });
-    
+    // Export SDRF
     exportSDRFButton.setIcon("[SKIN]actions/download.png");
     exportSDRFButton.addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
@@ -93,21 +93,18 @@ public class Magecomet implements EntryPoint {
         
       }
     });
-    
+    // Export IDF
     exportIDFButton.setIcon("[SKIN]actions/download.png");
     exportIDFButton.addClickHandler(new ClickHandler() {
-      
       public void onClick(ClickEvent event) {
-        
         if (!guiMediator.getCurrentIDFTitle().equals("null")) {
           logger.log(Level.INFO, "Export IDF Button was pressed");
           fileService.writeFile(guiMediator.getCurrentIDFTitle(), guiMediator.getIDFAsString(),
             new FileServiceCallback(guiMediator.getCurrentIDFTitle()));
         }
-        
       }
     });
-    
+    // Revalidate Button
     revalidateButton.addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
         if (!guiMediator.getCurrentSDRFTitle().equals("null")
@@ -126,13 +123,12 @@ public class Magecomet implements EntryPoint {
     
     TagCloudWindow tagCloudWindow = new TagCloudWindow(guiMediator);
     tagCloudWindow.show();
-    tagCloudWindow.moveTo(300, 100);
+    tagCloudWindow.moveTo(250, 85);
     // tagCloudWindow.moveAbove(canvas)
     
     // mainLayout.setHtmlElement(DOM.getElementById("webapp"));
     // mainLayout.show();
     
-    // RootPanel.get("search").add(uploadPanel);
     // topTabSet.setHtmlElement(DOM.getElementById("webapp"));
     
     Window.addWindowClosingHandler(new Window.ClosingHandler() {

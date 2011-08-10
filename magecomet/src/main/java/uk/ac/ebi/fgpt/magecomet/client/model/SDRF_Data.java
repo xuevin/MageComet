@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 import com.smartgwt.client.core.DataClass;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
@@ -14,6 +13,12 @@ import com.smartgwt.client.types.AutoFitWidthApproach;
 import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.widgets.grid.ListGridField;
 
+/**
+ * This class describes the SDRF Data
+ * 
+ * @author Vincent Xue
+ * 
+ */
 public class SDRF_Data {
   private Logger logger = Logger.getLogger(getClass().toString());
   
