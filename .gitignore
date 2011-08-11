@@ -1,4 +1,6 @@
-magecomet/target
-magecomet/.settings
-magecomet/.project
-magecomet/.classpath
+*/target
+*/.settings
+*/.project
+*/.classpath
+*.aux
+*.log
