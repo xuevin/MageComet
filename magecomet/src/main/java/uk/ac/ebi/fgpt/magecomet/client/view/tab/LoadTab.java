@@ -3,6 +3,7 @@ package uk.ac.ebi.fgpt.magecomet.client.view.tab;
 import gwtupload.client.IUploader;
 import gwtupload.client.MultiUploader;
 import gwtupload.client.IUploadStatus.Status;
+import gwtupload.client.IUploader.OnChangeUploaderHandler;
 import gwtupload.client.IUploader.UploadedInfo;
 
 import java.util.logging.Level;
@@ -101,13 +102,16 @@ public class LoadTab extends Tab {
      */
 
     MultiUploader dataUploader = new MultiUploader();
+    dataUploader.setMaximumFiles(2);
     dataUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
+    dataUploader.addOnChangeUploadHandler(onChangeUploadHandler);
     
-    InlineHTML instructions = new InlineHTML("To being, please load the IDF and SDRF OR Load by accession");
+    InlineHTML instructions = new InlineHTML("To being, please load the IDF and SDRF or load by accession");
     VerticalPanel uploadPanel = new VerticalPanel();
     uploadPanel.add(instructions);
     uploadPanel.add(dataUploader);
     uploadPanel.setHeight("70px");
+    uploadPanel.setWidth("300px");
     
     Canvas gwtUploadCanvas = new Canvas();
     gwtUploadCanvas.setStyleName("gwt-SuggestBoxCanvas");
@@ -167,6 +171,14 @@ public class LoadTab extends Tab {
       });
     
   }
+  
+  private IUploader.OnChangeUploaderHandler onChangeUploadHandler = new OnChangeUploaderHandler() {
+    
+    @Override
+    public void onChange(IUploader uploader) {
+      uploader.submit();
+    }
+  };
   
   // Fill in the corresponding sections
   private IUploader.OnFinishUploaderHandler onFinishUploaderHandler = new IUploader.OnFinishUploaderHandler() {

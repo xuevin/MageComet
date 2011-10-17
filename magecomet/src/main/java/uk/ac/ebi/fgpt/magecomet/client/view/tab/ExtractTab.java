@@ -7,6 +7,7 @@ import uk.ac.ebi.fgpt.magecomet.client.GuiMediator;
 import uk.ac.ebi.fgpt.magecomet.client.model.GlobalConfigs;
 import uk.ac.ebi.fgpt.magecomet.client.model.RowRecord;
 
+import com.google.gwt.autobean.shared.AutoBeanVisitor.Context;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.smartgwt.client.types.VerticalAlignment;
@@ -48,6 +49,7 @@ public class ExtractTab extends Tab {
   private final CheckboxItem caseSensitive = new CheckboxItem("case", "Case Sensitive");
   
   private GuiMediator guiMediator;
+  private HashMap<String,RowRecord> allRecords;
   
   public ExtractTab(GuiMediator guiMediator) {
     this.guiMediator = guiMediator;
@@ -97,29 +99,14 @@ public class ExtractTab extends Tab {
     destinationComboBoxItem.setValueMap(valueMap);
     destinationComboBoxItem.setValidators(new IsOneOfValidator());
     
-    // Depending on what the user selected for the destination,
-    // the choices change as well. This minimizes choices a user will see at
-    // once.
-    destinationComboBoxItem.addChangedHandler(new ChangedHandler() {
-      
-      public void onChanged(ChangedEvent event) {
-        String selectedItem = destinationComboBoxItem.getDisplayValue();
-        
-        if (selectedItem.equals("Characteristic") || selectedItem.equals("Factor Value")) {
-          newColumn.setValueMap(GlobalConfigs.getCommonFactorsOrChars());
-        } else if (selectedItem.equals("Unit")) {
-          newColumn.setValueMap(GlobalConfigs.getUnits());
-        } else {
-          newColumn.setValueMap(GlobalConfigs.getCommonFactorsOrChars());
-        }
-        
-      }
-    });
+
     
     submit.setTitle("Extract");
     submit.setHeight(27);
     submit.setMargin(2);
     
+    
+    addhandlers();
     // *****************************
     // Layout
     // *****************************
@@ -139,13 +126,26 @@ public class ExtractTab extends Tab {
     setPane(vstack);
   }
   
-  public void updateColumnsInComboBox(LinkedHashMap<String,String> valueMap) {
-    if (columnComboBoxItem != null) {
-      columnComboBoxItem.setValueMap(valueMap);
-    }
-  }
-  
-  public void setRecords(final HashMap<String,RowRecord> allRecords) {
+  private void addhandlers() {
+    // Depending on what the user selected for the destination,
+    // the choices change as well. This minimizes choices a user will see at
+    // once.
+    destinationComboBoxItem.addChangedHandler(new ChangedHandler() {
+      
+      public void onChanged(ChangedEvent event) {
+        String selectedItem = destinationComboBoxItem.getDisplayValue();
+        
+        if (selectedItem.equals("Characteristic") || selectedItem.equals("Factor Value")) {
+          newColumn.setValueMap(GlobalConfigs.getCommonFactorsOrChars());
+        } else if (selectedItem.equals("Unit")) {
+          newColumn.setValueMap(GlobalConfigs.getUnits());
+        } else {
+          newColumn.setValueMap(GlobalConfigs.getCommonFactorsOrChars());
+        }
+        
+      }
+    });
+    
     ChangedHandler inputChanged = new ChangedHandler() {
       public void onChanged(ChangedEvent event) {
         updateSampleOutput(allRecords);
@@ -166,7 +166,19 @@ public class ExtractTab extends Tab {
     caseSensitive.addChangedHandler(inputChanged);
     leftInput.addChangedHandler(inputChanged);
     rightInput.addChangedHandler(inputChanged);
-    submit.addClickHandler(addToColumnEditor);
+    submit.addClickHandler(addToColumnEditor);    
+  }
+
+  public void updateColumnsInComboBox(LinkedHashMap<String,String> valueMap) {
+    if (columnComboBoxItem != null) {
+      columnComboBoxItem.setValueMap(valueMap);
+    }
+  }
+  
+  public void setRecords(final HashMap<String,RowRecord> allRecords) {
+    this.allRecords = allRecords;
+    
+    
   }
   
   private void submit(final HashMap<String,RowRecord> listOfAllRecords) {
@@ -239,39 +251,47 @@ public class ExtractTab extends Tab {
   private String extract(String input, boolean caseSensitive) {
     String left;
     String right;
-    if (leftInput.getValueAsString() != null) {
+    if (leftInput.getValueAsString() != null && rightInput.getValueAsString() != null) {
       left = translateEscapeCharacters(leftInput.getValueAsString());
-    } else {
-      left = "";
-    }
-    if (rightInput.getValueAsString() != null) {
       right = translateEscapeCharacters(rightInput.getValueAsString());
     } else {
-      right = "";
+      return "";
     }
     
     // RegExp pattern =
     // RegExp.compile("(\\b"+left+"\\b)(.*?)(\\b"+right+"\\b)");
-    RegExp pattern;
-    if (caseSensitive) {
-      pattern = RegExp.compile("(" + left + ")(.*?)(" + right + ")");
-    } else {
-      pattern = RegExp.compile("(" + left + ")(.*?)(" + right + ")", "i");
+    try {
+      RegExp pattern;
+      if (caseSensitive) {
+        pattern = RegExp.compile("(" + left + ")(.*?)(" + right + ")");
+      } else {
+        pattern = RegExp.compile("(" + left + ")(.*?)(" + right + ")", "i");
+      }
+      String textInColumn = input;
+      
+      MatchResult matcher = pattern.exec(textInColumn);
+      if (pattern.test(textInColumn)) {
+        return matcher.getGroup(2).trim();
+      }
+    } catch (Exception e) {
+      //Invalid Regex were entered.
     }
     
-    String textInColumn = input;
-    
-    MatchResult matcher = pattern.exec(textInColumn);
-    if (pattern.test(textInColumn)) {
-      return matcher.getGroup(2).trim();
-    }
     return "";
   }
   
-  private String translateEscapeCharacters(String input) {
+  private static String translateEscapeCharacters(String input) {
+    // Eliminates the regex
+    String output;
     
-    String output = input.replaceAll("\\.", "\\\\.").replaceAll("\\(", "\\\\(").replaceAll("\\)", "\\\\)")
-        .replaceAll("\\+", "\\\\+").replaceAll("\\[", "\\\\[").replaceAll("\\]", "\\\\]");
+    // This is a special case check. If it starts and ends with 2 brackets, it may be important
+    if (input.startsWith("[") && input.endsWith("]")) {
+      output = input.replace("\\", "\\\\").replace(".", "\\.").replace("(", "\\(").replace(")", "\\)")
+          .replace("+", "\\+");
+    } else {
+      output = input.replace("\\", "\\\\").replace(".", "\\.").replace("(", "\\(").replace(")", "\\)")
+          .replace("+", "\\+").replace("[", "\\[").replace("]", "\\]");
+    }
     return output;
     
   }

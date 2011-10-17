@@ -81,7 +81,6 @@ public class FTPServiceImpl extends RemoteServiceServlet implements FTPService {
       e.printStackTrace();
       System.err.println("There was a problem with setting the context");
     }
-    
     return responseJSONObject.toString();
   }
   

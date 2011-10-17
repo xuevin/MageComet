@@ -86,7 +86,7 @@ public class SDRF_Section extends SectionStackSection {
         guiMediator.setCell(event.getRecord().getAttribute("key"), sdrfTable.getField(event.getColNum())
             .getName(), newValue);
         guiMediator.saveState();
-        System.out.println(guiMediator.getSDRFAsString());
+//        System.out.println(guiMediator.getSDRFAsString());
       }
     });
     

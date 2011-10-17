@@ -1,0 +1,49 @@
+Investigation Title	RNAi of human RHAU-depleted HeLa cells reveals The DExH-box RNA helicase RHAU is a nuclear protein involved in transcription and mRNA decay	
+Comment[Submitted Name]	The DExH-box RNA helicase RHAU is a Nuclear Protein Involved in Transcription and mRNA Decay	
+Experimental Design	unknown_experiment_design_type	RNAi profiling by array	
+Experimental Design Term Source REF		EFO	
+Comment[ArrayExpressReleaseDate]	2008-06-16	
+Comment[SecondaryAccession]	GSE8192	
+Comment[AEMIAMESCORE]	4	
+Comment[ArrayExpressAccession]	E-GEOD-8192	
+Comment[MAGETAB TimeStamp_Version]	2010-08-08 01:24:49 Last Changed Rev: 13058	
+Experimental Factor Name	
+Experimental Factor Type	
+Experimental Factor Term Source REF	
+Person Last Name	Iwamoto	
+Person First Name	Fumiko	
+Person Mid Initials	
+Person Email	fumiko@fmi.ch	
+Person Phone	
+Person Fax	
+Person Address	FMI, Maulbeerstrasse 66, Basel, 4058, Switzerland	
+Person Affiliation	FMI	
+Person Roles	submitter	
+Person Roles Term Source REF		
+Quality Control Type	
+Quality Control Term Source REF	
+Replicate Type	
+Replicate Term Source REF	
+Normalization Type	
+Normalization Term Source REF	
+Date of Experiment	
+Public Release Date	2008-06-16	
+PubMed ID	18279852	
+Publication DOI	18279852	
+Publication Author List	Fumiko Iwamoto, Michael Stadler, Katerina Chalupníková, Edward Oakeley, Yoshikuni Nagamine	
+Publication Title	Transcription-dependent nucleolar cap localization and possible nuclear function of DExH RNA helicase RHAU.	
+Publication Status	journal_article	
+Publication Status Term Source REF	The MGED Ontology	
+Experiment Description	RHAU (RNA helicase-associated with AU-rich element) is a DExH protein that was originally identified as a factor accelerating AU-rich element-mediated mRNA degradation. The finding that RHAU is predominantly localized in the nucleus, despite that mRNA degradation occurs in cytoplasm, prompted us to consider nuclear functions of RHAU. In HeLa cells, RHAU was localized throughout the nucleoplasm with some concentration in nuclear speckles in a manner dependent on ATPase activity. Transcriptional arrest altered its localization to nucleolar caps where it was colocalized with other RNA helicases, p68 and p72, suggesting that RHAU is involved in transcription-related RNA metabolism in the nucleus. To see whether RHAU affects global gene expression either transcriptionally or posttranscriptionally, we performed microarray analysis using total RNA prepared from RHAU-depleted HeLa cell lines, measuring both steady-state mRNA levels and mRNA half-lives by ActinomycinD-chase. We found that most transcripts whose steady-state levels were affected by RHAU knockdown did not show changes in their half-lives, suggesting the involvement of transcriptional regulation for these transcripts. We propose that RHAU has dual functions involved in synthesis and degradation of mRNA in different subcellular compartments.   Experiment Overall Design: HeLa-shRHAU and HeLa-shLuc cells were treated with doxycycline (1 Î¼g/ml) for 6 days. At the 4th day of dox-treatment, 4 clones of each cell line were pooled and total 2Ã106 cells were reseeded in 10 cm dishes. For the starvation experiment; medium was replaced with serum-free DMEM on the 5th day, 24 h before the collection of RNA. The ActD-chase experiment was done on the 6th day of doxycycline treatment. For the mRNA decay experiment; ActD was added to the medium at 5 Î¼g/ml and total RNA was collected at 0, 30, 60, 90, and 120 min after the addition of ActD. Samples for time 0, representing the total amount RNA in the normal condition, and samples from starved cells were analyzed in triplicates, whereas ActD-treated samples for the mRNA decay study were analyzed in duplicates. Total RNA was isolated using the RNeasy kit from QIAGEN (Hombrechtikon, Switzerland).  Experiment Overall Design: Total RNA  (5 Î¼g) from each replicate was reverse transcribed and labelled using the Affymetrix 1-cycle labelling kit according to manufacturerâs instructions. Biotinylated cRNA (20 Î¼g) was fragmented by heating with magnesium (as per Affymetrixâs instructions) and 15 Î¼g of this fragmentated cRNA was hybridized to Human U133 plus 2.0 GeneChipsTM. GC-RMA expression values and detection P-values were estimated using Refiner 4.0 from Genedata AG (Basel, Switzerland). Data analysis was performed using Analyst 4.0 from Genedata AG (Basel, Switzerland). The chip distributions were standardized by quantile normalization and they were scaled to make the median expression value, of genes with a detection P-value < 0.04, equal to 500. For the analysis of steady-state RNA levels, genes were required to have a detection P-value < 0.04 (Affymetrix default) in at least two replicates of at least one condition. The objective was to exclude genes that are not expressed in any condition. They were then subjected to a student t-test (P<0.05) and have a median fold change of 1.5 or 2 greater between samples dox+ and dox- or with and without starvation. Multiple testing errors were dealt with using a Benjamini and Hochberg false discovery correction.	
+Protocol Name	P-G8192-3	P-G8192-2	P-G8192-1	Affymetrix:Protocol:Hybridization-Unknown	P-AFFY-6	Affymetrix:Protocol:ExpressionStat	
+Protocol Type	nucleic_acid_extraction	nucleic_acid_extraction	labeling	hybridization	feature_extraction	bioassay_data_transformation	
+Protocol Description	Total RNA was isolated using the RNeasy kit (Qiagen).	Total RNA was isolated using the RNeasy kit (Qiagen)	Total RNA (5 Î¼g) from each replicate was reverse transcribed and labelled using the Affymetrix 1-cycle labelling kit as per manufacturerâs instructions. Biotinylated cRNA (20 Î¼g) was fragmented by heating with magnesium (as per Affymetrixâs instructions)	Title: Affymetrix Generic Hybridization. Description: 	Title: Affymetrix CEL analysis. Description: 	Title: Affymetrix CHP Analysis (ExpressionStat). Description: 	
+Protocol Parameters	
+Protocol Hardware	
+Protocol Software				MicroArraySuite 5.0	MicroArraySuite 5.0	MicroArraySuite 5.0	
+Protocol Contact	
+Protocol Term Source REF				mo	
+SDRF File	E-GEOD-8192.sdrf.txt	
+Term Source Name	mo	The MGED Ontology	ArrayExpress	EFO	The MGED Ontology	mo	
+Term Source File	http://mged.sourceforge.net/ontologies/MGEDontology.php	http://mged.sourceforge.net/ontologies/MGEDontology.php	http://www.ebi.ac.uk/arrayexpress	http://www.ebi.ac.uk/efo/	http://mged.sourceforge.net/ontologies/MGEDontology.php	http://mged.sourceforge.net/ontologies/MGEDontology.php	
+Term Source Version							

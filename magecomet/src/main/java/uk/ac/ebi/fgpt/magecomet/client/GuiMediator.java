@@ -6,8 +6,8 @@ import java.util.logging.Logger;
 
 import uk.ac.ebi.fgpt.magecomet.client.model.ColumnField;
 import uk.ac.ebi.fgpt.magecomet.client.model.IDF_Data;
-import uk.ac.ebi.fgpt.magecomet.client.model.JSON_Tools;
 import uk.ac.ebi.fgpt.magecomet.client.model.SDRF_Data;
+import uk.ac.ebi.fgpt.magecomet.client.utils.JSON_Tools;
 import uk.ac.ebi.fgpt.magecomet.client.view.section.IDF_Section;
 import uk.ac.ebi.fgpt.magecomet.client.view.section.SDRF_Section;
 import uk.ac.ebi.fgpt.magecomet.client.view.tab.EditTab;
@@ -56,7 +56,7 @@ public class GuiMediator {
   public GuiMediator() {}
   
   /**
-   * Mthod that adds an empty column to the SDRF table right after 'Source Name'
+   * Method that adds an empty column to the SDRF table right after 'Source Name'
    * 
    * @param fieldAttribute
    *          the name of the attribute that will be surrounded by the Characteristic brackets, ie

@@ -1,4 +1,4 @@
-package uk.ac.ebi.fgpt.magecomet.client.model;
+package uk.ac.ebi.fgpt.magecomet.client.utils;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;

@@ -1,0 +1,49 @@
+Investigation Title	Transcription profiling of human sarcoidosis patients	
+Comment[Submitted Name]	Gene Expression in Inflammatory Diseases	
+Experimental Design	unknown_experiment_design_type	transcription profiling by array	
+Experimental Design Term Source REF		EFO	
+Comment[SecondaryAccession]	GSE18781	
+Comment[ArrayExpressReleaseDate]	2009-11-15	
+Comment[AEMIAMESCORE]	3	
+Comment[ArrayExpressAccession]	E-GEOD-18781	
+Comment[MAGETAB TimeStamp_Version]	2010-08-03 17:23:53 Last Changed Rev: 13058	
+Experimental Factor Name	
+Experimental Factor Type	
+Experimental Factor Term Source REF	
+Person Last Name	Planck	
+Person First Name	Stephen	
+Person Mid Initials	
+Person Email	plancks@ohsu.edu	
+Person Phone	
+Person Fax	
+Person Address	Casey Eye Institute, Oregon Health & Science University, 3181 SW Sam Jackson Park Road, Portland, 97239, USA	
+Person Affiliation	Oregon Health & Science University	
+Person Roles	submitter	
+Person Roles Term Source REF	The MGED Ontology	
+Quality Control Type	
+Quality Control Term Source REF	
+Replicate Type	
+Replicate Term Source REF	
+Normalization Type	
+Normalization Term Source REF	
+Date of Experiment	
+Public Release Date	2009-11-15	
+PubMed ID	
+Publication DOI	
+Publication Author List	
+Publication Title	
+Publication Status	
+Publication Status Term Source REF	
+Experiment Description	We hypothesized that patients with sarcoidosis have characteristic mRNA profiles. Microarray analysis of gene expression was done on peripheral blood. Comparing peripheral blood from patients with sarcoidosis to controls, 872 transcripts were upregulated and 1039 were downregulated at >1.5-fold change and a significant q value. Several transcripts associated with interferon and STAT1 were upregulated. Lung and lymph node analyses also showed dramatic increases in STAT1 and STAT1-regulated chemokines. Granulomas in lymph nodes of patients with sarcoidosis expressed abundant STAT1 and phosphorylated STAT1. STAT1 might play an important role in sarcoidosis. This novel hypothesis unites seemingly disparate observations with regard to sarcoidosis including implication of a casual role for interferons, a suspected infectious trigger, TH1 predominating lymphocytes in bronchoalveolar lavage, and the association with hypercalcemia. This study tested the hypothesis that SpA is characterized by a distinct pattern of gene expression in peripheral blood of affected individuals compared with healthy controls.  High-density, human GeneChipÂ® probe arrays were used to profile mRNA of peripheral blood cells from 18 subjects with SpA and 25 normal individuals. Samples were processed as two separate sets at different times. Blood samples were taken at a time when patients were not receiving systemic immunomodulatory therapy. Differential expression was defined as a 1.5-fold change with a q value <5%. Gene ontology and pathway information were also studied. Signals from 134 probe sets (representing 95 known and 12 unknown gene transcripts) were consistently different from controls in both Sets 1 and 2.  Included among these were transcripts for a group of 20 genes, such as interleukin-1 receptors 1 and 2, NLRP2, SLPI, SPARC, and TREM-1 that are clearly related to the immune or inflammatory response and a group of 4 transcripts that have a strong role in bone remodeling. Our observations are the first to implicate SPARC, SLPI, and NLRP2, a component of the innate immune system, in the pathogenesis of SpA. Our results also indicate a possible role for interleukin-1 and its receptors in SpA. In accord with the bone pathology component of SpA, we also found that expression levels of transcripts reflecting bone remodeling factors are also distinguishable in peripheral blood from patients with SpA versus controls.  These results confirm some previously identified biomarkers implicated in the pathogenesis of SpA and also point to novel mediators in this disease. Experiment Overall Design: Peripheral blood was collected from diseased and control subjects.  The sarcoidosis portion of the study included 12 patients and 12 control subjects.  The spondyloarthropathy study was done in two independent sets. The first set included 11 patients and the same 12 control subjects used for the sarcoidosis study.  The second set included 7 patients and 13 control subjects.  For each sample, total RNA was isolated and analyzed by hybridization on Affymetrix arrays.	
+Protocol Name	P-G18781-1	P-G18781-4	P-G18781-2	P-G18781-3	
+Protocol Type	specified_biomaterial_action	nucleic_acid_extraction	labeling	bioassay_data_transformation	
+Protocol Description	Whole blood was collected and incubated in 4 PAXGene tubes/subject (PreAnalytiX, a Qiagen BD Company, Valencia, CA, USA) for two hours and stored frozen at -80C until the RNA was isolated.	Total RNA isolation was performed using the PAXgene Blood RNA Isolation System (PreAnalytiX, a Qiagen BD Company, Valencia, CA, USA) following the manufacturer's recommendations.  Following RNA isolation, DNase-treatment was performed as per PAXGene manufacturerâs recommendation.  RNA recovery and quality was then assessed by examining UV 260/280 absorbance ratios and RNA size distribution on RNA Nano LabChips (Agilent Technologies, Santa Clara, CA, USA) processed on the Agilent 2100 Bioanalyzer.  RNA from 4 PAXGene tubes was pooled for each subject.	Affymetrix one-cycle cDNA synthesis/Affymetrix IVT with PNA treatment of total RNA: The standard Affymetrix amplification and labeling was performed following the Affymetrix GeneChip Expression Analysis Technical Manual, rev. 5 (http://www.affymetrix.com/support/technical/manual/expression_manual.affx (3 Âµg of total RNA as input), with the following modification: four peptide nucleic acid (PNA) oligonucleotides (Applied Biosystems, Foster City, CA, USA) designed to anneal to human Î±- and Î²-globin mRNA were added to the total RNA preparations immediately prior to initiation of the target synthesis step in order to bind globin mRNA and block cDNA synthesis. The PNA oligonucleotide stocks were prepared on day of use at concentrations recommended by Affymetrix (www.affymetrix.com/support/technical/byproduct.affx?product=bloodrna). Globin reduction PNA master mix was prepared by adding equal amounts of the globin PNA stocks. 5 Âµg of total RNA were incubated with oligo-dT primer and 1 Âµl PNA master mix for 10 minutes at 70C prior to first strand cDNA synthesis.  Samples characterized as Set 1 were labeled and hybridized as one group and samples characterized as set 2 were processed as a second group a year later.	R2.4.0 64bit locally compiled by Sun compilers on Solaris 64/Bioconductor, gcrma background correction + invariant normalization + median polishing using PM only. Significance Analysis of Microarray (SAM) was utilized for statistical testing using samr package within R2.4.0 on Solaris 64.  Sets 1 and 2 were normalized independently, and each normalization set included additional array data from subjects with other inflammatory disease diagnoses.	
+Protocol Parameters	
+Protocol Hardware	
+Protocol Software	
+Protocol Contact	
+Protocol Term Source REF				The MGED Ontology	
+SDRF File	E-GEOD-18781.sdrf.txt	
+Term Source Name	EFO	The MGED Ontology	ArrayExpress	EFO	The MGED Ontology	
+Term Source File	http://www.ebi.ac.uk/efo/	http://mged.sourceforge.net/ontologies/MGEDontology.php	http://www.ebi.ac.uk/arrayexpress	http://www.ebi.ac.uk/efo/	http://mged.sourceforge.net/ontologies/MGEDontology.php	
+Term Source Version						

@@ -4,3 +4,6 @@
 */.classpath
 *.aux
 *.log
+docs/MageComet/instructions.out
+docs/MageComet/instructions.toc
+docs/MageComet/.title.tex.properties.xml
