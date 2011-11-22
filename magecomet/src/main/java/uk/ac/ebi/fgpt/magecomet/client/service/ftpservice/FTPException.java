@@ -17,7 +17,12 @@ public class FTPException extends Exception implements Serializable {
     this.experimentAccession = experimentAccession;
   }
   
+  public FTPException(String string, Throwable throwable) {
+    super(string, throwable);
+  }
+  
   public String getAccession() {
     return this.experimentAccession;
   }
+  
 }

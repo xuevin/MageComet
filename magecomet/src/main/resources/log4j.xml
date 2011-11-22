@@ -9,46 +9,6 @@
         </layout>
     </appender>
 
-    <!--<logger name="uk.ac.ebi.arrayexpress2.magetab.utils.MAGETABUtils">-->
-    <!--<level value="DEBUG" />-->
-    <!--<appender-ref ref="console" />-->
-    <!--</logger>-->
-
-    <!--<logger name="uk.ac.ebi.arrayexpress2.magetab.attributeReader.sdrf.node.FactorValueNodeHandler">-->
-    <!--<level value="DEBUG" />-->
-    <!--<appender-ref ref="console" />-->
-    <!--</logger>-->
-
-    <!--<logger name="uk.ac.ebi.arrayexpress2.magetab.attributeReader.sdrf.node.attribute.FactorValueAttributeReader">-->
-    <!--<level value="DEBUG" />-->
-    <!--<appender-ref ref="console" />-->
-    <!--</logger>-->
-
-    <!--<logger name="uk.ac.ebi.arrayexpress2.magetab.parser.IDFParser" additivity="false">-->
-        <!--<level value="DEBUG" />-->
-        <!--<appender-ref ref="console" />-->
-    <!--</logger>-->
-
-    <!--<logger name="uk.ac.ebi.arrayexpress2.magetab.parser.SDRFParser" additivity="false">-->
-        <!--<level value="DEBUG" />-->
-        <!--<appender-ref ref="console" />-->
-    <!--</logger>-->
-
-    <!--<logger name="uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser" additivity="false">-->
-        <!--<level value="DEBUG" />-->
-        <!--<appender-ref ref="console" />-->
-    <!--</logger>-->
-
-    <!--<logger name="uk.ac.ebi.arrayexpress2.magetab.parser.SDRFParser" additivity="false">-->
-        <!--<level value="DEBUG" />-->
-        <!--<appender-ref ref="console" />-->
-    <!--</logger>-->
-
-    <!--<logger name="uk.ac.ebi.arrayexpress2.magetab.parser.NonApplicableConversionHandler" additivity="false">-->
-        <!--<level value="DEBUG" />-->
-        <!--<appender-ref ref="console" />-->
-    <!--</logger>-->
-
     <root>
         <priority value="INFO" />
         <appender-ref ref="console" />

@@ -13,9 +13,10 @@ public class FTPServiceImplTest {
   public void setUp() throws Exception {}
   
   @Test
-  public void testGetExperimentJSON() throws FTPException {
+  public void testGettExperimentJSON() throws FTPException {
     FTPServiceImpl foo = new FTPServiceImpl();
     assertNotNull(foo.getExperimentJSON("E-GEOD-13367"));
+    System.out.println(foo.getExperimentJSON("E-GEOD-13367").toString());
   }
   
 }
